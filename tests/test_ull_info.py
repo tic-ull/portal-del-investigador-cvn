@@ -29,6 +29,7 @@ from django.test import TestCase
 from cvn import settings as st_cvn
 from core.tests.helpers import init, clean
 from core.tests.factories import UserFactory
+from mocks import get_learning, get_all, get_cargos
 from mock import patch
 from core.ws_utils import CachedWS
 from cvn.models import CVN
@@ -37,52 +38,6 @@ from cvn.parsers.read import parse_cvnitem
 from cvn.helpers import DateRange
 import datetime
 from lxml import etree
-
-
-@classmethod
-def get_all(cls, url, use_redis=True, timeout=None):
-    if url == st.WS_ULL_LEARNING % 'example_code':
-        return [{u'des1_titulacion': u'LICENCIADO EN MATEMATICAS',
-                 u'organismo': u'UNIVERSIDAD DE LA LAGUNA',
-                 u'f_expedicion': u'18-12-2001',
-                 u'des1_grado_titulacion': u'Licenciado/Ingeniero Superior'},
-                {u'des1_titulacion': u'Doctor por la Universidad de La Laguna',
-                 u'organismo': u'UNIVERSIDAD DE LA LAGUNA',
-                 u'f_expedicion': u'07-07-2006',
-                 u'des1_grado_titulacion': u'Doctor'}]
-    elif url == st.WS_ULL_CARGOS % 'example_code':
-        return [{u'dedicacion': u'Tiempo Completo',
-                 u'des1_cargo': u'SECRETARIO DPTO ANALISIS MATEMATICO',
-                 u'centro': u'DPTO.ANALISIS MATEMATICO',
-                 u'departamento': u'AN\xc1LISIS MATEM\xc1TICO',
-                 u'f_hasta': u'13-02-2013', u'f_toma_posesion': u'30-11-2010'}]
-
-
-@classmethod
-def get_learning(cls, url, use_redis=True, timeout=None):
-    if url == st.WS_ULL_LEARNING % 'example_code':
-        return [{u'des1_titulacion': u'LICENCIADO EN MATEMATICAS',
-                 u'organismo': u'UNIVERSIDAD DE LA LAGUNA',
-                 u'f_expedicion': u'18-12-2001',
-                 u'des1_grado_titulacion': u'Licenciado/Ingeniero Superior'},
-                {u'des1_titulacion': u'Doctor por la Universidad de La Laguna',
-                 u'organismo': u'UNIVERSIDAD DE LA LAGUNA',
-                 u'f_expedicion': u'07-07-2006',
-                 u'des1_grado_titulacion': u'Doctor'}]
-    else:
-        return []
-
-
-@classmethod
-def get_cargos(cls, url, use_redis=True, timeout=None):
-    if url == st.WS_ULL_CARGOS % 'example_code':
-        return [{u'dedicacion': u'Tiempo Completo',
-                 u'des1_cargo': u'SECRETARIO DPTO ANALISIS MATEMATICO',
-                 u'centro': u'DPTO.ANALISIS MATEMATICO',
-                 u'departamento': u'AN\xc1LISIS MATEM\xc1TICO',
-                 u'f_hasta': u'13-02-2013', u'f_toma_posesion': u'30-11-2010'}]
-    else:
-        return []
 
 
 class UllInfoTestCase(TestCase):
@@ -190,18 +145,6 @@ class UllInfoTestCase(TestCase):
         cvn = CVN(user=user, pdf=pdf)
         cvn.xml_file.open()
         self.assertEqual(len(etree.parse(cvn.xml_file).findall('CvnItem')), 2)
-
-    def test_ws_ull_learning(self):
-        ws_info = CachedWS.get(st.WS_ULL_LEARNING % 29739)
-        with patch.object(CachedWS, 'get', get_learning):
-            test_info = CachedWS.get(st.WS_ULL_LEARNING % 'example_code')
-        self.assertEqual(ws_info, test_info)
-
-    def test_ws_ull_cargos(self):
-        ws_info = CachedWS.get(st.WS_ULL_CARGOS % 29739)
-        with patch.object(CachedWS, 'get', get_cargos):
-            test_info = CachedWS.get(st.WS_ULL_CARGOS % 'example_code')
-        self.assertEqual(ws_info, test_info)
 
     def test_daterange(self):
         date1 = datetime.date(2001, 1, 1)
