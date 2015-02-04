@@ -29,7 +29,11 @@ from django.test import TestCase
 from cvn import settings as st_cvn
 from core.tests.helpers import init, clean
 from core.tests.factories import UserFactory
-from mocks import get_learning, get_all, get_cargos
+from mocks import (get_learning, get_all, get_cargos, get_cargos_no_f_hasta,
+                   get_cargos_no_departamento, get_cargos_no_dedicacion,
+                   get_learning_no_f_expedicion, get_learning_no_organismo,
+                   get_learning_doctor_no_f_expedicion,
+                   get_learning_doctor_no_organismo)
 from mock import patch
 from core.ws_utils import CachedWS
 from cvn.models import CVN
@@ -111,6 +115,68 @@ class UllInfoTestCase(TestCase):
             if not equal:
                 allequal = False
         self.assertTrue(allequal)
+
+    def _get_one_cargo_ull(self):
+        user = UserFactory.create()
+        user.profile.rrhh_code = 'example_code'
+        pdf = CVN.get_user_pdf_ull(user=user)
+        cvn = CVN(user=user, pdf=pdf)
+        cvn.xml_file.open()
+        cvn_items = etree.parse(cvn.xml_file).findall('CvnItem')
+        self.assertEqual(len(cvn_items), 1)
+        item = parse_cvnitem(cvn_items[0])
+        ws_content = CachedWS.get(st.WS_ULL_CARGOS % 'example_code')
+        self.assertEqual(len(ws_content), 1)
+        w = ws_content[0]
+        CVN._cargo_to_json(w)
+        if not 'employer' in w:
+            w['employer'] = 'Universidad de La Laguna'
+        self.assertEqual(cmp(item, w), 0)
+
+    def _get_one_learning_ull(self):
+        user = UserFactory.create()
+        user.profile.rrhh_code = 'example_code'
+        pdf = CVN.get_user_pdf_ull(user=user)
+        cvn = CVN(user=user, pdf=pdf)
+        cvn.xml_file.open()
+        cvn_items = etree.parse(cvn.xml_file).findall('CvnItem')
+        self.assertEqual(len(cvn_items), 1)
+        item = parse_cvnitem(cvn_items[0])
+        ws_content = CachedWS.get(st.WS_ULL_LEARNING % 'example_code')
+        self.assertEqual(len(ws_content), 1)
+        wi = ws_content[0]
+        CVN._learning_to_json(wi)
+        if 'title_type' in wi:
+            wi['title_type'] = wi['title_type'].upper()
+        self.assertEqual(cmp(item, wi), 0)
+
+    @patch.object(CachedWS, 'get', get_cargos_no_f_hasta)
+    def test_get_pdf_ull_cargos_no_f_hasta(self):
+        self._get_one_cargo_ull()
+
+    @patch.object(CachedWS, 'get', get_cargos_no_departamento)
+    def test_get_pdf_ull_cargos_no_departamento(self):
+        self._get_one_cargo_ull()
+
+    @patch.object(CachedWS, 'get', get_cargos_no_dedicacion)
+    def test_get_pdf_ull_cargos_no_dedicacion(self):
+        self._get_one_cargo_ull()
+
+    @patch.object(CachedWS, 'get', get_learning_no_f_expedicion)
+    def test_get_pdf_ull_learning_no_f_expedicion(self):
+        self._get_one_learning_ull()
+
+    @patch.object(CachedWS, 'get', get_learning_no_organismo)
+    def test_get_pdf_ull_learning_no_organismo(self):
+        self._get_one_learning_ull()
+
+    @patch.object(CachedWS, 'get', get_learning_doctor_no_organismo)
+    def test_get_pdf_ull_learning_doctor_no_organismo(self):
+        self._get_one_learning_ull()
+
+    @patch.object(CachedWS, 'get', get_learning_doctor_no_f_expedicion)
+    def test_get_pdf_ull_learning_doctor_no_f_expedicion(self):
+        self._get_one_learning_ull()
 
     @patch.object(CachedWS, 'get', get_all)
     def test_get_pdf_ull_filter_by_date(self):

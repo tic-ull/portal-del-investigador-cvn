@@ -24,6 +24,7 @@
 
 from django.conf import settings as st
 
+
 @classmethod
 def get_all(cls, url, use_redis=True, timeout=None):
     if url == st.WS_ULL_LEARNING % 'example_code':
@@ -59,6 +60,48 @@ def get_learning(cls, url, use_redis=True, timeout=None):
 
 
 @classmethod
+def get_learning_no_organismo(cls, url, use_redis=True, timeout=None):
+    if url == st.WS_ULL_LEARNING % 'example_code':
+        return [{u'des1_titulacion': u'LICENCIADO EN BELLAS ARTES',
+                 u'f_expedicion': u'04-11-1965',
+                 u'des1_grado_titulacion': u'Licenciado/Ingeniero Superior'}]
+    else:
+        return []
+
+
+@classmethod
+def get_learning_no_f_expedicion(cls, url, use_redis=True, timeout=None):
+    if url == st.WS_ULL_LEARNING % 'example_code':
+        return [{u'des1_titulacion': u'LICENCIADO EN FILOSOFIA'
+                                     u' Y CIENCIAS DE LA EDUCACION',
+                 u'organismo': u'UNIV. BARCELONA',
+                 u'des1_grado_titulacion': u'Licenciado/Ingeniero Superior'}]
+    else:
+        return []
+
+
+@classmethod
+def get_learning_doctor_no_organismo(cls, url, use_redis=True, timeout=None):
+    if url == st.WS_ULL_LEARNING % 'example_code':
+        return [{u'des1_titulacion': u'LICENCIADO EN BELLAS ARTES',
+                 u'f_expedicion': u'04-11-1965',
+                 u'des1_grado_titulacion': u'Doctor'}]
+    else:
+        return []
+
+
+@classmethod
+def get_learning_doctor_no_f_expedicion(cls, url, use_redis=True, timeout=None):
+    if url == st.WS_ULL_LEARNING % 'example_code':
+        return [{u'des1_titulacion': u'LICENCIADO EN FILOSOFIA'
+                                     u' Y CIENCIAS DE LA EDUCACION',
+                 u'organismo': u'UNIV. BARCELONA',
+                 u'des1_grado_titulacion': u'Doctor'}]
+    else:
+        return []
+
+
+@classmethod
 def get_cargos(cls, url, use_redis=True, timeout=None):
     if url == st.WS_ULL_CARGOS % 'example_code':
         return [{u'dedicacion': u'Tiempo Completo',
@@ -66,5 +109,39 @@ def get_cargos(cls, url, use_redis=True, timeout=None):
                  u'centro': u'DPTO.ANALISIS MATEMATICO',
                  u'departamento': u'AN\xc1LISIS MATEM\xc1TICO',
                  u'f_hasta': u'13-02-2013', u'f_toma_posesion': u'30-11-2010'}]
+    else:
+        return []
+
+
+@classmethod
+def get_cargos_no_f_hasta(cls, url, use_redis=True, timeout=None):
+    if url == st.WS_ULL_CARGOS % 'example_code':
+        return [{u'dedicacion': u'Tiempo Completo',
+                 u'des1_cargo': u'SUBDIRECTOR DPTO FILOLOGIA MODERNA',
+                 u'centro': u'DPTO.FILOLOGIA MODERNA',
+                 u'departamento': u'FILOLOGÍA FRANCESA Y ROMÁNICA',
+                 u'f_toma_posesion': u'29-01-1996'}]
+    else:
+        return []
+
+
+@classmethod
+def get_cargos_no_departamento(cls, url, use_redis=True, timeout=None):
+    if url == st.WS_ULL_CARGOS % 'example_code':
+        return [{u'dedicacion': u'Tiempo Completo',
+                 u'des1_cargo': u'DIRECTOR OFICINA TRANSF.RESUL.INVEST',
+                 u'centro': u'VICERRECTORADO INVEST,DESAR TECNOL E INN',
+                 u'f_toma_posesion': u'08-05-2000', u'f_hasta': u'06-01-2003'}]
+    else:
+        return []
+
+
+@classmethod
+def get_cargos_no_dedicacion(cls, url, use_redis=True, timeout=None):
+    if url == st.WS_ULL_CARGOS % 'example_code':
+        return [{u'des1_cargo': u'DIRECTOR ETS. INGENIERIA CIVIL E INDUS',
+                 u'centro': u'E.U. ENFERMERIA Y FISIOTERAPIA',
+                 u'departamento': u'ECONOMÍA APLICADA',
+                 u'f_toma_posesion': u'08-05-2000', u'f_hasta': u'01-09-2004'}]
     else:
         return []

@@ -194,8 +194,9 @@ def parse_cvnitem_teaching_subject(node):
 
 
 def parse_cvnitem_learning_phd(node):
+    university = node.find('Entity/EntityName/Item')
     item = {'title': node.find('Title/Name/Item').text,
-            'university': node.find('Entity/EntityName/Item').text,
+            'university': university.text if university is not None else None,
             'date': parse_date(node.find('Date'))}
     return item
 
