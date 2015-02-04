@@ -91,7 +91,8 @@ def get_learning_doctor_no_organismo(cls, url, use_redis=True, timeout=None):
 
 
 @classmethod
-def get_learning_doctor_no_f_expedicion(cls, url, use_redis=True, timeout=None):
+def get_learning_doctor_no_f_expedicion(cls, url, use_redis=True,
+                                        timeout=None):
     if url == st.WS_ULL_LEARNING % 'example_code':
         return [{u'des1_titulacion': u'LICENCIADO EN FILOSOFIA'
                                      u' Y CIENCIAS DE LA EDUCACION',
