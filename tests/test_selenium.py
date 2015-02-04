@@ -25,6 +25,7 @@
 from core.tests.helpers import init, clean
 from cvn import settings as st_cvn
 from django import test
+from django.conf import settings as st
 from django.contrib.auth.models import User
 from selenium import webdriver
 from selenium.common.exceptions import (NoSuchElementException,
@@ -49,14 +50,14 @@ class LoginCAS(test.LiveServerTestCase):
         self.driver = webdriver.Firefox()
         self.driver.implicitly_wait(8)
         self.driver.set_page_load_timeout(30)
-        self.base_url = "https://loginpruebas.ull.es/"
+        self.base_url = st.CAS_SERVER_URL
         self.verificationErrors = []
         self.accept_next_alert = True
 
     def test_login_cas(self):
         driver = self.driver
         driver.get(self.base_url +
-                   "/cas-1/login?service=http%3A%2F%2Flocalhost%3A8081%2F" +
+                   "login?service=http%3A%2F%2Flocalhost%3A8081%2F" +
                    "investigacion%2Faccounts%2Flogin%2F%3Fnext%3D%252F" +
                    "es%252Finvestigacion%252Fcvn%252F")
         driver.find_element_by_id("username").clear()
@@ -70,7 +71,7 @@ class LoginCAS(test.LiveServerTestCase):
     def test_login_no_cas(self):
         driver = self.driver
         driver.get(self.base_url +
-                   "/cas-1/login?service=http%3A%2F%2Flocalhost%3A8081%2F" +
+                   "login?service=http%3A%2F%2Flocalhost%3A8081%2F" +
                    "investigacion%2Faccounts%2Flogin%2F%3Fnext%3D%252F" +
                    "es%252Finvestigacion%252Fcvn%252F")
         driver.find_element_by_id("username").clear()
@@ -83,7 +84,7 @@ class LoginCAS(test.LiveServerTestCase):
     def test_upload_cvn_fecyt(self):
         driver = self.driver
         driver.get(self.base_url +
-                   "/cas-1/login?service=http%3A%2F%2Flocalhost%3A8081%2F" +
+                   "login?service=http%3A%2F%2Flocalhost%3A8081%2F" +
                    "investigacion%2Faccounts%2Flogin%2F%3Fnext%3D%252F" +
                    "es%252Finvestigacion%252Fcvn%252F")
         driver.find_element_by_id("username").clear()
@@ -104,7 +105,7 @@ class LoginCAS(test.LiveServerTestCase):
     def test_upload_cvn_no_fecyt(self):
         driver = self.driver
         driver.get(self.base_url +
-                   "/cas-1/login?service=http%3A%2F%2Flocalhost%3A8081%2F" +
+                   "login?service=http%3A%2F%2Flocalhost%3A8081%2F" +
                    "investigacion%2Faccounts%2Flogin%2F%3Fnext%3D%252F" +
                    "es%252Finvestigacion%252Fcvn%252F")
         driver.find_element_by_id("username").clear()
@@ -125,7 +126,7 @@ class LoginCAS(test.LiveServerTestCase):
     def test_upload_cvn_user_admin(self):
         driver = self.driver
         driver.get(self.base_url +
-                   "/cas-1/login?service=http%3A%2F%2Flocalhost%3A8081%2F" +
+                   "login?service=http%3A%2F%2Flocalhost%3A8081%2F" +
                    "investigacion%2Faccounts%2Flogin%2F%3Fnext%3D%252F" +
                    "es%252Finvestigacion%252Fcvn%252F")
         driver.find_element_by_id("username").clear()
@@ -153,7 +154,7 @@ class LoginCAS(test.LiveServerTestCase):
     def test_user_download_cvn(self):
         driver = self.driver
         driver.get(self.base_url +
-                   "/cas-1/login?service=http%3A%2F%2Flocalhost%3A8081%2F" +
+                   "login?service=http%3A%2F%2Flocalhost%3A8081%2F" +
                    "investigacion%2Faccounts%2Flogin%2F%3Fnext%3D%252F" +
                    "es%252Finvestigacion%252Fcvn%252F")
         driver.find_element_by_id("username").clear()
@@ -181,7 +182,7 @@ class LoginCAS(test.LiveServerTestCase):
     def test_user_rrhh(self):
         driver = self.driver
         driver.get(self.base_url +
-                   "/cas-1/login?service=http%3A%2F%2Flocalhost%3A8081%2F" +
+                   "login?service=http%3A%2F%2Flocalhost%3A8081%2F" +
                    "investigacion%2Faccounts%2Flogin%2F%3Fnext%3D%252F" +
                    "es%252Finvestigacion%252Fcvn%252F")
         driver.find_element_by_id("username").clear()
@@ -201,7 +202,7 @@ class LoginCAS(test.LiveServerTestCase):
     def test_selenium_get_info_ull(self):
         driver = self.driver
         driver.get(self.base_url +
-                   "/cas-1/login?service=http%3A%2F%2Flocalhost%3A8081%2F" +
+                   "login?service=http%3A%2F%2Flocalhost%3A8081%2F" +
                    "investigacion%2Faccounts%2Flogin%2F%3Fnext%3D%252F" +
                    "es%252Finvestigacion%252Fcvn%252F")
         driver.find_element_by_id("username").clear()
@@ -248,7 +249,7 @@ class LoginCAS(test.LiveServerTestCase):
     def test_selenium_not_info(self):
         driver = self.driver
         driver.get(self.base_url +
-                   "/cas-1/login?service=http%3A%2F%2Flocalhost%3A8081%2F" +
+                   "login?service=http%3A%2F%2Flocalhost%3A8081%2F" +
                    "investigacion%2Faccounts%2Flogin%2F%3Fnext%3D%252F" +
                    "es%252Finvestigacion%252Fcvn%252F")
         driver.find_element_by_id("username").clear()
