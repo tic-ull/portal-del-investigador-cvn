@@ -93,8 +93,8 @@ class UploadCVNForm(forms.ModelForm):
 
 
 def get_range_of_years_choices():
-    choices = [(x, x) for x in range(
-        st_cvn.RANGE_OF_YEARS[0], st_cvn.RANGE_OF_YEARS[1])]
+    choices = [(x, x) for x in reversed(range(
+        st_cvn.RANGE_OF_YEARS[0], st_cvn.RANGE_OF_YEARS[1]))]
     return choices
 
 
