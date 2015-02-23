@@ -23,6 +23,7 @@
 #
 
 from cvn import settings as st_cvn
+from urllib2 import URLError, HTTPError
 
 import suds
 import base64
@@ -34,11 +35,14 @@ logger = logging.getLogger('cvn')
 def pdf2xml(pdf, name):
     content = base64.encodestring(pdf)
     # Web Service - FECYT
-    client_ws = suds.client.Client(st_cvn.WS_FECYT_PDF2XML)
+    try:
+        client_ws = suds.client.Client(st_cvn.WS_FECYT_PDF2XML)
+    except (URLError, HTTPError):
+        return False, 1
     try:
         result_xml = client_ws.service.cvnPdf2Xml(
             st_cvn.FECYT_USER, st_cvn.FECYT_PASSWORD, content)
-    except:
+    except suds.WebFault:
         logger.warning(
             u'No hay respuesta del WS' +
             u' de la FECYT para el fichero' +
@@ -53,7 +57,10 @@ def pdf2xml(pdf, name):
 def xml2pdf(xml):
     content = xml.decode('utf8')
     # Web Service - FECYT
-    client_ws = suds.client.Client(st_cvn.WS_FECYT_XML2PDF)
+    try:
+        client_ws = suds.client.Client(st_cvn.WS_FECYT_XML2PDF)
+    except (URLError, HTTPError):
+        return None
     try:
         pdf = client_ws.service.crearPDFBean(
             st_cvn.FECYT_USER, st_cvn.FECYT_PASSWORD,

@@ -87,7 +87,7 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger btn-ms" data-dismiss="modal">{% trans "Cerrar" %}</button>
                         <input id="year" style="display:none;" type="Submit" name="select_year" />
-                        <button type="button" onclick="$('#year').click()" class="btn btn-primary btn-ms">{% trans "Exportar" %}</button>
+                        <button type="button" data-dismiss="modal" onclick="$('#year').click()" class="btn btn-primary btn-ms">{% trans "Exportar" %}</button>
                     </div>
                 </div>
             </div>
@@ -111,7 +111,7 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger btn-ms" data-dismiss="modal">{% trans "Cerrar" %}</button>
                         <input id="range_years" style="display:none;" type="Submit" name="range_years" />
-                        <button type="button" onclick="$('#range_years').click()" class="btn btn-primary btn-ms">{% trans "Exportar" %}</button>
+                        <button type="button" onclick="$('#range_years').click()" data-dismiss="modal" class="btn btn-primary btn-ms">{% trans "Exportar" %}</button>
                     </div>
                 </div>
             </div>

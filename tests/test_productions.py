@@ -53,20 +53,17 @@ class CVNTestCase(TestCase):
 
     def test_insert_xml_ull(self):
         """ Insert the data of XML in the database """
-        try:
-            user = UserFactory.create()
-            cvn = CVN(user=user, pdf_path=os.path.join(
-                st_cvn.FILE_TEST_ROOT, 'cvn/CVN-ULL.pdf'))
-            cvn.insert_xml()
-            self.assertEqual(user.profile.articulo_set.count(), 1214)
-            self.assertEqual(user.profile.libro_set.count(), 6)
-            self.assertEqual(user.profile.capitulo_set.count(), 32)
-            self.assertEqual(user.profile.congreso_set.count(), 55)
-            self.assertEqual(user.profile.convenio_set.count(), 38)
-            self.assertEqual(user.profile.proyecto_set.count(), 11)
-            self.assertEqual(user.profile.tesisdoctoral_set.count(), 0)
-        except:
-            raise
+        user = UserFactory.create()
+        cvn = CVN(user=user, pdf_path=os.path.join(
+            st_cvn.FILE_TEST_ROOT, 'cvn/CVN-ULL.pdf'))
+        cvn.insert_xml()
+        self.assertEqual(user.profile.articulo_set.count(), 1214)
+        self.assertEqual(user.profile.libro_set.count(), 6)
+        self.assertEqual(user.profile.capitulo_set.count(), 32)
+        self.assertEqual(user.profile.congreso_set.count(), 55)
+        self.assertEqual(user.profile.convenio_set.count(), 38)
+        self.assertEqual(user.profile.proyecto_set.count(), 11)
+        self.assertEqual(user.profile.tesisdoctoral_set.count(), 0)
 
     def test_delete_producciones(self):
         user = UserFactory.create()

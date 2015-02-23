@@ -44,7 +44,7 @@ class UploadCVNForm(forms.ModelForm):
         if 'data' in kwargs and 'user' in kwargs['data']:
             try:
                 self.user = User.objects.get(pk=kwargs['data']['user'].pk)
-            except:
+            except AttributeError:
                 self.user = User.objects.get(pk=kwargs['data']['user'])
         if 'initial' in kwargs and 'cvn_file' in kwargs['initial']:
             if 'data' not in kwargs:
@@ -53,11 +53,7 @@ class UploadCVNForm(forms.ModelForm):
         super(UploadCVNForm, self).__init__(*args, **kwargs)
 
     def clean_cvn_file(self):
-        try:
-            cvn_file = self.cleaned_data['cvn_file']
-        except:
-            cvn_file = self.data['cvn_file']
-        # PDF
+        cvn_file = self.cleaned_data['cvn_file']
         if mimetypes.guess_type(cvn_file.name)[0] != "application/pdf":
             raise forms.ValidationError(
                 _(u'El CVN debe estar en formato PDF.'))
@@ -93,8 +89,8 @@ class UploadCVNForm(forms.ModelForm):
 
 
 def get_range_of_years_choices():
-    choices = [(x, x) for x in range(
-        st_cvn.RANGE_OF_YEARS[0], st_cvn.RANGE_OF_YEARS[1])]
+    choices = [(x, x) for x in reversed(range(
+        st_cvn.RANGE_OF_YEARS[0], st_cvn.RANGE_OF_YEARS[1]))]
     return choices
 
 
