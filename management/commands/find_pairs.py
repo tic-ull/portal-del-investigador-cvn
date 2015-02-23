@@ -27,7 +27,7 @@ from cvn.models import (Proyecto, Congreso, Convenio, Articulo, Patente,
 from core.models import UserProfile
 from django.conf import settings as st
 from django.core.management.base import BaseCommand, CommandError
-from django.core.exceptions import FieldError
+from django.core.exceptions import FieldError, ObjectDoesNotExist
 from joblib import Parallel, delayed
 from optparse import make_option
 from string_utils.stringcmp import do_stringcmp
@@ -209,7 +209,7 @@ class Command(BaseCommand):
         else:
             try:
                 self.DIFFERING_PAIRS = int(options['differing_pairs'])
-            except:
+            except ValueError:
                 raise CommandError("Option `--diff needs an integer 0,1,...")
         year = None
         if options['year'] is not None:
@@ -245,7 +245,7 @@ class Command(BaseCommand):
             usuario = options['usuario']
             try:
                 usuario = UserProfile.objects.get(documento=usuario)
-            except:
+            except ObjectDoesNotExist:
                 raise CommandError('El usuario con documento "{0}" no existe'
                                    .format(usuario))
 
@@ -409,6 +409,6 @@ class Command(BaseCommand):
             choice = raw_input("? ")
             try:
                 choice = int(choice)
-            except:
+            except ValueError:
                 pass
         return choice

@@ -67,7 +67,10 @@ def index(request):
 @login_required
 def download_cvn(request):
     cvn = request.user.profile.cvn
-    pdf = open(cvn.cvn_file.path)
+    try:
+        pdf = open(cvn.cvn_file.path)
+    except IOError:
+        raise Http404
     response = HttpResponse(pdf, content_type='application/pdf')
     response['Content-Disposition'] = 'inline; filename=%s' % (
         cvn.cvn_file.name.split('/')[-1])
