@@ -3,15 +3,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-02-19 10:24+0000\n"
-"PO-Revision-Date: 2015-02-19 10:27-0102\n"
+"POT-Creation-Date: 2015-02-24 15:49+0000\n"
+"PO-Revision-Date: 2015-02-24 15:50-0102\n"
 "Last-Translator: DOMINGO YERAY RODRIGUEZ MARTIN <dyeray@ull.edu.es>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: \n"
-"X-Translated-Using: django-rosetta 0.7.4\n"
+"X-Translated-Using: django-rosetta 0.7.5\n"
 
 #: admin.py:113
 msgid "Nombre"
@@ -21,15 +21,15 @@ msgstr "Name"
 msgid "Apellidos"
 msgstr "Surname"
 
-#: forms.py:63
+#: forms.py:59
 msgid "El CVN debe estar en formato PDF."
 msgstr "The CVN must be in PDF format."
 
-#: forms.py:71
+#: forms.py:67
 msgid "El CVN debe estar generado desde el Editor CVN de la FECYT"
 msgstr "The CVN must be generated from the FECYT CVN Editor"
 
-#: forms.py:118
+#: forms.py:114
 msgid "El año inicial no puede ser mayor que el año final"
 msgstr "The initial year may not exceed the final year"
 
@@ -405,6 +405,14 @@ msgstr "My CVN"
 msgid "Exportar mi información ULL"
 msgstr "Export my information ULL"
 
+#: templates/cvn/base.html:31
+msgid ""
+"El formato CVN ha sido desarrollado por la Fundación Española para la "
+"Ciencia y la Tecnología"
+msgstr ""
+"The CVN format has been developed by Fundación Española para la Ciencia y la"
+" Tecnología"
+
 #: templates/cvn/export_data_ull.html:8
 msgid "Exportar información ULL"
 msgstr "Exportinformation ULL"
@@ -626,11 +634,11 @@ msgstr "Area"
 msgid "CVN actualizado con éxito."
 msgstr "CVN updated successfully."
 
-#: views.py:88
+#: views.py:91
 msgid "No disponible"
 msgstr "Not Available"
 
-#: views.py:119
+#: views.py:122
 msgid "No dispone de información en el periodo seleccionado"
 msgstr "No information in this period"
 
