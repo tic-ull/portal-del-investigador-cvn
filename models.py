@@ -150,10 +150,7 @@ class CVN(models.Model):
         contratos = cls._insert_profession(
             st.WS_ULL_CONTRATOS, user, parser, start_date, end_date)
 
-        teaching = cls._insert_teaching_ull(
-            user, parser, start_date, end_date)
-
-        if not learning and not cargos and not contratos and not teaching:
+        if not learning and not cargos and not contratos:
             return None
         xml = parser.tostring()
         return fecyt.xml2pdf(xml)
