@@ -32,11 +32,12 @@ import os
 # Enable translations in this file
 _ = lambda s: s
 
+# DJANGO CONSTANCE
+st.CONSTANCE_CONFIG['EXPIRY_DATE'] = (
+    datetime.date(2013, 12, 31), _(u'Expiry date for a CVN'))
+
 # Default Entity
 UNIVERSITY = _(u'Universidad de La Laguna')
-
-# Expiry date for a CVN
-EXPIRY_DATE = datetime.date(2013, 12, 31)
 
 # ******************************* PATHS *************************************
 REPORTS_PDF_ROOT = os.path.join(st.MEDIA_ROOT, 'cvn/reports/pdf')
