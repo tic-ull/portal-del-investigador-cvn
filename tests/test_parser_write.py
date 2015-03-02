@@ -24,7 +24,6 @@
 
 from core.tests.factories import UserFactory
 from core.tests.helpers import init, clean
-from cvn import settings as st_cvn
 from cvn.models import CVN
 from cvn.parsers.read import parse_cvnitem
 from cvn.parsers.write import CvnXmlWriter
@@ -32,10 +31,6 @@ from django.test import TestCase
 from factories import (LearningPhdFactory, ProfessionFactory,
                        TeachingFactory, LearningFactory,)
 from lxml import etree
-
-import csv
-import datetime
-import os
 
 
 class ParserWriterTestCase(TestCase):
@@ -57,36 +52,70 @@ class ParserWriterTestCase(TestCase):
             except AttributeError:
                 pass
 
-    def test_cvnitem_factories(self):
+    def test_cvnitem_profession_factory(self):
         user = UserFactory.create()
         parser = CvnXmlWriter(user)
         cvnitem_dict = {}
         # Insert old and new professions in the CVN
         for i in range(0, 10):
             d = ProfessionFactory.create()
-            cvnitem_dict[d['title']] = d
+            for key in [u'departamento', u'centro', u'dedicacion']:
+                if d[key] is None:
+                    del d[key]
+            cvnitem_dict[d[u'des1_cargo']] = d
             parser.add_profession(**d)
+        cvn = CVN.create(user, parser.tostring())
+        cvn.xml_file.open()
+        cvn_items = etree.parse(cvn.xml_file).findall('CvnItem')
+        for item in cvn_items:
+            cvnitem = parse_cvnitem(item)
+            self.assertEqual(
+                cmp(cvnitem, cvnitem_dict[cvnitem[u'des1_cargo']]), 0)
+        self.assertNotEqual(cvn, None)
+
+    def test_cvnitem_learning_factory(self):
+        user = UserFactory.create()
+        parser = CvnXmlWriter(user)
+        cvnitem_dict = {}
         # Insert Phd the researcher has received
         for i in range(0, 10):
             d = LearningPhdFactory.create()
-            cvnitem_dict[d['title']] = d
+            cvnitem_dict[d[u'des1_titulacion']] = d
+            if u'organismo' in d and d[u'organismo'] is None:
+                del d[u'organismo']
             parser.add_learning_phd(**d)
-        # Insert teaching data
-        for i in range(0, 10):
-            d = TeachingFactory.create()
-            cvnitem_dict[d['title']] = d
-            parser.add_teaching(**d)
-        # Insert bachelor, degree...data
+         # Insert bachelor, degree...data
         for i in range(0, 10):
             d = LearningFactory.create()
-            cvnitem_dict[d['title']] = d
+            cvnitem_dict[d[u'des1_titulacion']] = d
+            if u'organismo' in d and d[u'organismo'] is None:
+                del d[u'organismo']
             parser.add_learning(**d)
         cvn = CVN.create(user, parser.tostring())
         cvn.xml_file.open()
         cvn_items = etree.parse(cvn.xml_file).findall('CvnItem')
         for item in cvn_items:
             cvnitem = parse_cvnitem(item)
-            self.assertEqual(cmp(cvnitem, cvnitem_dict[cvnitem['title']]), 0)
+            self.assertEqual(
+                cmp(cvnitem, cvnitem_dict[cvnitem[u'des1_titulacion']]), 0)
+        self.assertNotEqual(cvn, None)
+
+    def test_cvnitem_teaching_factory(self):
+        user = UserFactory.create()
+        parser = CvnXmlWriter(user)
+        cvnitem_dict = {}
+        # Insert teaching data
+        for i in range(0, 10):
+            d = TeachingFactory.create()
+            cvnitem_dict[d['asignatura']] = d
+            parser.add_teaching(**d)
+        cvn = CVN.create(user, parser.tostring())
+        cvn.xml_file.open()
+        cvn_items = etree.parse(cvn.xml_file).findall('CvnItem')
+        for item in cvn_items:
+            cvnitem = parse_cvnitem(item)
+            self.assertEqual(
+                cmp(cvnitem, cvnitem_dict[cvnitem['asignatura']]), 0)
         self.assertNotEqual(cvn, None)
 
     @classmethod

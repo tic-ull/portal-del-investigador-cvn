@@ -25,6 +25,7 @@
 from cvn import settings as st_cvn
 from lxml import etree
 
+import datetime
 import time
 
 
@@ -91,42 +92,45 @@ class CvnXmlWriter:
             node = nodes[0].getparent()
             xml.remove(node)
 
-    def add_teaching(self, title, professional_category, program_type,
-                     subject_type, course, qualification, department,
-                     faculty, school_year, number_credits,
-                     university=st_cvn.UNIVERSITY,):
+    def add_teaching(self, asignatura, categ_anyo, tipo_estudio,
+                     tipologia, plan_nomid, departamento,
+                     centro_nomid, curso_inicio, creditos, curso=None,
+                     university=st_cvn.UNIVERSITY):
         """Graduate, postgraduate (bachelor's degree, master, engineering)"""
-        program_code = self._get_code(st_cvn.PROGRAM_TYPE, program_type)
-        subject_code = self._get_code(st_cvn.SUBJECT_TYPE, subject_type)
+        program_code = self._get_code(st_cvn.PROGRAM_TYPE, tipo_estudio)
+        subject_code = self._get_code(st_cvn.SUBJECT_TYPE, tipologia)
         teaching = etree.fromstring(
             get_xml_fragment(st_cvn.XML_TEACHING) % {
-                'subject': title,
-                'professional_category': professional_category,
+                'subject': asignatura,
+                'professional_category': categ_anyo,
                 'program_type': program_code,
-                'program_others': program_type,
+                'program_others': tipo_estudio,
                 'subject_type': subject_code,
-                'subject_others': subject_type,
-                'course': course,
-                'qualification': qualification,
-                'department': department,
-                'faculty': faculty,
-                'school_year': school_year,
-                'number_credits': number_credits,
+                'subject_others': tipologia,
+                'course': curso if curso is not None else None,
+                'qualification': plan_nomid,
+                'department': departamento,
+                'faculty': centro_nomid,
+                'school_year': curso_inicio,
+                'number_credits': creditos,
                 'university': university,
             }
         )
+
+        if curso is None:
+            self._remove_node(xml=teaching, node='Edition')
 
         if university is None:
             self._remove_parent_node_by_code(
                 xml=teaching, node='EntityName',
                 code=st_cvn.Entity.UNIVERSITY.value)
 
-        if department is None:
+        if departamento is None:
             self._remove_parent_node_by_code(
                 xml=teaching, node='EntityName',
                 code=st_cvn.Entity.TEACHING_DEPARTAMENT.value)
 
-        if faculty is None:
+        if centro_nomid is None:
             self._remove_parent_node_by_code(
                 xml=teaching, node='EntityName',
                 code=st_cvn.Entity.FACULTY.value)
@@ -143,95 +147,108 @@ class CvnXmlWriter:
 
         self.xml.append(teaching)
 
-    def add_learning(self, title, title_type, university=None, date=None):
-        title_code = self._get_code(
-            st_cvn.OFFICIAL_TITLE_TYPE, title_type.upper())
+    def add_learning(self, des1_titulacion, des1_grado_titulacion,
+                     organismo=None, f_expedicion=None):
+        titulacion_code = self._get_code(
+            st_cvn.OFFICIAL_TITLE_TYPE, des1_grado_titulacion.upper())
         learning = etree.fromstring(
             get_xml_fragment(st_cvn.XML_LEARNING) % {
-                'title': title,
-                'title_code': title_code,
-                'university': university,
-                'date': date.strftime(self.DATE_FORMAT) if date else None,
-                'others': title_type,
+                'title': des1_titulacion,
+                'title_code': titulacion_code,
+                'university': organismo,
+                'date': f_expedicion.strftime(
+                    self.DATE_FORMAT) if f_expedicion else None,
+                'others': des1_grado_titulacion,
             }
         )
 
-        if date is None:
+        if f_expedicion is None:
             self._remove_node(learning, 'Date')
 
-        if university is None:
+        if organismo is None:
             self._remove_node(learning, 'Entity')
 
-        if title_code != u'OTHERS':
+        if titulacion_code != u'OTHERS':
             self._remove_child_node(
                 xml=learning, parent='Filter', child='Others')
 
         self.xml.append(learning)
 
-    def add_learning_phd(self, title, date=None, university=st_cvn.UNIVERSITY):
+    def add_learning_phd(self, des1_titulacion, f_expedicion=None,
+                         organismo=st_cvn.UNIVERSITY):
         """ PhD (Doctor) """
         learning_phd = etree.fromstring(
             get_xml_fragment(st_cvn.XML_LEARNING_PHD) % {
-                'title': title,
-                'university': university,
-                'date': date.strftime(self.DATE_FORMAT) if date else None,
+                'title': des1_titulacion,
+                'university': organismo,
+                'date': f_expedicion.strftime(
+                    self.DATE_FORMAT) if f_expedicion else None,
             }
         )
 
-        if date is None:
+        if f_expedicion is None:
             self._remove_node(learning_phd, 'Date')
 
-        if university is None:
+        if organismo is None:
             self._remove_node(learning_phd, 'Entity')
 
         self.xml.append(learning_phd)
 
-    def add_profession(self, title, start_date, employer=st_cvn.UNIVERSITY,
-                       end_date=None, centre=None, department=None,
-                       full_time=None):
-        values = {'title': title,
-                  'start_date': start_date.strftime(self.DATE_FORMAT),
-                  'employer': employer,
-                  'centre': centre,
-                  'department': department,
-                  'full_time': full_time,
+    def add_profession(self, employer=st_cvn.UNIVERSITY,
+                       des1_cargo=None, f_toma_posesion=None,
+                       des1_cce=None, f_desde=None,
+                       f_hasta=None, centro=None, departamento=None,
+                       dedicacion=None):
+
+        values = {'employer': employer,
+                  'centre': centro,
+                  'department': departamento,
                   'dedication_code': None,
                   'dedication_type': None,
                   }
 
-        if full_time is not None:
+        if des1_cargo is not None:
+            values['title'] = des1_cargo
+        elif des1_cce is not None:
+            values['title'] = des1_cce
+
+        if f_toma_posesion is not None:
+            values['start_date'] = f_toma_posesion.strftime(self.DATE_FORMAT)
+        elif f_desde is not None:
+            values['start_date'] = f_desde.strftime(self.DATE_FORMAT)
+
+        if dedicacion is not None:
             values['dedication_code'] = (
                 st_cvn.ProfessionCode.CURRENT_TRIMMED.value
-                if end_date is None else
+                if f_hasta is None else
                 st_cvn.ProfessionCode.OLD_TRIMMED.value)
-
             values['dedication_type'] = (
                 st_cvn.DedicationType.TOTAL.value
-                if full_time else
+                if dedicacion else
                 st_cvn.DedicationType.PARTIAL.value)
 
         xml = st_cvn.XML_CURRENT_PROFESSION
-        if end_date is not None:
-            values['end_date'] = end_date.strftime(self.DATE_FORMAT)
+        if f_hasta is not None:
+            values['end_date'] = f_hasta.strftime(self.DATE_FORMAT)
             xml = st_cvn.XML_PROFESSION
 
         profession = etree.fromstring(get_xml_fragment(xml) % values)
 
-        if centre is None:
+        if centro is None:
             centre_code = (st_cvn.Entity.CURRENT_CENTRE.value
-                           if end_date is None else
+                           if f_hasta is None else
                            st_cvn.Entity.CENTRE.value)
             self._remove_parent_node_by_code(
                 xml=profession, node='EntityName', code=centre_code)
 
-        if department is None:
+        if departamento is None:
             department_code = (st_cvn.Entity.CURRENT_DEPT.value
-                               if end_date is None else
+                               if f_hasta is None else
                                st_cvn.Entity.DEPT.value)
             self._remove_parent_node_by_code(
                 xml=profession, node='EntityName', code=department_code)
 
-        if full_time is None:
+        if dedicacion is None:
             self._remove_node(xml=profession, node='Dedication')
 
         self.xml.append(profession)

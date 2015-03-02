@@ -35,54 +35,55 @@ d = datetime.date(1940, 1, 1)
 
 class ProfessionFactory(factory.Factory):
     FACTORY_FOR = dict
-    title = factory.Sequence(lambda n: 'Trabajo #{0}'.format(n))
+    des1_cargo = factory.Sequence(lambda n: 'Trabajo #{0}'.format(n))
     employer = FuzzyAttribute(lambda: 'Empresa #' + str(randint(0, 100)))
-    start_date = FuzzyDate(datetime.date(1940, 1, 1)).fuzz()
-    end_date = FuzzyAttribute(lambda: random.choice(
+    f_toma_posesion = FuzzyDate(datetime.date(1940, 1, 1)).fuzz()
+    f_hasta = FuzzyAttribute(lambda: random.choice(
         [None, FuzzyDate(d).fuzz()]))
-    centre = FuzzyAttribute(lambda: random.choice(
+    centro = FuzzyAttribute(lambda: random.choice(
         [None, 'Centro #' + str(randint(0, 100))]))
-    department = FuzzyAttribute(lambda: random.choice(
+    departamento = FuzzyAttribute(lambda: random.choice(
         [None, 'Departamento #' + str(randint(0, 100))]))
-    full_time = FuzzyChoice([True, False, None])
+    dedicacion = FuzzyChoice([True, False, None])
 
 
 class LearningPhdFactory(factory.Factory):
     FACTORY_FOR = dict
-    title = factory.Sequence(lambda n: 'PHD recibido #{0}'.format(n))
-    university = FuzzyAttribute(lambda: 'Universidad #' + str(randint(0, 100)))
-    date = FuzzyAttribute(lambda: random.choice([None, FuzzyDate(d).fuzz()]))
+    des1_titulacion = factory.Sequence(lambda n: 'PHD recibido #{0}'.format(n))
+    organismo = FuzzyAttribute(lambda: 'Universidad #' + str(randint(0, 100)))
+    f_expedicion = FuzzyAttribute(
+        lambda: random.choice([None, FuzzyDate(d).fuzz()]))
 
 
 class TeachingFactory(factory.Factory):
     FACTORY_FOR = dict
-    title = factory.Sequence(lambda n: 'Asignatura #{0}'.format(n))
-    professional_category = FuzzyAttribute(
+    asignatura = factory.Sequence(lambda n: 'Asignatura #{0}'.format(n))
+    categ_anyo = FuzzyAttribute(
         lambda: u'Profesión #' + str(randint(0, 100)))
-    program_type = FuzzyAttribute(lambda: random.choice(
+    tipo_estudio = FuzzyAttribute(lambda: random.choice(
         st_cvn.SUBJECT_TYPE.keys() +
         [u'Titulación #' + str(randint(0, 100))]))
-    subject_type = FuzzyAttribute(lambda: random.choice(
+    tipologia = FuzzyAttribute(lambda: random.choice(
         st_cvn.SUBJECT_TYPE.keys() +
         ['Tipo asignatura #' + str(randint(0, 100))]))
-    course = FuzzyAttribute(lambda: str(randint(1, 5)))
-    qualification = factory.Sequence(lambda n: u'Titulación #{0}'.format(n))
+    curso = FuzzyAttribute(lambda: str(randint(1, 5)))
+    plan_nomid = factory.Sequence(lambda n: u'Titulación #{0}'.format(n))
     university = FuzzyAttribute(lambda: random.choice(
         [None, st_cvn.UNIVERSITY, 'Universidad #' + str(randint(0, 100))]))
-    department = FuzzyAttribute(lambda: random.choice(
+    departamento = FuzzyAttribute(lambda: random.choice(
         [None, 'Departamento #' + str(randint(0, 100))]))
-    faculty = FuzzyAttribute(lambda: random.choice(
+    centro_nomid = FuzzyAttribute(lambda: random.choice(
         [None, 'Facultad #' + str(randint(0, 100))]))
-    school_year = FuzzyAttribute(lambda: str(randint(1990, 2020)))
-    number_credits = FuzzyAttribute(lambda: str(round(uniform(0.5, 15.5), 2)))
+    curso_inicio = FuzzyAttribute(lambda: str(randint(1990, 2020)))
+    creditos = FuzzyAttribute(lambda: str(round(uniform(0.5, 15.5), 2)))
 
 
 class LearningFactory(factory.Factory):
     FACTORY_FOR = dict
-    title = factory.Sequence(lambda n: u'Título #{0}'.format(n))
-    title_type = FuzzyAttribute(lambda: random.choice(
+    des1_titulacion = factory.Sequence(lambda n: u'Título #{0}'.format(n))
+    des1_grado_titulacion = FuzzyAttribute(lambda: random.choice(
         st_cvn.OFFICIAL_TITLE_TYPE.keys() + ['GRADO', 'FP']))
-    university = FuzzyAttribute(lambda: random.choice(
+    organismo = FuzzyAttribute(lambda: random.choice(
         [None, 'Universidad #' + str(randint(0, 100))]))
-    date = FuzzyAttribute(lambda: random.choice(
+    f_expedicion = FuzzyAttribute(lambda: random.choice(
         [None, FuzzyDate(d).fuzz()]))

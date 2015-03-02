@@ -28,28 +28,38 @@ from read_helpers import (parse_date_interval, parse_dedication_type,
                           parse_date, parse_publicacion_location, parse_places,
                           parse_filters)
 from cvn import settings as st_cvn
-import datetime
 
 
 def _parse_cvnitem_profession(node):
     """Shared parser for current and old profession"""
     date = parse_date_interval(node.find('Date'))
-    item = {'title': node.find('Title/Name/Item').text,
-            'start_date': date[0],
-            'end_date': date[1],
-            'full_time': parse_dedication_type(node.find('Dedication/Item'))}
+    item = {
+        u'des1_cargo': unicode(node.find('Title/Name/Item').text),
+        u'f_toma_posesion': date[0],
+        u'f_hasta': date[1],
+    }
+
+    dedicacion = parse_dedication_type(node.find('Dedication/Item'))
+    if dedicacion is not None:
+        item[u'dedicacion'] = dedicacion
+
     entities = parse_entities(node.findall('Entity'))
-    item['employer'] = (
+
+    item[u'employer'] = unicode(
         entities[st_cvn.Entity.EMPLOYER.value]
         if entities[st_cvn.Entity.EMPLOYER.value] is not None
-        else entities[st_cvn.Entity.CURRENT_EMPLOYER.value]
-    )
-    item['centre'] = (entities[st_cvn.Entity.CENTRE.value]
-                      if entities[st_cvn.Entity.CENTRE.value] is not None
-                      else entities[st_cvn.Entity.CURRENT_CENTRE.value])
-    item['department'] = (entities[st_cvn.Entity.DEPT.value]
-                          if entities[st_cvn.Entity.DEPT.value] is not None
-                          else entities[st_cvn.Entity.CURRENT_DEPT.value])
+        else entities[st_cvn.Entity.CURRENT_EMPLOYER.value])
+
+    if entities[st_cvn.Entity.CENTRE.value] is not None:
+        item[u'centro'] = entities[st_cvn.Entity.CENTRE.value]
+    elif entities[st_cvn.Entity.CURRENT_CENTRE.value] is not None:
+        item[u'centro'] = entities[st_cvn.Entity.CURRENT_CENTRE.value]
+
+    if entities[st_cvn.Entity.DEPT.value] is not None:
+        item[u'departamento'] = entities[st_cvn.Entity.DEPT.value]
+    elif entities[st_cvn.Entity.CURRENT_DEPT.value] is not None:
+        item[u'departamento'] = entities[st_cvn.Entity.CURRENT_DEPT.value]
+
     return item
 
 
@@ -174,48 +184,48 @@ def parse_cvnitem_teaching_subject(node):
     entities = parse_entities(node.findall('Entity'))
     filters = parse_filters(node.findall('Filter'))
     item = {
-        'title': node.find('Title/Name/Item').text,
-        'course': node.find('Edition/Text/Item').text,
-        'qualification': node.find('Link/Title/Name/Item').text,
-        'school_year': node.find('Date/StartDate/Year/Item').text,
-        'number_credits': node.find('PhysicalDimension/Value/Item').text,
+        'asignatura': node.find('Title/Name/Item').text,
+        'curso': node.find('Edition/Text/Item').text,
+        'plan_nomid': node.find('Link/Title/Name/Item').text,
+        'curso_inicio': node.find('Date/StartDate/Year/Item').text,
+        'creditos': node.find('PhysicalDimension/Value/Item').text,
         'university': entities[st_cvn.Entity.UNIVERSITY.value],
-        'department': entities[st_cvn.Entity.TEACHING_DEPARTAMENT.value],
-        'faculty': entities[st_cvn.Entity.FACULTY.value],
-        'program_type': filters[st_cvn.FilterCode.PROGRAM.value],
-        'subject_type': filters[st_cvn.FilterCode.SUBJECT.value]
+        'departamento': entities[st_cvn.Entity.TEACHING_DEPARTAMENT.value],
+        'centro_nomid': entities[st_cvn.Entity.FACULTY.value],
+        'tipo_estudio': filters[st_cvn.FilterCode.PROGRAM.value],
+        'tipologia': filters[st_cvn.FilterCode.SUBJECT.value]
     }
 
     professional_category = node.find('Description/Item').text
     if professional_category is not None:
-        item['professional_category'] = professional_category
+        item['categ_anyo'] = professional_category
 
     return item
 
 
 def parse_cvnitem_learning_phd(node):
-    university = node.find('Entity/EntityName/Item')
-    item = {'title': node.find('Title/Name/Item').text,
-            'university': university.text if university is not None else None,
-            'date': parse_date(node.find('Date'))}
+    organismo = node.find('Entity/EntityName/Item')
+    item = {u'des1_titulacion': unicode(node.find('Title/Name/Item').text),
+            u'organismo': unicode(
+                organismo.text) if organismo is not None else None,
+            u'f_expedicion': parse_date(node.find('Date'))}
     return item
 
 
 def parse_cvnitem_learning_degree(node):
-
-    title_type = node.find('Filter/Value/Item').text
-    if title_type == 'OTHERS':
-        title_type = node.find('Filter/Others/Item').text
+    des1_grado_titulacion = node.find('Filter/Value/Item').text
+    if des1_grado_titulacion == 'OTHERS':
+        des1_grado_titulacion = node.find('Filter/Others/Item').text
     else:
-        title_type = st_cvn.OFFICIAL_TITLE_TYPE.keys()[
-            st_cvn.OFFICIAL_TITLE_TYPE.values().index(unicode(title_type))]
-    university = (node.find('Entity/EntityName/Item').text
-                  if node.find('Entity/EntityName/Item') is not None
-                  else None)
-    item = {'title': node.find('Title/Name/Item').text,
-            'title_type': title_type,
-            'university': university,
-            'date': parse_date(node.find('Date'))}
+        des1_grado_titulacion = st_cvn.OFFICIAL_TITLE_TYPE.keys()[
+            st_cvn.OFFICIAL_TITLE_TYPE.values().index(
+                unicode(des1_grado_titulacion))]
+    item = {u'des1_titulacion': unicode(node.find('Title/Name/Item').text),
+            u'des1_grado_titulacion': des1_grado_titulacion,
+            u'f_expedicion': parse_date(node.find('Date'))}
+    organismo = node.find('Entity/EntityName/Item')
+    if organismo is not None:
+        item[u'organismo'] = unicode(organismo.text)
     return item
 
 

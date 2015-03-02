@@ -141,67 +141,105 @@ class CVN(models.Model):
         if user.profile.rrhh_code is None:
             return None
         parser = CvnXmlWriter(user=user)
-        learning = cls._insert_learning_ull(user, parser, start_date, end_date)
-        cargos = cls._insert_cargos_ull(user, parser, start_date, end_date)
-        if not learning and not cargos:
+
+        learning = cls._insert_learning(user, parser, start_date, end_date)
+
+        cargos = cls._insert_profession(
+            st.WS_ULL_CARGOS, user, parser, start_date, end_date)
+
+        contratos = cls._insert_profession(
+            st.WS_ULL_CONTRATOS, user, parser, start_date, end_date)
+
+        teaching = cls._insert_teaching_ull(
+            user, parser, start_date, end_date)
+
+        if not learning and not cargos and not contratos and not teaching:
             return None
         xml = parser.tostring()
         return fecyt.xml2pdf(xml)
 
     @classmethod
-    def _insert_learning_ull(cls, user, parser, start_date, end_date):
+    def _insert_learning(cls, user, parser, start_date, end_date):
         items = ws.get(url=st.WS_ULL_LEARNING % user.profile.rrhh_code,
-                       use_redis=False)
+                       use_redis=True)
+        if items is None:
+            return 0
         for item in items:
-            doctor = item["des1_grado_titulacion"] == u'Doctor'
-            cls._learning_to_json(item)
-            item_date_range = DateRange(item['date'], item['date'])
-            if not item_date_range.intersect(DateRange(start_date, end_date)):
+            values = item.copy()
+            cls._cleaned_data_learning(values)
+            item_date_range = DateRange(
+                values[u'f_expedicion'], values[u'f_expedicion'])
+            if not item_date_range.intersect(DateRange(
+                    start_date, end_date)):
                 continue
-            if doctor:
-                parser.add_learning_phd(**item)
+            if (u'des1_grado_titulacion' in item
+                    and item[u'des1_grado_titulacion'] == u'Doctor'):
+                del values[u'des1_grado_titulacion']
+                parser.add_learning_phd(**values)
             else:
-                parser.add_learning(**item)
+                parser.add_learning(**values)
         return len(items)
 
     @staticmethod
-    def _learning_to_json(item):
-        item['title'] = item.pop("des1_titulacion")
-        item['university'] = item.pop("organismo", None)
-        date = item.pop("f_expedicion", None)
-        if date is not None:
-            item['date'] = datetime.datetime.strptime(date, "%d-%m-%Y").date()
+    def _cleaned_data_learning(item):
+        if u'f_expedicion' in item and item[u'f_expedicion'] is not None:
+            item[u'f_expedicion'] = datetime.datetime.strptime(
+                item[u'f_expedicion'], "%d-%m-%Y").date()
         else:
-            item['date'] = None
-        title_type = item.pop("des1_grado_titulacion")
-        if title_type != u'Doctor':
-            item['title_type'] = title_type
+            item[u'f_expedicion'] = None
 
     @classmethod
-    def _insert_cargos_ull(cls, user, parser, start_date, end_date):
-        items = ws.get(url=st.WS_ULL_CARGOS % user.profile.rrhh_code,
-                       use_redis=False)
+    def _insert_profession(cls, ws_url, user, parser, start_date, end_date):
+        items = ws.get(url=ws_url % user.profile.rrhh_code, use_redis=True)
+        if items is None:
+            return 0
         for item in items:
-            cls._cargo_to_json(item)
-            item_date_range = DateRange(item["start_date"], item["end_date"])
-            if not item_date_range.intersect(DateRange(start_date, end_date)):
+            values = item.copy()
+            cls._cleaned_data_profession(values)
+            if u'f_toma_posesion' in item:
+                initial_date = values[u'f_toma_posesion']
+            else:
+                initial_date = values[u'f_desde']
+            item_date_range = DateRange(initial_date, values[u'f_hasta'])
+            if not item_date_range.intersect(DateRange(
+                    start_date, end_date)):
                 continue
-            parser.add_profession(**item)
+            parser.add_profession(**values)
         return len(items)
 
     @staticmethod
-    def _cargo_to_json(item):
-        item["start_date"] = datetime.datetime.strptime(
-            item.pop("f_toma_posesion"), "%d-%m-%Y").date()
-        if "f_hasta" in item:
-            item["end_date"] = datetime.datetime.strptime(
-                item.pop("f_hasta"), "%d-%m-%Y").date()
+    def _cleaned_data_profession(item):
+        if u'f_toma_posesion' in item and item[u'f_toma_posesion'] is not None:
+            item[u'f_toma_posesion'] = datetime.datetime.strptime(
+                item[u'f_toma_posesion'], "%d-%m-%Y").date()
+
+        if u'f_desde' in item and item[u'f_desde'] is not None:
+            item[u'f_desde'] = datetime.datetime.strptime(
+                item[u'f_desde'], "%d-%m-%Y").date()
+
+        if u'f_hasta' in item and item[u'f_hasta'] is not None:
+            item[u'f_hasta'] = datetime.datetime.strptime(
+                item[u'f_hasta'], "%d-%m-%Y").date()
         else:
-            item["end_date"] = None
-        item["title"] = item.pop("des1_cargo")
-        item["centre"] = item.pop("centro", None)
-        item["department"] = item.pop("departamento", None)
-        item["full_time"] = item.pop("dedicacion", None) == "Tiempo Completo"
+            item[u'f_hasta'] = None
+
+        if u'dedicacion' in item:
+            item[u'dedicacion'] = item[u'dedicacion'] == u'Tiempo Completo'
+
+    @classmethod
+    def _insert_teaching_ull(cls, user, parser, start_date, end_date):
+        items = ws.get(url=st.WS_ULL_TEACHING % user.profile.rrhh_code,
+                       use_redis=True)
+        if items is None:
+            return 0
+        for item in items:
+            values = item.copy()
+            date = datetime.date(int(values[u'curso_inicio']), 1, 1)
+            item_date_range = DateRange(date, date)
+            if not item_date_range.intersect(DateRange(start_date, end_date)):
+                continue
+            parser.add_teaching(**values)
+        return len(items)
 
     @staticmethod
     def create(user, xml=None):

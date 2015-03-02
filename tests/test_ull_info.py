@@ -33,7 +33,9 @@ from mocks import (get_learning, get_all, get_cargos, get_cargos_no_f_hasta,
                    get_cargos_no_departamento, get_cargos_no_dedicacion,
                    get_learning_no_f_expedicion, get_learning_no_organismo,
                    get_learning_doctor_no_f_expedicion,
-                   get_learning_doctor_no_organismo)
+                   get_learning_doctor_no_organismo, get_contratos,
+                   get_contratos_no_f_hasta)
+
 from mock import patch
 from core.ws_utils import CachedWS
 from cvn.models import CVN
@@ -51,12 +53,12 @@ class UllInfoTestCase(TestCase):
         init()
 
     def setUp(self):
-        self.xml_ull = open(os.path.join(st_cvn.FILE_TEST_ROOT,
-                            'xml/CVN-ULL.xml'))
-        self.xml_empty = open(os.path.join(st_cvn.FILE_TEST_ROOT,
-                              'xml/empty.xml'))
-        self.xml_test = open(os.path.join(st_cvn.FILE_TEST_ROOT,
-                             'xml/CVN-Test.xml'))
+        self.xml_ull = open(
+            os.path.join(st_cvn.FILE_TEST_ROOT, 'xml/CVN-ULL.xml'))
+        self.xml_empty = open(
+            os.path.join(st_cvn.FILE_TEST_ROOT, 'xml/empty.xml'))
+        self.xml_test = open(
+            os.path.join(st_cvn.FILE_TEST_ROOT, 'xml/CVN-Test.xml'))
 
     @patch.object(CachedWS, 'get', get_learning)
     def test_get_pdf_ull_learning(self):
@@ -68,14 +70,14 @@ class UllInfoTestCase(TestCase):
         cvn_items = etree.parse(cvn.xml_file).findall('CvnItem')
         ws_content = CachedWS.get(st.WS_ULL_LEARNING % 'example_code')
         for w in ws_content:
-            CVN._learning_to_json(w)
-            if 'title_type' in w:
-                w['title_type'] = w['title_type'].upper()
-
+            CVN._cleaned_data_learning(w)
+            if u'des1_grado_titulacion' in w:
+                w[u'des1_grado_titulacion'] = w[u'des1_grado_titulacion'].upper()
+                if w[u'des1_grado_titulacion'] == u'DOCTOR':
+                    del w[u'des1_grado_titulacion']
         pdf_content = []
         for item in cvn_items:
             pdf_content.append(parse_cvnitem(item))
-
         self.assertEqual(len(ws_content), len(pdf_content))
         allequal = True
         for wi in ws_content:
@@ -97,15 +99,45 @@ class UllInfoTestCase(TestCase):
         cvn_items = etree.parse(cvn.xml_file).findall('CvnItem')
         ws_content = CachedWS.get(st.WS_ULL_CARGOS % 'example_code')
         for w in ws_content:
-            CVN._cargo_to_json(w)
-            if not 'employer' in w:
-                w['employer'] = 'Universidad de La Laguna'
-
+            CVN._cleaned_data_profession(w)
+            if not u'employer' in w:
+                w[u'employer'] = u'Universidad de La Laguna'
         pdf_content = []
         for item in cvn_items:
             pdf_content.append(parse_cvnitem(item))
-
         self.assertEqual(len(ws_content), len(pdf_content))
+        allequal = True
+        for wi in ws_content:
+            equal = False
+            for pi in pdf_content:
+                if cmp(wi, pi) == 0:
+                    equal = True
+            if not equal:
+                allequal = False
+        self.assertTrue(allequal)
+
+    @patch.object(CachedWS, 'get', get_contratos)
+    def test_get_pdf_ull_contratos(self):
+        user = UserFactory.create()
+        user.profile.rrhh_code = 'example_code'
+        pdf = CVN.get_user_pdf_ull(user=user)
+        cvn = CVN(user=user, pdf=pdf)
+        cvn.xml_file.open()
+        cvn_items = etree.parse(cvn.xml_file).findall('CvnItem')
+        ws_content = CachedWS.get(st.WS_ULL_CONTRATOS % 'example_code')
+        for w in ws_content:
+            CVN._cleaned_data_profession(w)
+            if not u'employer' in w:
+                w[u'employer'] = u'Universidad de La Laguna'
+        pdf_content = []
+        for item in cvn_items:
+            pdf_content.append(parse_cvnitem(item))
+        self.assertEqual(len(ws_content), len(pdf_content))
+        for pi in pdf_content:
+            pi[u'f_desde'] = pi[u'f_toma_posesion']
+            del pi[u'f_toma_posesion']
+            pi[u'des1_cce'] = pi[u'des1_cargo']
+            del pi[u'des1_cargo']
         allequal = True
         for wi in ws_content:
             equal = False
@@ -128,9 +160,30 @@ class UllInfoTestCase(TestCase):
         ws_content = CachedWS.get(st.WS_ULL_CARGOS % 'example_code')
         self.assertEqual(len(ws_content), 1)
         w = ws_content[0]
-        CVN._cargo_to_json(w)
-        if not 'employer' in w:
-            w['employer'] = 'Universidad de La Laguna'
+        CVN._cleaned_data_profession(w)
+        if not u'employer' in w:
+            w[u'employer'] = u'Universidad de La Laguna'
+        self.assertEqual(cmp(item, w), 0)
+
+    def _get_one_contrato_ull(self):
+        user = UserFactory.create()
+        user.profile.rrhh_code = 'example_code'
+        pdf = CVN.get_user_pdf_ull(user=user)
+        cvn = CVN(user=user, pdf=pdf)
+        cvn.xml_file.open()
+        cvn_items = etree.parse(cvn.xml_file).findall('CvnItem')
+        self.assertEqual(len(cvn_items), 1)
+        item = parse_cvnitem(cvn_items[0])
+        item[u'f_desde'] = item[u'f_toma_posesion']
+        del item[u'f_toma_posesion']
+        item[u'des1_cce'] = item[u'des1_cargo']
+        del item[u'des1_cargo']
+        ws_content = CachedWS.get(st.WS_ULL_CONTRATOS % 'example_code')
+        self.assertEqual(len(ws_content), 1)
+        w = ws_content[0]
+        CVN._cleaned_data_profession(w)
+        if not u'employer' in w:
+            w[u'employer'] = u'Universidad de La Laguna'
         self.assertEqual(cmp(item, w), 0)
 
     def _get_one_learning_ull(self):
@@ -145,9 +198,13 @@ class UllInfoTestCase(TestCase):
         ws_content = CachedWS.get(st.WS_ULL_LEARNING % 'example_code')
         self.assertEqual(len(ws_content), 1)
         wi = ws_content[0]
-        CVN._learning_to_json(wi)
-        if 'title_type' in wi:
-            wi['title_type'] = wi['title_type'].upper()
+        CVN._cleaned_data_learning(wi)
+        if u'des1_grado_titulacion' in wi:
+            wi[u'des1_grado_titulacion'] = wi[u'des1_grado_titulacion'].upper()
+            if wi[u'des1_grado_titulacion'] == u'DOCTOR':
+                del wi[u'des1_grado_titulacion']
+                if not u'organismo' in wi:
+                    wi[u'organismo'] = u'Universidad de La Laguna'
         self.assertEqual(cmp(item, wi), 0)
 
     @patch.object(CachedWS, 'get', get_cargos_no_f_hasta)
@@ -161,6 +218,10 @@ class UllInfoTestCase(TestCase):
     @patch.object(CachedWS, 'get', get_cargos_no_dedicacion)
     def test_get_pdf_ull_cargos_no_dedicacion(self):
         self._get_one_cargo_ull()
+
+    @patch.object(CachedWS, 'get', get_contratos_no_f_hasta)
+    def test_get_pdf_ull_contratos_no_f_hasta(self):
+        self._get_one_contrato_ull()
 
     @patch.object(CachedWS, 'get', get_learning_no_f_expedicion)
     def test_get_pdf_ull_learning_no_f_expedicion(self):

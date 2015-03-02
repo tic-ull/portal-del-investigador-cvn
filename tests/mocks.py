@@ -109,7 +109,8 @@ def get_cargos(cls, url, use_redis=True, timeout=None):
                  u'des1_cargo': u'SECRETARIO DPTO ANALISIS MATEMATICO',
                  u'centro': u'DPTO.ANALISIS MATEMATICO',
                  u'departamento': u'AN\xc1LISIS MATEM\xc1TICO',
-                 u'f_hasta': u'13-02-2013', u'f_toma_posesion': u'30-11-2010'}]
+                 u'f_hasta': u'13-02-2013',
+                 u'f_toma_posesion': u'30-11-2010'}]
     else:
         return []
 
@@ -132,7 +133,8 @@ def get_cargos_no_departamento(cls, url, use_redis=True, timeout=None):
         return [{u'dedicacion': u'Tiempo Completo',
                  u'des1_cargo': u'DIRECTOR OFICINA TRANSF.RESUL.INVEST',
                  u'centro': u'VICERRECTORADO INVEST,DESAR TECNOL E INN',
-                 u'f_toma_posesion': u'08-05-2000', u'f_hasta': u'06-01-2003'}]
+                 u'f_toma_posesion': u'08-05-2000',
+                 u'f_hasta': u'06-01-2003'}]
     else:
         return []
 
@@ -143,6 +145,32 @@ def get_cargos_no_dedicacion(cls, url, use_redis=True, timeout=None):
         return [{u'des1_cargo': u'DIRECTOR ETS. INGENIERIA CIVIL E INDUS',
                  u'centro': u'E.U. ENFERMERIA Y FISIOTERAPIA',
                  u'departamento': u'ECONOMÍA APLICADA',
-                 u'f_toma_posesion': u'08-05-2000', u'f_hasta': u'01-09-2004'}]
+                 u'f_toma_posesion': u'08-05-2000',
+                 u'f_hasta': u'01-09-2004'}]
+    else:
+        return []
+
+
+@classmethod
+def get_contratos(cls, url, use_redis=True, timeout=None):
+    if url == st.WS_ULL_CONTRATOS % 'example_code':
+        return [{u'dedicacion': u'Tiempo Completo',
+                 u'des1_cce': u'PROFESOR ASOCIADO',
+                 u'centro': u'DPTO.ANALISIS MATEMATICO',
+                 u'departamento': u'AN\xc1LISIS MATEM\xc1TICO',
+                 u'f_hasta': u'27-11-2002',
+                 u'f_desde': u'01-10-1999'}]
+    else:
+        return []
+
+
+@classmethod
+def get_contratos_no_f_hasta(cls, url, use_redis=True, timeout=None):
+    if url == st.WS_ULL_CONTRATOS % 'example_code':
+        return [{u'dedicacion': u'Tiempo Completo',
+                 u'des1_cce': u'PROFESOR TITULAR UNIVERSIDAD',
+                 u'centro': u'DPTO.ANALISIS MATEMATICO',
+                 u'departamento': u'AN\xc1LISIS MATEM\xc1TICO',
+                 u'f_desde': u'28-11-2002'}]
     else:
         return []

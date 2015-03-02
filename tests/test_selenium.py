@@ -35,6 +35,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait, Select
 import unittest
 from pyvirtualdisplay import Display
+import os
 
 
 class LoginCAS(test.LiveServerTestCase):
@@ -42,6 +43,10 @@ class LoginCAS(test.LiveServerTestCase):
     def __init__(self, *args, **kwargs):
         super(LoginCAS, self).__init__(*args, **kwargs)
         init()
+
+    @classmethod
+    def setUpClass(cls):
+        os.environ['DJANGO_LIVE_TEST_SERVER_ADDRESS'] = 'localhost:8081'
 
     def setUp(self):
         display = Display(visible=0, size=(1280, 1024))
