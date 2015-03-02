@@ -36,6 +36,7 @@ from lxml import etree
 from managers import CongresoManager, ScientificExpManager, CvnItemManager
 from parsers.read_helpers import parse_date, parse_nif, parse_cvnitem_to_class
 from parsers.write import CvnXmlWriter
+from constance import config
 
 import datetime
 import fecyt
@@ -107,7 +108,7 @@ class CVN(models.Model):
 
     def update_status(self, commit=True):
         status = self.status
-        if self.fecha <= st_cvn.EXPIRY_DATE:
+        if self.fecha <= config.EXPIRY_DATE:
             self.status = st_cvn.CVNStatus.EXPIRED
         elif not self._is_valid_identity():
             self.status = st_cvn.CVNStatus.INVALID_IDENTITY
