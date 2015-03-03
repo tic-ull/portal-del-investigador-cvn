@@ -164,7 +164,7 @@ class CVN(models.Model):
             return 0
         for item in items:
             values = item.copy()
-            cls._cleaned_data_learning(values)
+            cls._clean_data_learning(values)
             item_date_range = DateRange(
                 values[u'f_expedicion'], values[u'f_expedicion'])
             if not item_date_range.intersect(DateRange(
@@ -179,7 +179,7 @@ class CVN(models.Model):
         return len(items)
 
     @staticmethod
-    def _cleaned_data_learning(item):
+    def _clean_data_learning(item):
         if u'f_expedicion' in item and item[u'f_expedicion'] is not None:
             item[u'f_expedicion'] = datetime.datetime.strptime(
                 item[u'f_expedicion'], "%d-%m-%Y").date()
@@ -225,7 +225,7 @@ class CVN(models.Model):
             item[u'dedicacion'] = item[u'dedicacion'] == u'Tiempo Completo'
 
     @classmethod
-    def _insert_teaching_ull(cls, user, parser, start_date, end_date):
+    def _insert_teaching(cls, user, parser, start_date, end_date):
         items = ws.get(url=st.WS_ULL_TEACHING % user.profile.rrhh_code,
                        use_redis=True)
         if items is None:

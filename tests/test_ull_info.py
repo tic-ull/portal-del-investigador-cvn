@@ -70,7 +70,7 @@ class UllInfoTestCase(TestCase):
         cvn_items = etree.parse(cvn.xml_file).findall('CvnItem')
         ws_content = CachedWS.get(st.WS_ULL_LEARNING % 'example_code')
         for w in ws_content:
-            CVN._cleaned_data_learning(w)
+            CVN._clean_data_learning(w)
             if u'des1_grado_titulacion' in w:
                 w[u'des1_grado_titulacion'] = w[u'des1_grado_titulacion'].upper()
                 if w[u'des1_grado_titulacion'] == u'DOCTOR':
@@ -198,7 +198,7 @@ class UllInfoTestCase(TestCase):
         ws_content = CachedWS.get(st.WS_ULL_LEARNING % 'example_code')
         self.assertEqual(len(ws_content), 1)
         wi = ws_content[0]
-        CVN._cleaned_data_learning(wi)
+        CVN._clean_data_learning(wi)
         if u'des1_grado_titulacion' in wi:
             wi[u'des1_grado_titulacion'] = wi[u'des1_grado_titulacion'].upper()
             if wi[u'des1_grado_titulacion'] == u'DOCTOR':
