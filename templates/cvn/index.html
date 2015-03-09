@@ -31,7 +31,7 @@
                             <br>
                         {% endif %}
                         <div>
-                            <form action="" method='post'
+                            <form action="{% url 'cvn' %}" method='post'
                                 {% if form.is_multipart %} 
                                     enctype="multipart/form-data"
                                 {% endif %}>{% csrf_token %}
@@ -81,7 +81,7 @@
                                 </tr>
                                 <tr>
                                     <th><strong>{% trans 'Fecha del documento' %}</strong></th>
-                                    <td align='center'>{{ cvn.fecha }}</td>
+                                    <td style="text-align: center;">{{ cvn.fecha }}</td>
                                 </tr>
                                 {#% include 'cvn/partials/statistics_unit.html' with unit=department label=label_dept %#}
                                 {#% include 'cvn/partials/statistics_unit.html' with unit=area label=label_area %#}
@@ -103,7 +103,7 @@
         {% include 'cvn/partials/producciones_chart.html' %}
     {% endif %}
 
-    <div class="modal fade upload-cvn-modal" tabindex="-1" role="dialog" aria-labelledby="upload-cvn-modal" aria-hidden="true">
+    <div class="modal fade upload-cvn-modal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <p class="alert alert-warning">
