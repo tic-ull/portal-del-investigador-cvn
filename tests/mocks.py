@@ -175,6 +175,7 @@ def get_contratos_no_f_hasta(cls, url, use_redis=True, timeout=None):
     else:
         return []
 
+
 @classmethod
 def get_docencia(cls, url, use_redis=True, timeout=None):
     if url == st.WS_ULL_TEACHING % 'example_code':
