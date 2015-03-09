@@ -68,6 +68,8 @@ class CvnXmlWriter:
         return etree.tostring(self.xml)
 
     def _get_code(self, dic, key):
+        if key is None:
+            return None
         try:
             code = dic[key.upper()]
         except KeyError:
@@ -92,9 +94,9 @@ class CvnXmlWriter:
             node = nodes[0].getparent()
             xml.remove(node)
 
-    def add_teaching(self, asignatura, categ_anyo, tipo_estudio,
-                     tipologia, plan_nomid, departamento,
-                     centro_nomid, curso_inicio, creditos, curso=None,
+    def add_teaching(self, curso_inicio, creditos, asignatura=None, curso=None,
+                     plan_nomid=None, departamento=None, centro_nomid=None,
+                     categ_anyo=None, tipologia=None, tipo_estudio=None,
                      university=st_cvn.UNIVERSITY):
         """Graduate, postgraduate (bachelor's degree, master, engineering)"""
         program_code = self._get_code(st_cvn.PROGRAM_TYPE, tipo_estudio)
@@ -107,7 +109,7 @@ class CvnXmlWriter:
                 'program_others': tipo_estudio,
                 'subject_type': subject_code,
                 'subject_others': tipologia,
-                'course': curso if curso is not None else None,
+                'course': curso,
                 'qualification': plan_nomid,
                 'department': departamento,
                 'faculty': centro_nomid,
@@ -117,8 +119,38 @@ class CvnXmlWriter:
             }
         )
 
+        if asignatura is None:
+            self._remove_node(xml=teaching, node='Title')
+
+        if categ_anyo is None:
+            self._remove_node(xml=teaching, node='Description')
+
+        if tipo_estudio is None:
+            self._remove_parent_node_by_code(
+                xml=teaching, node='Type', code='030.010.000.140')
+
+        if tipo_estudio is not None and program_code != u'OTHERS':
+            self._remove_child_node_by_code(
+                xml=teaching, parent='Filter',
+                child='Others', code=st_cvn.PROGRAM_TYPE_OTHERS)
+
+        if tipologia is None:
+            self._remove_parent_node_by_code(
+                xml=teaching, node='Type', code='030.010.000.190')
+
+        if tipologia is not None and subject_code != u'OTHERS':
+            self._remove_child_node_by_code(
+                xml=teaching, parent='Filter',
+                child='Others', code=st_cvn.SUBJECT_TYPE_OTHERS)
+
         if curso is None:
             self._remove_node(xml=teaching, node='Edition')
+
+        if plan_nomid is None:
+            self._remove_node(xml=teaching, node='Link')
+
+        if not creditos:
+            self._remove_node(xml=teaching, node='PhysicalDimension')
 
         if university is None:
             self._remove_parent_node_by_code(
@@ -134,16 +166,6 @@ class CvnXmlWriter:
             self._remove_parent_node_by_code(
                 xml=teaching, node='EntityName',
                 code=st_cvn.Entity.FACULTY.value)
-
-        if program_code != u'OTHERS':
-            self._remove_child_node_by_code(
-                xml=teaching, parent='Filter',
-                child='Others', code=st_cvn.PROGRAM_TYPE_OTHERS)
-
-        if subject_code != u'OTHERS':
-            self._remove_child_node_by_code(
-                xml=teaching, parent='Filter',
-                child='Others', code=st_cvn.SUBJECT_TYPE_OTHERS)
 
         self.xml.append(teaching)
 

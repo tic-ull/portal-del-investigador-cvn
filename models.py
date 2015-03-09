@@ -151,8 +151,11 @@ class CVN(models.Model):
         contratos = cls._insert_profession(
             st.WS_ULL_CONTRATOS, user, parser, start_date, end_date)
 
-        if not learning and not cargos and not contratos:
+        docencia = cls._insert_teaching(user, parser, start_date, end_date)
+
+        if not learning and not cargos and not contratos and not docencia:
             return None
+
         xml = parser.tostring()
         return fecyt.xml2pdf(xml)
 
@@ -160,8 +163,9 @@ class CVN(models.Model):
     def _insert_learning(cls, user, parser, start_date, end_date):
         items = ws.get(url=st.WS_ULL_LEARNING % user.profile.rrhh_code,
                        use_redis=True)
+        counter = 0
         if items is None:
-            return 0
+            return counter
         for item in items:
             values = item.copy()
             cls._clean_data_learning(values)
@@ -176,7 +180,8 @@ class CVN(models.Model):
                 parser.add_learning_phd(**values)
             else:
                 parser.add_learning(**values)
-        return len(items)
+            counter += 1
+        return counter
 
     @staticmethod
     def _clean_data_learning(item):
@@ -189,8 +194,9 @@ class CVN(models.Model):
     @classmethod
     def _insert_profession(cls, ws_url, user, parser, start_date, end_date):
         items = ws.get(url=ws_url % user.profile.rrhh_code, use_redis=True)
+        counter = 0
         if items is None:
-            return 0
+            return counter
         for item in items:
             values = item.copy()
             cls._cleaned_data_profession(values)
@@ -203,7 +209,8 @@ class CVN(models.Model):
                     start_date, end_date)):
                 continue
             parser.add_profession(**values)
-        return len(items)
+            counter += 1
+        return counter
 
     @staticmethod
     def _cleaned_data_profession(item):
@@ -228,8 +235,9 @@ class CVN(models.Model):
     def _insert_teaching(cls, user, parser, start_date, end_date):
         items = ws.get(url=st.WS_ULL_TEACHING % user.profile.rrhh_code,
                        use_redis=True)
+        counter = 0
         if items is None:
-            return 0
+            return counter
         for item in items:
             values = item.copy()
             date = datetime.date(int(values[u'curso_inicio']), 1, 1)
@@ -237,7 +245,8 @@ class CVN(models.Model):
             if not item_date_range.intersect(DateRange(start_date, end_date)):
                 continue
             parser.add_teaching(**values)
-        return len(items)
+            counter += 1
+        return counter
 
     @staticmethod
     def create(user, xml=None):
