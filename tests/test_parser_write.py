@@ -107,7 +107,7 @@ class ParserWriterTestCase(TestCase):
         # Insert teaching data
         for i in range(0, 10):
             d = TeachingFactory.create()
-            cvnitem_dict[d['asignatura']] = d
+            cvnitem_dict[d[u'asignatura']] = d
             parser.add_teaching(**d)
         cvn = CVN.create(user, parser.tostring())
         cvn.xml_file.open()
@@ -115,7 +115,7 @@ class ParserWriterTestCase(TestCase):
         for item in cvn_items:
             cvnitem = parse_cvnitem(item)
             self.assertEqual(
-                cmp(cvnitem, cvnitem_dict[cvnitem['asignatura']]), 0)
+                cmp(cvnitem, cvnitem_dict[cvnitem[u'asignatura']]), 0)
         self.assertNotEqual(cvn, None)
 
     @classmethod

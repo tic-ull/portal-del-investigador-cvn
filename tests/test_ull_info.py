@@ -34,7 +34,7 @@ from mocks import (get_learning, get_all, get_cargos, get_cargos_no_f_hasta,
                    get_learning_no_f_expedicion, get_learning_no_organismo,
                    get_learning_doctor_no_f_expedicion,
                    get_learning_doctor_no_organismo, get_contratos,
-                   get_contratos_no_f_hasta)
+                   get_contratos_no_f_hasta, get_docencia)
 
 from mock import patch
 from core.ws_utils import CachedWS
@@ -138,6 +138,32 @@ class UllInfoTestCase(TestCase):
             del pi[u'f_toma_posesion']
             pi[u'des1_cce'] = pi[u'des1_cargo']
             del pi[u'des1_cargo']
+        allequal = True
+        for wi in ws_content:
+            equal = False
+            for pi in pdf_content:
+                if cmp(wi, pi) == 0:
+                    equal = True
+            if not equal:
+                allequal = False
+        self.assertTrue(allequal)
+
+    @patch.object(CachedWS, 'get', get_docencia)
+    def test_get_pdf_ull_teaching(self):
+        user = UserFactory.create()
+        user.profile.rrhh_code = 'example_code'
+        pdf = CVN.get_user_pdf_ull(user=user)
+        cvn = CVN(user=user, pdf=pdf)
+        cvn.xml_file.open()
+        cvn_items = etree.parse(cvn.xml_file).findall('CvnItem')
+        ws_content = CachedWS.get(st.WS_ULL_TEACHING % 'example_code')
+        for w in ws_content:
+            if not u'university' in w:
+                w[u'university'] = u'Universidad de La Laguna'
+        pdf_content = []
+        for item in cvn_items:
+            pdf_content.append(parse_cvnitem(item))
+        self.assertEqual(len(ws_content), len(pdf_content))
         allequal = True
         for wi in ws_content:
             equal = False

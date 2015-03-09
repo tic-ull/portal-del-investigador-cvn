@@ -174,3 +174,19 @@ def get_contratos_no_f_hasta(cls, url, use_redis=True, timeout=None):
                  u'f_desde': u'28-11-2002'}]
     else:
         return []
+
+@classmethod
+def get_docencia(cls, url, use_redis=True, timeout=None):
+    if url == st.WS_ULL_TEACHING % 'example_code':
+        return [{u"asignatura": u"AMPLIACI\u00d3N DE MATEM\u00c1TICA APLICADA",
+                 u"categ_anyo": u"Profesor Titular Universidad",
+                 u"creditos": u"6",
+                 u"curso": u"3",
+                 u"plan_nomid": u"LICENCIADO EN FARMACIA (PLAN 2002)",
+                 u"centro_nomid": u"FACULTAD DE FARMACIA",
+                 u"departamento": u"AN\u00c1LISIS MATEM\u00c1TICO",
+                 u"tipo_estudio": u"LICENCIADO",
+                 u"tipologia": u"OPTATIVA",
+                 u"curso_inicio": u"2005"}]
+    else:
+        return []
