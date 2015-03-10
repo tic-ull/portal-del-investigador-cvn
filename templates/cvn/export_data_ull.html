@@ -61,14 +61,14 @@
         </div>
     </div>
 
-    <form action="" method='post'
+    <form action="{% url 'export_data_ull' %}" method='post'
         {% if form.is_multipart %}
             enctype="multipart/form-data"
         {% endif %}>{% csrf_token %}
         <input id="all_years" style="display:none;" type="Submit" name="all_years" />
     </form>
 
-    <form action="" method='post'
+    <form action="{% url 'export_data_ull' %}" method='post'
         {% if form.is_multipart %}
             enctype="multipart/form-data"
         {% endif %}>{% csrf_token %}
@@ -92,7 +92,7 @@
         </div>
     </form>
 
-    <form action="" method='post'
+    <form action="{% url 'export_data_ull' %}" method='post'
         {% if form.is_multipart %}
             enctype="multipart/form-data"
         {% endif %}>{% csrf_token %}
