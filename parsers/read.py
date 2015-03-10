@@ -184,31 +184,13 @@ def parse_cvnitem_teaching_subject(node):
     filters = parse_filters(node.findall('Filter'))
     item = {
         u'asignatura': node.find('Title/Name/Item').text,
-        u'curso': (
-            unicode(node.find('Edition/Text/Item').text)
-            if node.find('Edition/Text/Item').text is not None
-            else None),
-        u'plan_nomid': (
-            unicode(node.find('Link/Title/Name/Item').text)
-            if node.find('Link/Title/Name/Item').text is not None
-            else None),
-        u'curso_inicio': (
-            unicode(node.find('Date/StartDate/Year/Item').text)
-            if node.find('Date/StartDate/Year/Item').text is not None
-            else None),
-        u'creditos': (
-            unicode(node.find('PhysicalDimension/Value/Item').text)
-            if node.find('PhysicalDimension/Value/Item').text is not None
-            else None),
-        u'university': (
-            unicode(entities[st_cvn.Entity.UNIVERSITY.value])
-            if entities[st_cvn.Entity.UNIVERSITY.value] is not None
-            else None),
+        u'curso': node.find('Edition/Text/Item').text,
+        u'plan_nomid': node.find('Link/Title/Name/Item').text,
+        u'curso_inicio': node.find('Date/StartDate/Year/Item').text,
+        u'creditos': node.find('PhysicalDimension/Value/Item').text,
+        u'university': entities[st_cvn.Entity.UNIVERSITY.value],
         u'departamento': entities[st_cvn.Entity.TEACHING_DEPARTAMENT.value],
-        u'centro_nomid': (
-            unicode(entities[st_cvn.Entity.FACULTY.value])
-            if entities[st_cvn.Entity.FACULTY.value] is not None
-            else None),
+        u'centro_nomid': entities[st_cvn.Entity.FACULTY.value],
         u'tipo_estudio': filters[st_cvn.FilterCode.PROGRAM.value],
         u'tipologia': filters[st_cvn.FilterCode.SUBJECT.value]
     }
