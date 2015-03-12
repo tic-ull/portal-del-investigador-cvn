@@ -32,7 +32,7 @@ import os
 
 
 class Command(BaseCommand):
-    help = u'Reorganiza la hubicación de los CVN-PDF'
+    help = u'Reorganiza la ubicación de los CVN-PDF'
 
     def handle(self, *args, **options):
         for cvn in CVN.objects.all():
