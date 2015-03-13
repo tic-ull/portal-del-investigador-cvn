@@ -29,7 +29,7 @@ from django.utils.translation import ugettext_lazy as _
 from forms import UploadCVNForm
 from models import (Congreso, Proyecto, Convenio, TesisDoctoral, Articulo,
                     Libro, CVN, Capitulo, Patente, OldCvnPdf)
-
+import admin_readonly  # Don't delete
 
 class CVNAdmin(admin.ModelAdmin):
 
