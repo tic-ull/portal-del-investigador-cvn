@@ -26,7 +26,7 @@ from core.models import UserProfile
 from core.widgets import FileFieldURLWidget
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
-from forms import UploadCVNForm
+from forms import UploadCVNForm, UserProfileAdminForm
 from models import (Congreso, Proyecto, Convenio, TesisDoctoral, Articulo,
                     Libro, CVN, Capitulo, Patente, OldCvnPdf)
 
@@ -107,6 +107,8 @@ class OldCvnPdfInline(admin.TabularInline):
 
 
 class UserProfileAdmin(admin.ModelAdmin):
+
+    form = UserProfileAdminForm
 
     list_display = ('user', 'get_first_name', 'get_last_name', 'documento',
                     'rrhh_code', )

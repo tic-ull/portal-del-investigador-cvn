@@ -22,7 +22,7 @@
 #    <http://www.gnu.org/licenses/>.
 #
 
-from .models import CVN
+from .models import CVN, UserProfile
 from cvn import settings as st_cvn
 from django import forms
 from django.contrib.auth.models import User
@@ -113,3 +113,23 @@ class GetDataCVNULL(forms.Form):
                 raise forms.ValidationError(
                     _(u'El año inicial no puede ser mayor que el año final'))
         return end_year
+
+
+class UserProfileAdminForm(forms.ModelForm):
+    first_name = forms.CharField(
+        label=_('Nombre'),
+        widget=forms.TextInput(attrs={'readonly':'readonly'})
+    )
+    last_name = forms.CharField(
+        label=_('Apellidos'),
+        widget=forms.TextInput(attrs={'readonly':'readonly'})
+    )
+
+    class Meta:
+        model = UserProfile
+
+    def __init__(self, *args, **kwargs):
+        super(UserProfileAdminForm, self).__init__(*args, **kwargs)
+        if self.instance and self.instance.pk:
+            self.fields['first_name'].initial = self.instance.user.first_name
+            self.fields['last_name'].initial = self.instance.user.last_name
