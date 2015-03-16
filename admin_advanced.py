@@ -22,16 +22,14 @@
 #    <http://www.gnu.org/licenses/>.
 #
 
-from .forms import UploadCVNForm
 from .models import (Congreso, Proyecto, Convenio, TesisDoctoral, Articulo,
                      Libro, CVN, Capitulo, Patente, OldCvnPdf)
 from core.models import UserProfile
 from core.widgets import FileFieldURLWidget
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
-from forms import UploadCVNForm, UserProfileAdminForm
-from models import (Congreso, Proyecto, Convenio, TesisDoctoral, Articulo,
-                    Libro, CVN, Capitulo, Patente, OldCvnPdf)
+from .forms import UploadCVNForm
+from .admin_base import OldCvnPdfInline, BaseUserProfileAdmin, BaseCvnInline
 
 
 class CVNAdmin(admin.ModelAdmin):
@@ -66,75 +64,16 @@ class CVNAdmin(admin.ModelAdmin):
         return False
 
 
-class CVNInline(admin.TabularInline):
-
-    model = CVN
-
-    form = UploadCVNForm
-
-    fields = ('cvn_file', 'xml_file', 'fecha', 'uploaded_at', 'status',
-              'is_inserted')
-
-    readonly_fields = ('fecha', 'uploaded_at', 'status', 'is_inserted')
-
+class CVNInline(BaseCvnInline):
     def formfield_for_dbfield(self, db_field, **kwargs):
         if db_field.name == 'xml_file':
             kwargs['widget'] = FileFieldURLWidget
         return super(CVNInline, self).formfield_for_dbfield(db_field, **kwargs)
 
-    def has_delete_permission(self, request, obj=None):
-        return False
 
-
-class OldCvnPdfInline(admin.TabularInline):
-
-    model = OldCvnPdf
-
-    extra = 0
-
-    def formfield_for_dbfield(self, db_field, **kwargs):
-        if db_field.name == 'cvn_file':
-            kwargs['widget'] = FileFieldURLWidget
-        return super(OldCvnPdfInline, self).formfield_for_dbfield(
-            db_field, **kwargs)
-
-    readonly_fields = ('uploaded_at', )
-
-    fields = ('cvn_file', 'uploaded_at')
-
-    def has_add_permission(self, request):
-        return False
-
-    def has_delete_permission(self, request, obj=None):
-        return False
-
-
-class UserProfileAdmin(admin.ModelAdmin):
-
-    form = UserProfileAdminForm
-
-    list_display = ('user', 'get_first_name', 'get_last_name', 'documento',
-                    'rrhh_code', )
-
-    def get_first_name(self, obj):
-        return obj.user.first_name
-    get_first_name.short_description = _(u'Nombre')
-
-    def get_last_name(self, obj):
-        return obj.user.last_name
-    get_last_name.short_description = _(u'Apellidos')
-
-    search_fields = ['user__username', 'documento', 'rrhh_code',
-                     'user__first_name', 'user__last_name', ]
-
+class UserProfileAdmin(BaseUserProfileAdmin):
+    inlines = [CVNInline, OldCvnPdfInline]
     readonly_fields = ('rrhh_code', )
-
-    inlines = [
-        CVNInline, OldCvnPdfInline,
-    ]
-
-    def has_add_permission(self, request):
-        return False
 
 
 class ProductionAdmin(admin.ModelAdmin):
