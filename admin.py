@@ -63,13 +63,16 @@ class CVNAdmin(admin.ModelAdmin):
         return False
 
 
-class CVNInline(admin.StackedInline):
+class CVNInline(admin.TabularInline):
 
     model = CVN
 
     form = UploadCVNForm
 
-    fields = ('cvn_file', 'xml_file')
+    fields = ('cvn_file', 'xml_file', 'fecha', 'uploaded_at', 'status',
+              'is_inserted')
+
+    readonly_fields = ('fecha', 'uploaded_at', 'status', 'is_inserted')
 
     def formfield_for_dbfield(self, db_field, **kwargs):
         if db_field.name == 'xml_file':
@@ -80,7 +83,7 @@ class CVNInline(admin.StackedInline):
         return False
 
 
-class OldCvnPdfInline(admin.StackedInline):
+class OldCvnPdfInline(admin.TabularInline):
 
     model = OldCvnPdf
 
