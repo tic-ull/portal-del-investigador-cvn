@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
-from core.admin_readonly import readonly_admin_site
+from core.admin_basic import basic_admin_site
 from core.models import UserProfile
 from .models import CVN, OldCvnPdf
 from core.widgets import FileFieldURLWidget
@@ -62,4 +62,4 @@ class UserProfileAdmin(admin.ModelAdmin):
     def has_add_permission(self, request):
         return False
 
-readonly_admin_site.register(UserProfile, UserProfileAdmin)
+basic_admin_site.register(UserProfile, UserProfileAdmin)
