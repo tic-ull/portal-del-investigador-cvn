@@ -22,6 +22,9 @@
 #    <http://www.gnu.org/licenses/>.
 #
 
+from .forms import UploadCVNForm
+from .models import (Congreso, Proyecto, Convenio, TesisDoctoral, Articulo,
+                     Libro, CVN, Capitulo, Patente, OldCvnPdf)
 from core.models import UserProfile
 from core.widgets import FileFieldURLWidget
 from django.contrib import admin
@@ -29,6 +32,7 @@ from django.utils.translation import ugettext_lazy as _
 from forms import UploadCVNForm, UserProfileAdminForm
 from models import (Congreso, Proyecto, Convenio, TesisDoctoral, Articulo,
                     Libro, CVN, Capitulo, Patente, OldCvnPdf)
+import admin_basic  # Don't delete
 
 
 class CVNAdmin(admin.ModelAdmin):
