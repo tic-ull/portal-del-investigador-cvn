@@ -22,10 +22,10 @@
 #    <http://www.gnu.org/licenses/>.
 #
 
+from .admin_base import OldCvnPdfInline, BaseUserProfileAdmin, BaseCvnInline
 from core.admin_basic import basic_admin_site
 from core.models import UserProfile
 from core.widgets import FileFieldURLWidget
-from .admin_base import OldCvnPdfInline, BaseUserProfileAdmin, BaseCvnInline
 
 
 class CvnInline(BaseCvnInline):

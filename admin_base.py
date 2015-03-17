@@ -1,7 +1,7 @@
 # -*- encoding: UTF-8 -*-
 
 #
-#    Copyright 2015
+#    Copyright 2014-2015
 #
 #      STIC-Investigación - Universidad de La Laguna (ULL) <gesinv@ull.edu.es>
 #
@@ -22,11 +22,11 @@
 #    <http://www.gnu.org/licenses/>.
 #
 
-from django.utils.translation import ugettext_lazy as _
-from django.contrib import admin
-from core.widgets import FileFieldURLWidget
-from .models import OldCvnPdf, CVN
 from .forms import UserProfileAdminForm, UploadCVNForm
+from .models import OldCvnPdf, CVN
+from core.widgets import FileFieldURLWidget
+from django.contrib import admin
+from django.utils.translation import ugettext_lazy as _
 
 
 class OldCvnPdfInline(admin.TabularInline):
