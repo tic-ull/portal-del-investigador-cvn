@@ -118,11 +118,11 @@ class GetDataCVNULL(forms.Form):
 class UserProfileAdminForm(forms.ModelForm):
     first_name = forms.CharField(
         label=_('Nombre'),
-        widget=forms.TextInput(attrs={'readonly':'readonly'})
+        widget=forms.TextInput(attrs={'readonly': 'readonly'})
     )
     last_name = forms.CharField(
         label=_('Apellidos'),
-        widget=forms.TextInput(attrs={'readonly':'readonly'})
+        widget=forms.TextInput(attrs={'readonly': 'readonly'})
     )
 
     class Meta:
