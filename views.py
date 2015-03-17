@@ -77,7 +77,7 @@ def download_cvn(request):
 
 
 @login_required
-@permission_required('auth.basic_staff')
+@permission_required('cvn.view_university_report')
 def ull_report(request, year):
     if year is None or year not in st.HISTORICAL:
         raise Http404
