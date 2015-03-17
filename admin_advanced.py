@@ -73,6 +73,7 @@ class CVNInline(BaseCvnInline):
 class UserProfileAdmin(BaseUserProfileAdmin):
     inlines = [CVNInline, OldCvnPdfInline]
     readonly_fields = ('rrhh_code', )
+    list_filter = ('cvn__status', 'cvn__is_inserted', )
 
 
 class ProductionAdmin(admin.ModelAdmin):
