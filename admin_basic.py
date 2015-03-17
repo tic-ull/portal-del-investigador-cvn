@@ -39,4 +39,11 @@ class UserProfileAdmin(BaseUserProfileAdmin):
     inlines = [CvnInline, OldCvnPdfInline]
     readonly_fields = ['user', 'rrhh_code', 'documento']
 
+    def get_actions(self, request):
+        """ Remove action delete object from list of actions """
+        actions = super(UserProfileAdmin, self).get_actions(request)
+        if 'delete_selected' in actions:
+            del actions['delete_selected']
+        return actions
+
 basic_admin_site.register(UserProfile, UserProfileAdmin)
