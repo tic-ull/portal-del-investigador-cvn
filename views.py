@@ -28,8 +28,7 @@ from .utils import (scientific_production_to_context, cvn_to_context,
                     stats_to_context)
 from cvn import settings as st_cvn
 from django.conf import settings as st
-from django.contrib.admin.views.decorators import staff_member_required
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, Http404
@@ -78,7 +77,7 @@ def download_cvn(request):
 
 
 @login_required
-@staff_member_required
+@permission_required('auth.basic_staff')
 def ull_report(request, year):
     if year is None or year not in st.HISTORICAL:
         raise Http404
