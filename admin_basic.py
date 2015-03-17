@@ -39,4 +39,13 @@ class UserProfileAdmin(BaseUserProfileAdmin):
     inlines = [CvnInline, OldCvnPdfInline]
     readonly_fields = ['user', 'rrhh_code', 'documento']
 
+    def change_view(self, request, object_id, form_url='', extra_context=None):
+        extra_context = extra_context or {}
+        extra_context.update({
+            'show_save_and_continue': False,
+            'show_save': False,
+        })
+        return super(UserProfileAdmin, self).change_view(request, object_id,
+            form_url, extra_context=extra_context)
+
 basic_admin_site.register(UserProfile, UserProfileAdmin)
