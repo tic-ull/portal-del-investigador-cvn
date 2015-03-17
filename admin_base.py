@@ -55,6 +55,8 @@ class BaseUserProfileAdmin(admin.ModelAdmin):
     list_display = ('user', 'get_first_name', 'get_last_name', 'documento',
                     'rrhh_code', )
 
+    list_filter = ('cvn__status', 'cvn__is_inserted', )
+
     def get_first_name(self, obj):
         return obj.user.first_name
     get_first_name.short_description = _(u'Nombre')
