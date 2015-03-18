@@ -22,10 +22,12 @@
 #    <http://www.gnu.org/licenses/>.
 #
 
+from django.contrib import admin
 from .admin_base import OldCvnPdfInline, BaseUserProfileAdmin, BaseCvnInline
 from core.admin_basic import basic_admin_site
-from core.models import UserProfile
+from core.models import UserProfile, Log
 from core.widgets import FileFieldURLWidget
+import core.settings as st_core
 
 
 class CvnInline(BaseCvnInline):
@@ -35,8 +37,19 @@ class CvnInline(BaseCvnInline):
         return super(CvnInline, self).formfield_for_dbfield(db_field, **kwargs)
 
 
+class CvnLogInline(admin.TabularInline):
+    model = Log
+    fields = ('date', 'message')
+    readonly_fields = fields
+
+    def get_queryset(self, request):
+        qs = super(CvnLogInline, self).get_queryset(request)
+        return qs.filter(entry_type=st_core.LogType.CVN_UPDATED.value,
+                         application='CVN')
+
+
 class UserProfileAdmin(BaseUserProfileAdmin):
-    inlines = [CvnInline, OldCvnPdfInline]
+    inlines = [CvnInline, OldCvnPdfInline, CvnLogInline]
     readonly_fields = ['user', 'rrhh_code', 'documento']
 
     def change_view(self, request, object_id, form_url='', extra_context=None):
