@@ -22,11 +22,11 @@
 #    <http://www.gnu.org/licenses/>.
 #
 
-from django.contrib import admin
 from .admin_base import OldCvnPdfInline, BaseUserProfileAdmin, BaseCvnInline
 from core.admin_basic import basic_admin_site
 from core.models import UserProfile, Log
 from core.widgets import FileFieldURLWidget
+from django.contrib import admin
 import core.settings as st_core
 
 
@@ -58,8 +58,8 @@ class UserProfileAdmin(BaseUserProfileAdmin):
             'show_save_and_continue': False,
             'show_save': False,
         })
-        return super(UserProfileAdmin, self).change_view(request, object_id,
-            form_url, extra_context=extra_context)
+        return super(UserProfileAdmin, self).change_view(
+            request, object_id, form_url, extra_context=extra_context)
 
     def get_actions(self, request):
         """ Remove action delete object from list of actions """
