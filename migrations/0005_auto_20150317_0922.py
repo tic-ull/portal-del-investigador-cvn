@@ -13,7 +13,7 @@ def add_view_university_report_permission(apps, schema_editor):
     content_type = ContentType.objects.get(app_label='cvn', model='cvn')
     Permission.objects.create(content_type=content_type,
                               codename='view_university_report',
-                              name='Can access university report')
+                              name='Can read university report')
 
 
 def delete_view_university_report_permission(apps, schema_editor):
