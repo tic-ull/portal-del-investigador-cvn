@@ -22,11 +22,11 @@
 #    <http://www.gnu.org/licenses/>.
 #
 
+from . import signals
 from .forms import UploadCVNForm, GetDataCVNULL
 from .models import CVN
 from .utils import (scientific_production_to_context, cvn_to_context,
                     stats_to_context)
-from . import signals
 from cvn import settings as st_cvn
 from django.conf import settings as st
 from django.contrib.auth.decorators import login_required, permission_required
@@ -74,6 +74,7 @@ def download_cvn(request):
     response = HttpResponse(pdf, content_type='application/pdf')
     response['Content-Disposition'] = 'inline; filename=%s' % (
         cvn.cvn_file.name.split('/')[-1])
+    signals.cvn_downloaded.send(sender=None)
     return response
 
 
