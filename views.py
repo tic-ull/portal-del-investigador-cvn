@@ -26,6 +26,7 @@ from .forms import UploadCVNForm, GetDataCVNULL
 from .models import CVN
 from .utils import (scientific_production_to_context, cvn_to_context,
                     stats_to_context)
+from . import signals
 from cvn import settings as st_cvn
 from django.conf import settings as st
 from django.contrib.auth.decorators import login_required, permission_required
@@ -126,6 +127,7 @@ def export_data_ull(request):
             response['Content-Disposition'] = (
                 'attachment;' 'filename="CVN-EXPORT-%s.pdf"' % (
                     request.user.profile.documento))
+            signals.pdf_exported.send(sender=None, user=request.user)
             return response
 
         context['form'] = form
