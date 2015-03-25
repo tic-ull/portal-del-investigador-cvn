@@ -229,7 +229,8 @@ class CVN(models.Model):
             item[u'f_hasta'] = None
 
         if u'dedicacion' in item:
-            item[u'dedicacion'] = item[u'dedicacion'] == u'Tiempo Completo'
+            dedicacion = item[u'dedicacion'].upper()
+            item[u'dedicacion'] = dedicacion == u'TIEMPO COMPLETO'
 
     @classmethod
     def _insert_teaching(cls, user, parser, start_date, end_date):
