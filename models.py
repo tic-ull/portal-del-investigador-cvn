@@ -175,7 +175,7 @@ class CVN(models.Model):
                     start_date, end_date)):
                 continue
             if (u'des1_grado_titulacion' in item
-                    and item[u'des1_grado_titulacion'] == u'Doctor'):
+                    and item[u'des1_grado_titulacion'].upper() == u'DOCTOR'):
                 del values[u'des1_grado_titulacion']
                 parser.add_learning_phd(**values)
             else:
