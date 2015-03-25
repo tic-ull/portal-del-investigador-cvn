@@ -129,7 +129,7 @@ def export_data_ull(request):
             response['Content-Disposition'] = (
                 'attachment;' 'filename="CVN-EXPORT-%s.pdf"' % (
                     request.user.profile.documento))
-            signals.pdf_exported.send(sender=None, user=request.user)
+            signals.pdf_exported.send(sender=None)
             return response
 
         context['form'] = form

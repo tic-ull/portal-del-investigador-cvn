@@ -30,6 +30,6 @@ cvn_downloaded = Signal()
 
 cvn_uploaded = Signal()
 
-pdf_exported = Signal(providing_args=["user"])
+pdf_exported = Signal()
 
 
