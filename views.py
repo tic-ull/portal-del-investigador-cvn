@@ -55,7 +55,7 @@ def index(request):
         if form.is_valid():
             cvn = form.save()
             context['message'] = _(u'CVN actualizado con éxito.')
-            signals.cvn_uploaded.send(sender=None)
+            signals.cvn_uploaded.send(sender=None, cvn=cvn)
     context['form'] = form
     stats_to_context(request, context)
     cvn_to_context(user.profile, context)

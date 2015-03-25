@@ -28,7 +28,7 @@ pre_cvn_status_changed = Signal(providing_args=["cvn"])
 
 cvn_downloaded = Signal()
 
-cvn_uploaded = Signal()
+cvn_uploaded = Signal(providing_args=["cvn"])
 
 pdf_exported = Signal(providing_args=["user"])
 
