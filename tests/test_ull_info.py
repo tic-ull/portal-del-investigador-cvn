@@ -323,6 +323,14 @@ class UllInfoTestCase(TestCase):
         self.assertFalse(range7.intersect(range4))
         self.assertTrue(range9.intersect(range10))
 
+    @patch.object(CachedWS, 'get', get_contratos)
+    def test_contrato_dedicacion_ignore_case(self):
+        ws_content = CachedWS.get(st.WS_ULL_CONTRATOS % 'example_code')
+        w = ws_content[0]
+        w[u'dedicacion'] = u'Tiempo completo'
+        CVN._cleaned_data_profession(w)
+        self.assertTrue(w[u'dedicacion'])
+
     @classmethod
     def tearDownClass(cls):
         clean()
