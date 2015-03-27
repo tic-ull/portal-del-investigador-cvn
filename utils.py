@@ -73,13 +73,20 @@ def stats_to_context(request, context):
     else:
         context['validPercentCVN'] = st_stat.PERCENTAGE_VALID_CVN
         if 'dept_name' in request.session:
-            dept = Department.objects.get(name=request.session['dept_name'])
-            context['department'] = dept
-            context['label_dept'] = _(u'Departamento')
+            try:
+                dept = Department.objects.get(
+                    name=request.session['dept_name'])
+                context['department'] = dept
+                context['label_dept'] = _(u'Departamento')
+            except ObjectDoesNotExist:
+                pass
         if 'area_name' in request.session:
-            area = Area.objects.get(name=request.session['area_name'])
-            context['area'] = area
-            context['label_area'] = _(u'Área')
+            try:
+                area = Area.objects.get(name=request.session['area_name'])
+                context['area'] = area
+                context['label_area'] = _(u'Área')
+            except ObjectDoesNotExist:
+                pass
 
 
 def isdigit(obj):
