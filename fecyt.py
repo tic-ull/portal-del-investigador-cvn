@@ -24,8 +24,10 @@
 
 from cvn import settings as st_cvn
 from urllib2 import URLError, HTTPError
+from ssl import SSLError
 
 import suds
+import socket
 import base64
 import logging
 
@@ -42,7 +44,7 @@ def pdf2xml(pdf, name):
     try:
         result_xml = client_ws.service.cvnPdf2Xml(
             st_cvn.FECYT_USER, st_cvn.FECYT_PASSWORD, content)
-    except suds.WebFault:
+    except (suds.WebFault, URLError, HTTPError, SSLError, socket.error):
         logger.warning(
             u'No hay respuesta del WS' +
             u' de la FECYT para el fichero' +
