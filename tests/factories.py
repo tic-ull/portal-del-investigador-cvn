@@ -34,7 +34,6 @@ d = datetime.date(1940, 1, 1)
 
 
 class ProfessionFactory(factory.Factory):
-    FACTORY_FOR = dict
     des1_cargo = factory.Sequence(lambda n: 'Trabajo #{0}'.format(n))
     employer = FuzzyAttribute(lambda: 'Empresa #' + str(randint(0, 100)))
     f_toma_posesion = FuzzyDate(datetime.date(1940, 1, 1)).fuzz()
@@ -46,17 +45,21 @@ class ProfessionFactory(factory.Factory):
         [None, 'Departamento #' + str(randint(0, 100))]))
     dedicacion = FuzzyChoice([True, False, None])
 
+    class Meta:
+        model = dict
+
 
 class LearningPhdFactory(factory.Factory):
-    FACTORY_FOR = dict
     des1_titulacion = factory.Sequence(lambda n: 'PHD recibido #{0}'.format(n))
     organismo = FuzzyAttribute(lambda: 'Universidad #' + str(randint(0, 100)))
     f_expedicion = FuzzyAttribute(
         lambda: random.choice([None, FuzzyDate(d).fuzz()]))
 
+    class Meta:
+        model = dict
+
 
 class TeachingFactory(factory.Factory):
-    FACTORY_FOR = dict
     asignatura = factory.Sequence(lambda n: 'Asignatura #{0}'.format(n))
     categ_anyo = FuzzyAttribute(
         lambda: u'Profesión #' + str(randint(0, 100)))
@@ -77,9 +80,11 @@ class TeachingFactory(factory.Factory):
     curso_inicio = FuzzyAttribute(lambda: str(randint(1990, 2020)))
     creditos = FuzzyAttribute(lambda: str(round(uniform(0.5, 15.5), 2)))
 
+    class Meta:
+        model = dict
+
 
 class LearningFactory(factory.Factory):
-    FACTORY_FOR = dict
     des1_titulacion = factory.Sequence(lambda n: u'Título #{0}'.format(n))
     des1_grado_titulacion = FuzzyAttribute(lambda: random.choice(
         st_cvn.OFFICIAL_TITLE_TYPE.keys() + ['GRADO', 'FP']))
@@ -87,3 +92,6 @@ class LearningFactory(factory.Factory):
         [None, 'Universidad #' + str(randint(0, 100))]))
     f_expedicion = FuzzyAttribute(lambda: random.choice(
         [None, FuzzyDate(d).fuzz()]))
+
+    class Meta:
+        model = dict
