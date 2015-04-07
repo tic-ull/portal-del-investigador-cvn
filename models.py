@@ -288,14 +288,16 @@ class CVN(models.Model):
             u'.pdf', u'-' + str(
                 self.uploaded_at.strftime('%Y-%m-%d-%Hh%Mm%Ss')
             ) + u'.pdf')
-
-        old_cvn_file = SimpleUploadedFile(
-            filename, self.cvn_file.read(), content_type="application/pdf")
-
-        cvn_old = OldCvnPdf(
-            user_profile=self.user_profile, cvn_file=old_cvn_file,
-            uploaded_at=self.uploaded_at)
-        cvn_old.save()
+        try:
+            old_cvn_file = SimpleUploadedFile(
+                filename, self.cvn_file.read(), content_type="application/pdf")
+        except IOError as e:
+            logger.error(e.message)
+        else:
+            cvn_old = OldCvnPdf(
+                user_profile=self.user_profile, cvn_file=old_cvn_file,
+                uploaded_at=self.uploaded_at)
+            cvn_old.save()
 
     def remove_producciones(self):
         Articulo.remove_by_userprofile(self.user_profile)
