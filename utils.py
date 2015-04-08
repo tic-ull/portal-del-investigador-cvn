@@ -27,7 +27,6 @@ from cvn.parsers.read_helpers import parse_nif
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import ugettext as _
 from lxml import etree
-
 import logging
 
 logger = logging.getLogger('cvn')
@@ -35,9 +34,9 @@ logger = logging.getLogger('cvn')
 
 def cvn_to_context(user, context):
     try:
+        user.cvn.cvn_file.open()  # FIXME: Put cvn in context just if pdf exists
+        user.cvn.xml_file.open()
         if user.cvn.status == st_cvn.CVNStatus.INVALID_IDENTITY:
-            if user.cvn.xml_file.closed:
-                user.cvn.xml_file.open()
             xml_tree = etree.parse(user.cvn.xml_file)
             user.cvn.xml_file.seek(0)
             nif = parse_nif(xml_tree)
