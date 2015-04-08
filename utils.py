@@ -28,11 +28,13 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import ugettext as _
 from lxml import etree
 
+import logging
+
+logger = logging.getLogger('cvn')
+
 
 def cvn_to_context(user, context):
     try:
-        context['cvn'] = user.cvn
-        context['cvn_status'] = st_cvn.CVN_STATUS[user.cvn.status][1]
         if user.cvn.status == st_cvn.CVNStatus.INVALID_IDENTITY:
             if user.cvn.xml_file.closed:
                 user.cvn.xml_file.open()
@@ -42,8 +44,12 @@ def cvn_to_context(user, context):
             user.cvn.xml_file.close()
             if nif is not '':
                 context['nif_invalid'] = nif.upper()
+        context['cvn'] = user.cvn
+        context['cvn_status'] = st_cvn.CVN_STATUS[user.cvn.status][1]
     except ObjectDoesNotExist:
         return
+    except IOError as e:
+        logger.error(e.message)
 
 
 def scientific_production_to_context(user_profile, context):
