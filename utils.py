@@ -27,6 +27,7 @@ from cvn.parsers.read_helpers import parse_nif
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import ugettext as _
 from lxml import etree
+
 import logging
 
 logger = logging.getLogger('cvn')
@@ -46,7 +47,7 @@ def cvn_to_context(user, context):
         context['cvn'] = user.cvn
         context['cvn_status'] = st_cvn.CVN_STATUS[user.cvn.status][1]
     except ObjectDoesNotExist:
-        pass
+        return
     except IOError as e:
         logger.error(e.message)
 
