@@ -276,12 +276,12 @@ class CVN(models.Model):
             if self.cvn_file:
                 self.cvn_file.delete(False)  # Remove PDF file
         except IOError as e:
-            logger.error(e.message)
+            logger.error(str(e))
         try:
             if self.xml_file:
                 self.xml_file.delete(False)  # Remove XML file
         except IOError as e:
-            logger.error(e.message)
+            logger.error(str(e))
 
     def _backup_pdf(self):
         filename = self.cvn_file.name.split('/')[-1].replace(
