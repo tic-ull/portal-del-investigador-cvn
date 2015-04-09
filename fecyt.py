@@ -39,16 +39,18 @@ def pdf2xml(pdf, name):
     # Web Service - FECYT
     try:
         client_ws = suds.client.Client(st_cvn.WS_FECYT_PDF2XML)
-    except (URLError, HTTPError):
+    except (URLError, HTTPError) as e:
+        logger.warning(e)
         return False, 1
     try:
         result_xml = client_ws.service.cvnPdf2Xml(
             st_cvn.FECYT_USER, st_cvn.FECYT_PASSWORD, content)
-    except (suds.WebFault, URLError, HTTPError, SSLError, socket.error):
+    except (suds.WebFault, URLError, HTTPError, SSLError, socket.error) as e:
         logger.warning(
             u'No hay respuesta del WS' +
             u' de la FECYT para el fichero' +
             u' %s' % name)
+        logger.warning(e)
         return False, 1
     # Format CVN-XML of FECYT
     if result_xml.errorCode == 0:
@@ -68,7 +70,7 @@ def xml2pdf(xml):
             st_cvn.FECYT_USER, st_cvn.FECYT_PASSWORD,
             st_cvn.FECYT_CVN_NAME, content, st_cvn.FECYT_TIPO_PLANTILLA)
     except UnicodeDecodeError as e:
-        logger.error(e.message)
+        logger.error(e)
         return None
     if pdf.returnCode == '01':
         xml_error = base64.decodestring(pdf.dataHandler)

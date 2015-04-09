@@ -34,21 +34,24 @@ logger = logging.getLogger('cvn')
 
 def cvn_to_context(user, context):
     try:
-        user.cvn.cvn_file.open()  # FIXME: Put cvn in context just if pdf exists
-        user.cvn.xml_file.open()
-        if user.cvn.status == st_cvn.CVNStatus.INVALID_IDENTITY:
-            xml_tree = etree.parse(user.cvn.xml_file)
-            user.cvn.xml_file.seek(0)
-            nif = parse_nif(xml_tree)
-            user.cvn.xml_file.close()
-            if nif is not '':
-                context['nif_invalid'] = nif.upper()
-        context['cvn'] = user.cvn
-        context['cvn_status'] = st_cvn.CVN_STATUS[user.cvn.status][1]
+        cvn = user.cvn
     except ObjectDoesNotExist:
         return
+    try:
+        cvn.cvn_file.open()  # FIXME: Put cvn in context just if pdf exists
+        cvn.xml_file.open()
     except IOError as e:
-        logger.error(e.message)
+        logger.error(e)
+        return
+    if cvn.status == st_cvn.CVNStatus.INVALID_IDENTITY:
+        xml_tree = etree.parse(cvn.xml_file)
+        cvn.xml_file.seek(0)
+        nif = parse_nif(xml_tree)
+        cvn.xml_file.close()
+        if nif is not '':
+            context['nif_invalid'] = nif.upper()
+    context['cvn'] = cvn
+    context['cvn_status'] = st_cvn.CVN_STATUS[cvn.status][1]
 
 
 def scientific_production_to_context(user_profile, context):
