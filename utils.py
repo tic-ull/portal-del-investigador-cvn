@@ -27,6 +27,7 @@ from cvn.parsers.read_helpers import parse_nif
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import ugettext as _
 from lxml import etree
+
 import logging
 
 logger = logging.getLogger('cvn')
@@ -41,7 +42,7 @@ def cvn_to_context(user, context):
         cvn.cvn_file.open()  # FIXME: Put cvn in context just if pdf exists
         cvn.xml_file.open()
     except IOError as e:
-        logger.error(e)
+        logger.error(str(e))
         return
     if cvn.status == st_cvn.CVNStatus.INVALID_IDENTITY:
         xml_tree = etree.parse(cvn.xml_file)
@@ -58,17 +59,17 @@ def scientific_production_to_context(user_profile, context):
     try:
         if not user_profile.cvn.is_inserted:
             return False
-        context['Articulos'] = user_profile.articulo_set.all()
-        context['Capitulos'] = user_profile.capitulo_set.all()
-        context['Libros'] = user_profile.libro_set.all()
-        context['Congresos'] = user_profile.congreso_set.all()
-        context['Proyectos'] = user_profile.proyecto_set.all()
-        context['Convenios'] = user_profile.convenio_set.all()
-        context['TesisDoctorales'] = user_profile.tesisdoctoral_set.all()
-        context['Patentes'] = user_profile.patente_set.all()
-        return True
     except ObjectDoesNotExist:
         return False
+    context['Articulos'] = user_profile.articulo_set.all()
+    context['Capitulos'] = user_profile.capitulo_set.all()
+    context['Libros'] = user_profile.libro_set.all()
+    context['Congresos'] = user_profile.congreso_set.all()
+    context['Proyectos'] = user_profile.proyecto_set.all()
+    context['Convenios'] = user_profile.convenio_set.all()
+    context['TesisDoctorales'] = user_profile.tesisdoctoral_set.all()
+    context['Patentes'] = user_profile.patente_set.all()
+    return True
 
 
 def stats_to_context(request, context):
