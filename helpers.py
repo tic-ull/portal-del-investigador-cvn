@@ -32,27 +32,21 @@ def _get_md5_path(keyword):
     return "cvn/%s/" % md5
 
 
-# Ignores original filename. Useful when the file comes from the client
 # Do not change signature http://goo.gl/tbTq8g
-def get_automatic_cvn_path(instance, filename):
+def get_cvn_path(instance, filename):
     return os.path.join(
         _get_md5_path(instance.user_profile.documento),
         instance.user_profile.documento,
-        u'CVN-%s.pdf' % instance.user_profile.documento
+        u'CVN-%s%s' % (
+            instance.user_profile.documento, os.path.splitext(filename)[1])
     )
-
-
-# Uses original filename. Useful when the file is created using FileField.save()
-# Do not change signature http://goo.gl/tbTq8g
-def get_manual_cvn_path(instance, filename):
-    return os.path.join(_get_md5_path(instance.user_profile.documento),
-                        instance.user_profile.documento, filename)
 
 
 # Do not change signature http://goo.gl/tbTq8g
 def get_old_cvn_path(instance, filename):
-    return os.path.join(_get_md5_path(instance.user_profile.documento),
-                        instance.user_profile.documento, 'old', filename)
+    return os.path.join(
+        _get_md5_path(instance.user_profile.documento),
+        instance.user_profile.documento, 'old', filename)
 
 
 class DateRange:

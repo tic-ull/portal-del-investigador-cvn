@@ -22,8 +22,7 @@
 #    <http://www.gnu.org/licenses/>.
 #
 
-from .helpers import (get_automatic_cvn_path, get_manual_cvn_path,
-                      get_old_cvn_path, DateRange)
+from .helpers import get_cvn_path, get_old_cvn_path, DateRange
 from core.models import UserProfile
 from core.ws_utils import CachedWS as ws
 from cvn import settings as st_cvn
@@ -48,9 +47,9 @@ logger = logging.getLogger('cvn')
 
 class CVN(models.Model):
 
-    cvn_file = models.FileField(_(u'PDF'), upload_to=get_automatic_cvn_path)
+    cvn_file = models.FileField(_(u'PDF'), upload_to=get_cvn_path)
 
-    xml_file = models.FileField(_(u'XML'), upload_to=get_manual_cvn_path)
+    xml_file = models.FileField(_(u'XML'), upload_to=get_cvn_path)
 
     fecha = models.DateField(_(u'Fecha del CVN'))
 
@@ -87,16 +86,16 @@ class CVN(models.Model):
             CVN.remove_cvn_by_userprofile(self.user_profile)
             self.cvn_file = SimpleUploadedFile(name, pdf,
                                                content_type="application/pdf")
-            self.update_fields(xml, commit)
+            self.initialize_fields(xml, commit)
 
     def update_from_xml(self, xml, commit=True):
         pdf = fecyt.xml2pdf(xml)
         if pdf:
             self.update_from_pdf(pdf, commit)
 
-    def update_fields(self, xml, commit=True):
-        self.xml_file.save(u'CVN-%s.xml' % self.user_profile.documento,
-                           ContentFile(xml), save=False)
+    def initialize_fields(self, xml, commit=True):
+        # Warning: The filename is ignored by your extension is needed
+        self.xml_file.save(u'fake-filename.xml', ContentFile(xml), save=False)
         tree_xml = etree.XML(xml)
         self.fecha = parse_date(tree_xml.find('Version/VersionID/Date'))
         self.is_inserted = False
