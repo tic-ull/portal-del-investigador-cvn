@@ -27,25 +27,26 @@ import hashlib
 import os
 
 
-# Do not touch. Uses self so it can be called in a django upload_to field
-# https://stackoverflow.com/questions/17539720/
-def get_md5_path(self):
-    md5 = hashlib.md5(self.user_profile.documento).hexdigest()[0:2]
+def _get_md5_path(keyword):
+    md5 = hashlib.md5(keyword).hexdigest()[0:2]
     return "cvn/%s/" % md5
 
 
-# Do not touch. Uses self so it can be called in a django upload_to field
-# https://stackoverflow.com/questions/17539720/
-def get_cvn_path(self, filename):
+# Do not change signature http://goo.gl/tbTq8g
+def get_cvn_path(instance, filename):
     return os.path.join(
-        get_md5_path(self), self.user_profile.documento, filename)
+        _get_md5_path(instance.user_profile.documento),
+        instance.user_profile.documento,
+        u'CVN-%s%s' % (
+            instance.user_profile.documento, os.path.splitext(filename)[1])
+    )
 
 
-# Do not touch. Uses self so it can be called in a django upload_to field
-# https://stackoverflow.com/questions/17539720/
-def get_old_cvn_path(self, filename):
+# Do not change signature http://goo.gl/tbTq8g
+def get_old_cvn_path(instance, filename):
     return os.path.join(
-        get_md5_path(self), self.user_profile.documento, 'old', filename)
+        _get_md5_path(instance.user_profile.documento),
+        instance.user_profile.documento, 'old', filename)
 
 
 class DateRange:

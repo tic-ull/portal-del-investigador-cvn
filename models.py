@@ -86,17 +86,16 @@ class CVN(models.Model):
             CVN.remove_cvn_by_userprofile(self.user_profile)
             self.cvn_file = SimpleUploadedFile(name, pdf,
                                                content_type="application/pdf")
-            self.update_fields(xml, commit)
+            self.initialize_fields(xml, commit)
 
     def update_from_xml(self, xml, commit=True):
         pdf = fecyt.xml2pdf(xml)
         if pdf:
             self.update_from_pdf(pdf, commit)
 
-    def update_fields(self, xml, commit=True):
-        self.cvn_file.name = u'CVN-%s.pdf' % self.user_profile.documento
-        self.xml_file.save(self.cvn_file.name.replace('pdf', 'xml'),
-                           ContentFile(xml), save=False)
+    def initialize_fields(self, xml, commit=True):
+        # Warning: The filename is ignored by your extension is needed
+        self.xml_file.save(u'fake-filename.xml', ContentFile(xml), save=False)
         tree_xml = etree.XML(xml)
         self.fecha = parse_date(tree_xml.find('Version/VersionID/Date'))
         self.is_inserted = False
