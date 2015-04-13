@@ -39,7 +39,8 @@ def cvn_to_context(user, context):
     except ObjectDoesNotExist:
         return
     try:
-        cvn.cvn_file.open()  # FIXME: Put cvn in context just if pdf exists
+        # FIXME: Puts the CVN in the context just if the pdf file exists
+        cvn.cvn_file.open()
         cvn.xml_file.open()
     except IOError as e:
         logger.error(str(e))
