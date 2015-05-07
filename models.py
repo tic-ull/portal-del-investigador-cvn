@@ -160,8 +160,10 @@ class CVN(models.Model):
 
     @classmethod
     def _insert_learning(cls, user, parser, start_date, end_date):
-        items = ws.get(url=st.WS_ULL_LEARNING % user.profile.rrhh_code,
-                       use_redis=True)
+        items = ws.get(
+            url=st.WS_ULL_LEARNING % user.profile.id_without_control_digit,
+            use_redis=True
+        )
         counter = 0
         if items is None:
             return counter
