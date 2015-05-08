@@ -170,14 +170,14 @@ class CvnXmlWriter:
         self.xml.append(teaching)
 
     def add_learning(self, des1_titulacion, des1_grado_titulacion,
-                     organismo=None, f_expedicion=None):
+                     des1_organismo=None, f_expedicion=None):
         titulacion_code = self._get_code(
             st_cvn.OFFICIAL_TITLE_TYPE, des1_grado_titulacion.upper())
         learning = etree.fromstring(
             get_xml_fragment(st_cvn.XML_LEARNING) % {
                 'title': des1_titulacion,
                 'title_code': titulacion_code,
-                'university': organismo,
+                'university': des1_organismo,
                 'date': f_expedicion.strftime(
                     self.DATE_FORMAT) if f_expedicion else None,
                 'others': des1_grado_titulacion,
@@ -187,7 +187,7 @@ class CvnXmlWriter:
         if f_expedicion is None:
             self._remove_node(learning, 'Date')
 
-        if organismo is None:
+        if des1_organismo is None:
             self._remove_node(learning, 'Entity')
 
         if titulacion_code != u'OTHERS':
@@ -197,12 +197,12 @@ class CvnXmlWriter:
         self.xml.append(learning)
 
     def add_learning_phd(self, des1_titulacion, f_expedicion=None,
-                         organismo=st_cvn.UNIVERSITY):
+                         des1_organismo=st_cvn.UNIVERSITY):
         """ PhD (Doctor) """
         learning_phd = etree.fromstring(
             get_xml_fragment(st_cvn.XML_LEARNING_PHD) % {
                 'title': des1_titulacion,
-                'university': organismo,
+                'university': des1_organismo,
                 'date': f_expedicion.strftime(
                     self.DATE_FORMAT) if f_expedicion else None,
             }
@@ -211,7 +211,7 @@ class CvnXmlWriter:
         if f_expedicion is None:
             self._remove_node(learning_phd, 'Date')
 
-        if organismo is None:
+        if des1_organismo is None:
             self._remove_node(learning_phd, 'Entity')
 
         self.xml.append(learning_phd)

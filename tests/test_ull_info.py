@@ -64,6 +64,7 @@ class UllInfoTestCase(TestCase):
     def test_get_pdf_ull_learning(self):
         user = UserFactory.create()
         user.profile.rrhh_code = 'example_code'
+        user.profile.documento = 'example_codeL'
         pdf = CVN.get_user_pdf_ull(user=user)
         cvn = CVN(user=user, pdf=pdf)
         cvn.xml_file.open()
@@ -93,6 +94,7 @@ class UllInfoTestCase(TestCase):
     def test_get_pdf_ull_cargos(self):
         user = UserFactory.create()
         user.profile.rrhh_code = 'example_code'
+        user.profile.documento = 'example_codeL'
         pdf = CVN.get_user_pdf_ull(user=user)
         cvn = CVN(user=user, pdf=pdf)
         cvn.xml_file.open()
@@ -120,6 +122,7 @@ class UllInfoTestCase(TestCase):
     def test_get_pdf_ull_contratos(self):
         user = UserFactory.create()
         user.profile.rrhh_code = 'example_code'
+        user.profile.documento = 'example_codeL'
         pdf = CVN.get_user_pdf_ull(user=user)
         cvn = CVN(user=user, pdf=pdf)
         cvn.xml_file.open()
@@ -152,6 +155,7 @@ class UllInfoTestCase(TestCase):
     def test_get_pdf_ull_teaching(self):
         user = UserFactory.create()
         user.profile.rrhh_code = 'example_code'
+        user.profile.documento = 'example_codeL'
         pdf = CVN.get_user_pdf_ull(user=user)
         cvn = CVN(user=user, pdf=pdf)
         cvn.xml_file.open()
@@ -177,6 +181,7 @@ class UllInfoTestCase(TestCase):
     def _get_one_cargo_ull(self):
         user = UserFactory.create()
         user.profile.rrhh_code = 'example_code'
+        user.profile.documento = 'example_codeL'
         pdf = CVN.get_user_pdf_ull(user=user)
         cvn = CVN(user=user, pdf=pdf)
         cvn.xml_file.open()
@@ -194,6 +199,7 @@ class UllInfoTestCase(TestCase):
     def _get_one_contrato_ull(self):
         user = UserFactory.create()
         user.profile.rrhh_code = 'example_code'
+        user.profile.documento = 'example_codeL'
         pdf = CVN.get_user_pdf_ull(user=user)
         cvn = CVN(user=user, pdf=pdf)
         cvn.xml_file.open()
@@ -215,6 +221,7 @@ class UllInfoTestCase(TestCase):
     def _get_one_learning_ull(self):
         user = UserFactory.create()
         user.profile.rrhh_code = 'example_code'
+        user.profile.documento = 'example_codeL'
         pdf = CVN.get_user_pdf_ull(user=user)
         cvn = CVN(user=user, pdf=pdf)
         cvn.xml_file.open()
@@ -229,8 +236,8 @@ class UllInfoTestCase(TestCase):
             wi[u'des1_grado_titulacion'] = wi[u'des1_grado_titulacion'].upper()
             if wi[u'des1_grado_titulacion'] == u'DOCTOR':
                 del wi[u'des1_grado_titulacion']
-                if not u'organismo' in wi:
-                    wi[u'organismo'] = u'Universidad de La Laguna'
+                if not u'des1_organismo' in wi:
+                    wi[u'des1_organismo'] = u'Universidad de La Laguna'
         self.assertEqual(cmp(item, wi), 0)
 
     @patch.object(CachedWS, 'get', get_cargos_no_f_hasta)
@@ -269,6 +276,7 @@ class UllInfoTestCase(TestCase):
     def test_get_pdf_ull_filter_by_date(self):
         user = UserFactory.create()
         user.profile.rrhh_code = 'example_code'
+        user.profile.documento = 'example_codeL'
         pdf = CVN.get_user_pdf_ull(user=user)
         cvn = CVN(user=user, pdf=pdf)
         cvn.xml_file.open()

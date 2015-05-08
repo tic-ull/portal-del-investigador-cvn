@@ -51,7 +51,7 @@ class ProfessionFactory(factory.Factory):
 
 class LearningPhdFactory(factory.Factory):
     des1_titulacion = factory.Sequence(lambda n: 'PHD recibido #{0}'.format(n))
-    organismo = FuzzyAttribute(lambda: 'Universidad #' + str(randint(0, 100)))
+    des1_organismo = FuzzyAttribute(lambda: 'Universidad #' + str(randint(0, 100)))
     f_expedicion = FuzzyAttribute(
         lambda: random.choice([None, FuzzyDate(d).fuzz()]))
 
@@ -88,7 +88,7 @@ class LearningFactory(factory.Factory):
     des1_titulacion = factory.Sequence(lambda n: u'Título #{0}'.format(n))
     des1_grado_titulacion = FuzzyAttribute(lambda: random.choice(
         st_cvn.OFFICIAL_TITLE_TYPE.keys() + ['GRADO', 'FP']))
-    organismo = FuzzyAttribute(lambda: random.choice(
+    des1_organismo = FuzzyAttribute(lambda: random.choice(
         [None, 'Universidad #' + str(randint(0, 100))]))
     f_expedicion = FuzzyAttribute(lambda: random.choice(
         [None, FuzzyDate(d).fuzz()]))

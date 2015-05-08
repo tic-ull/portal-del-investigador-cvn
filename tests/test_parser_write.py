@@ -81,15 +81,15 @@ class ParserWriterTestCase(TestCase):
         for i in range(0, 10):
             d = LearningPhdFactory.create()
             cvnitem_dict[d[u'des1_titulacion']] = d
-            if u'organismo' in d and d[u'organismo'] is None:
-                del d[u'organismo']
+            if u'des1_organismo' in d and d[u'des1_organismo'] is None:
+                del d[u'des1_organismo']
             parser.add_learning_phd(**d)
          # Insert bachelor, degree...data
         for i in range(0, 10):
             d = LearningFactory.create()
             cvnitem_dict[d[u'des1_titulacion']] = d
-            if u'organismo' in d and d[u'organismo'] is None:
-                del d[u'organismo']
+            if u'des1_organismo' in d and d[u'des1_organismo'] is None:
+                del d[u'des1_organismo']
             parser.add_learning(**d)
         cvn = CVN.create(user, parser.tostring())
         cvn.xml_file.open()

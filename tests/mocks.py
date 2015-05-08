@@ -29,11 +29,11 @@ from django.conf import settings as st
 def get_all(cls, url, use_redis=True, timeout=None):
     if url == st.WS_ULL_LEARNING % 'example_code':
         return [{u'des1_titulacion': u'LICENCIADO EN MATEMATICAS',
-                 u'organismo': u'UNIVERSIDAD DE LA LAGUNA',
+                 u'des1_organismo': u'UNIVERSIDAD DE LA LAGUNA',
                  u'f_expedicion': u'18-12-2001',
                  u'des1_grado_titulacion': u'Licenciado/Ingeniero Superior'},
                 {u'des1_titulacion': u'Doctor por la Universidad de La Laguna',
-                 u'organismo': u'UNIVERSIDAD DE LA LAGUNA',
+                 u'des1_organismo': u'UNIVERSIDAD DE LA LAGUNA',
                  u'f_expedicion': u'07-07-2006',
                  u'des1_grado_titulacion': u'Doctor'}]
     elif url == st.WS_ULL_CARGOS % 'example_code':
@@ -48,11 +48,11 @@ def get_all(cls, url, use_redis=True, timeout=None):
 def get_learning(cls, url, use_redis=True, timeout=None):
     if url == st.WS_ULL_LEARNING % 'example_code':
         return [{u'des1_titulacion': u'LICENCIADO EN MATEMATICAS',
-                 u'organismo': u'UNIVERSIDAD DE LA LAGUNA',
+                 u'des1_organismo': u'UNIVERSIDAD DE LA LAGUNA',
                  u'f_expedicion': u'18-12-2001',
                  u'des1_grado_titulacion': u'Licenciado/Ingeniero Superior'},
                 {u'des1_titulacion': u'Doctor por la Universidad de La Laguna',
-                 u'organismo': u'UNIVERSIDAD DE LA LAGUNA',
+                 u'des1_organismo': u'UNIVERSIDAD DE LA LAGUNA',
                  u'f_expedicion': u'07-07-2006',
                  u'des1_grado_titulacion': u'Doctor'}]
     else:
@@ -74,7 +74,7 @@ def get_learning_no_f_expedicion(cls, url, use_redis=True, timeout=None):
     if url == st.WS_ULL_LEARNING % 'example_code':
         return [{u'des1_titulacion': u'LICENCIADO EN FILOSOFIA'
                                      u' Y CIENCIAS DE LA EDUCACION',
-                 u'organismo': u'UNIV. BARCELONA',
+                 u'des1_organismo': u'UNIV. BARCELONA',
                  u'des1_grado_titulacion': u'Licenciado/Ingeniero Superior'}]
     else:
         return []
@@ -96,7 +96,7 @@ def get_learning_doctor_no_f_expedicion(cls, url, use_redis=True,
     if url == st.WS_ULL_LEARNING % 'example_code':
         return [{u'des1_titulacion': u'LICENCIADO EN FILOSOFIA'
                                      u' Y CIENCIAS DE LA EDUCACION',
-                 u'organismo': u'UNIV. BARCELONA',
+                 u'des1_organismo': u'UNIV. BARCELONA',
                  u'des1_grado_titulacion': u'Doctor'}]
     else:
         return []
