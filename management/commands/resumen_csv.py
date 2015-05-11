@@ -27,13 +27,13 @@ import os
 import csv
 
 
-class InformeCSV:
+class ResumenCSV:
 
     def __init__(self, year, departamento, investigadores, articulos, libros,
                  capitulos_libro, congresos, proyectos, convenios, tesis,
                  patentes, model_type):
         self.year = str(year)
-        self.departamento = departamento['nombre'].encode('utf-8')
+        self.departamento = departamento.encode('utf-8')
         self.investigadores = len(investigadores)
         self.articulos = len(articulos)
         self.libros = len(libros)

@@ -30,7 +30,7 @@ from cvn.utils import isdigit
 from django.conf import settings as st
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand, CommandError
-from informe_csv import InformeCSV
+from resumen_csv import ResumenCSV
 from informe_pdf import InformePDF
 from optparse import make_option
 
@@ -78,7 +78,7 @@ class Command(BaseCommand):
         if options['format'] == 'pdf':
             self.generator = InformePDF
         else:
-            self.generator = InformeCSV
+            self.generator = ResumenCSV
         self.create_reports(year, unit_id, model)
 
     def check_args(self, options):
@@ -121,7 +121,7 @@ class Command(BaseCommand):
         print 'Generando Informe para [%s] %s ... ' % (
             unit['unidad']['codigo'], unit['unidad']['nombre'])
         if investigadores:
-            informe = self.generator(year, unit['unidad'], investigadores,
+            informe = self.generator(year, unit['unidad']['nombre'], investigadores,
                                      articulos, libros, capitulos_libro,
                                      congresos, proyectos, convenios, tesis,
                                      patentes, self.model_type)
