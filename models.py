@@ -33,6 +33,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from lxml import etree
+import dateutil.parser
 from managers import CongresoManager, ScientificExpManager, CvnItemManager
 from parsers.read_helpers import parse_date, parse_nif, parse_cvnitem_to_class
 from parsers.write import CvnXmlWriter
@@ -187,8 +188,8 @@ class CVN(models.Model):
     @staticmethod
     def _clean_data_learning(item):
         if u'f_expedicion' in item and item[u'f_expedicion'] is not None:
-            item[u'f_expedicion'] = datetime.datetime.strptime(
-                item[u'f_expedicion'], "%d-%m-%Y").date()
+            item[u'f_expedicion'] = dateutil.parser.parse(
+                item[u'f_expedicion']).date()
         else:
             item[u'f_expedicion'] = None
 
