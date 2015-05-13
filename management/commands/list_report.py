@@ -32,6 +32,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand, CommandError
 from resumen_csv import ResumenCSV
 from informe_pdf import InformePDF
+from informe_csv import InformeCSV
 from optparse import make_option
 
 
@@ -71,6 +72,8 @@ class Command(BaseCommand):
         self.check_args(options)
         if options['format'] == 'pdf':
             self.generator = InformePDF
+        elif options['format'] == 'icsv':
+            self.generator = InformeCSV
         else:
             self.generator = ResumenCSV
         nifs = options["list"].split(",")
@@ -78,7 +81,7 @@ class Command(BaseCommand):
 
     def check_args(self, options):
         f = options['format']
-        if not f == 'pdf' and not f == 'csv':
+        if not f == 'pdf' and not f == 'csv' and not f == 'icsv':
             raise CommandError("Option `--format=X` must be pdf, csv or icsv")
         if not isdigit(options['year']):
             raise CommandError(

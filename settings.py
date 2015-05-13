@@ -42,6 +42,7 @@ UNIVERSITY = _(u'Universidad de La Laguna')
 # ******************************* PATHS *************************************
 REPORTS_PDF_ROOT = os.path.join(st.MEDIA_ROOT, 'cvn/reports/pdf')
 REPORTS_CSV_ROOT = os.path.join(st.MEDIA_ROOT, 'cvn/reports/csv')
+REPORTS_ICSV_ROOT = os.path.join(st.MEDIA_ROOT, 'cvn/reports/icsv')
 REPORTS_IMAGES = os.path.join(st.STATIC_ROOT, 'images/')
 FILE_TEST_ROOT = os.path.join(st.BASE_DIR, 'cvn/tests/files/')
 MIGRATION_ROOT = os.path.join(st.BASE_DIR, 'importCVN')
@@ -293,6 +294,52 @@ CVN_PDF_AUTHOR_NOAUT = [u'FECYT - Author of Example', ]
 
 # HISTORICAL REPORT
 HISTORICAL_YEAR = '2013'
+
+
+# Fields on the csv file of informe_csv (dept_report and list_report management commands)
+INFORME_CSV_FIELDS_ARTICULO = [
+    'titulo', 'nombre_publicacion', 'fecha', 'autores', 'volumen', 'numero',
+    'pagina_inicial', 'pagina_final', 'issn', 'isbn', 'deposito_legal'
+]
+
+INFORME_CSV_FIELDS_CAPITULO = [
+    'titulo', 'nombre_publicacion', 'fecha', 'autores', 'volumen', 'numero',
+    'pagina_inicial', 'pagina_final', 'issn', 'isbn', 'deposito_legal'
+]
+
+INFORME_CSV_FIELDS_LIBRO = [
+    'titulo', 'nombre_publicacion', 'fecha', 'autores', 'volumen', 'numero',
+    'pagina_inicial', 'pagina_final', 'issn', 'isbn', 'deposito_legal'
+]
+
+INFORME_CSV_FIELDS_CONGRESO = [
+    'titulo', 'nombre_del_congreso', 'ciudad_de_realizacion', 'fecha',
+    'fecha_de_inicio', 'fecha_de_fin', 'autores', 'ambito', 'otro_ambito',
+    'deposito_legal', 'publicacion_acta_congreso'
+]
+
+INFORME_CSV_FIELDS_CONVENIO = [
+    'titulo', 'numero_de_investigadores', 'autores', 'fecha_de_inicio',
+    'fecha_de_fin', 'duracion', 'ambito', 'otro_ambito',
+    'cod_segun_financiadora', 'cuantia_total', 'cuantia_subproyecto',
+    'porcentaje_en_subvencion', 'porcentaje_en_credito', 'porcentaje_mixto'
+]
+
+INFORME_CSV_FIELDS_PROYECTO = [
+    'titulo', 'numero_de_investigadores', 'autores', 'fecha_de_inicio',
+    'fecha_de_fin', 'duracion', 'ambito', 'otro_ambito',
+    'cod_segun_financiadora', 'cuantia_total', 'cuantia_subproyecto',
+    'porcentaje_en_subvencion', 'porcentaje_en_credito', 'porcentaje_mixto'
+]
+
+INFORME_CSV_FIELDS_TESIS = [
+    'titulo', 'fecha', 'autor', 'universidad_que_titula', 'codirector'
+]
+
+INFORME_CSV_FIELDS_PATENTE = [
+    'titulo', 'fecha', 'fecha_concesion', 'num_solicitud', 'lugar_prioritario',
+    'lugares', 'entidad_titular', 'empresas'
+]
 
 # ************************* SETTINGS LOCAL ***********************************
 try:

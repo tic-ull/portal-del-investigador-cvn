@@ -32,6 +32,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand, CommandError
 from resumen_csv import ResumenCSV
 from informe_pdf import InformePDF
+from informe_csv import InformeCSV
 from optparse import make_option
 
 
@@ -77,6 +78,8 @@ class Command(BaseCommand):
             self.model_type = 'department'
         if options['format'] == 'pdf':
             self.generator = InformePDF
+        elif options['format'] == 'icsv':
+            self.generator = InformeCSV
         else:
             self.generator = ResumenCSV
         self.create_reports(year, unit_id, model)
@@ -90,8 +93,9 @@ class Command(BaseCommand):
         if not options['type'] == 'a' and not options['type'] == 'd':
             raise CommandError("Option `--type=X` must be a (area) "
                                "or d (department)")
-        if not options['format'] == 'pdf' and not options['format'] == 'csv':
-            raise CommandError("Option `--format=X` must be pdf or csv")
+        f = options['format']
+        if not f == 'pdf' and not f == 'csv' and not f == 'icsv':
+            raise CommandError("Option `--format=X` must be pdf, csv or icsv")
 
     def create_reports(self, year, unit_id, model):
         if unit_id is None:
@@ -121,10 +125,11 @@ class Command(BaseCommand):
         print 'Generando Informe para [%s] %s ... ' % (
             unit['unidad']['codigo'], unit['unidad']['nombre'])
         if investigadores:
-            informe = self.generator(year, unit['unidad']['nombre'], investigadores,
-                                     articulos, libros, capitulos_libro,
-                                     congresos, proyectos, convenios, tesis,
-                                     patentes, self.model_type)
+            informe = self.generator(
+                year, unit['unidad']['nombre'], investigadores, articulos,
+                libros, capitulos_libro, congresos, proyectos, convenios, tesis,
+                patentes, self.model_type
+            )
             informe.go()
             print 'OK\n'
         else:
