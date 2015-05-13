@@ -127,7 +127,7 @@ def parse_scope(tree_xml):
        Example: CvnItem/Link/Scope
     """
     data_cvn = {}
-    if tree_xml:
+    if tree_xml is not None:
         data_cvn['ambito'] = unicode(st_cvn.SCOPE[tree_xml.find(
             'Type/Item').text.strip()])
         if data_cvn['ambito'] == u'Otros' and tree_xml.find('Others/Item'):
@@ -216,7 +216,7 @@ def _parse_produccion_subtype(xml):
 def parse_publicacion_location(xml):
     """Input: Location node"""
     data = {}
-    if xml:
+    if xml is not None:
         volume = xml.find('Volume/Item')
         if volume is not None and volume.text is not None:
             data['volumen'] = volume.text.strip()

@@ -75,7 +75,7 @@ def _parse_cvnitem_scientificexp(node):
             'autores': parse_authors(node.findall('Author'))}
 
     item.update(parse_economic(node.findall('EconomicDimension')))
-    if node.find('ExternalPK/Code'):
+    if node.find('ExternalPK/Code') is not None:
         item[u'cod_segun_financiadora'] = unicode(node.find(
             'ExternalPK/Code/Item').text.strip())
     item.update(parse_scope(node.find('Scope')))
@@ -100,7 +100,7 @@ def parse_cvnitem_scientificact_production(node):
         'isbn': pids[st_cvn.PRODUCTION_ID_CODE['ISBN']],
         'deposito_legal': pids[st_cvn.PRODUCTION_ID_CODE['DEPOSITO_LEGAL']]
     }
-    if (node.find('Link/Title/Name') and
+    if (node.find('Link/Title/Name') is not None and
             node.find('Link/Title/Name/Item').text):
         item[u'nombre_publicacion'] = unicode(node.find(
             'Link/Title/Name/Item').text.strip())
@@ -117,7 +117,7 @@ def parse_cvnitem_scientificact_congress(node):
         if itemXML.find(
             'CvnItemID/CodeCVNItem/Item'
         ).text.strip() == st_cvn.DATA_CONGRESO:
-            if (itemXML.find('Title/Name') and
+            if (itemXML.find('Title/Name') is not None and
                     itemXML.find('Title/Name/Item').text):
                 item[u'nombre_del_congreso'] = unicode(itemXML.find(
                     'Title/Name/Item').text.strip())
@@ -126,7 +126,7 @@ def parse_cvnitem_scientificact_congress(node):
             (item['fecha_de_inicio'], item['fecha_de_fin'],
                 duracion) = parse_date_interval(date_node)
 
-            if itemXML.find('Place/City'):
+            if itemXML.find('Place/City') is not None:
                 item[u'ciudad_de_realizacion'] = unicode(itemXML.find(
                     'Place/City/Item').text.strip())
             # Ámbito
