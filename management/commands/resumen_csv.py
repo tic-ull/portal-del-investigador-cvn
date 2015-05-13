@@ -24,7 +24,8 @@
 
 from cvn import settings as st_cvn
 import os
-import csv
+import unicodecsv as csv
+from django.conf import settings as st
 
 
 class ResumenCSV:
@@ -44,11 +45,9 @@ class ResumenCSV:
         self.tesis = len(tesis)
         self.patentes = len(patentes)
         self.model_type = model_type
-        self.header = ['Nombre', 'Investigadores',
-                       u'Artículos'.encode('utf-8'),
-                       'Libros', u'Capítulos'.encode('utf-8'), 'Congresos',
-                       'Proyectos', 'Convenios', 'Tesis',
-                       'Propiedad Intelectual']
+        self.header = [u'Nombre', u'Investigadores', u'Artículos', u'Libros',
+                       u'Capítulos', u'Congresos', u'Proyectos', u'Convenios',
+                       u'Tesis', u'Propiedad Intelectual']
         path = "%s/%s/%s/" % (st_cvn.REPORTS_CSV_ROOT, self.model_type,
                               self.year)
         if not os.path.isdir(path):
@@ -59,16 +58,17 @@ class ResumenCSV:
     def go(self):
         isfile = os.path.isfile(self.filename)
         writer = csv.DictWriter(open(self.filename, 'awb'),
-                                delimiter=';', fieldnames=self.header)
+                                dialect=st.CSV_DIALECT,
+                                fieldnames=self.header)
         if not isfile:
             writer.writeheader()
-        writer.writerow({'Nombre': self.departamento,
-                         'Investigadores': self.investigadores,
-                         u'Artículos'.encode('utf-8'): self.articulos,
-                         'Libros': self.libros,
-                         u'Capítulos'.encode('utf-8'): self.capitulos,
-                         'Congresos': self.congresos,
-                         'Proyectos': self.proyectos,
-                         'Convenios': self.convenios,
-                         'Tesis': self.tesis,
-                         'Propiedad Intelectual': self.patentes})
+        writer.writerow({u'Nombre': self.departamento,
+                         u'Investigadores': self.investigadores,
+                         u'Artículos': self.articulos,
+                         u'Libros': self.libros,
+                         u'Capítulos': self.capitulos,
+                         u'Congresos': self.congresos,
+                         u'Proyectos': self.proyectos,
+                         u'Convenios': self.convenios,
+                         u'Tesis': self.tesis,
+                         u'Propiedad Intelectual': self.patentes})

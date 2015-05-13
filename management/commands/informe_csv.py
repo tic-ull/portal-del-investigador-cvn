@@ -26,6 +26,7 @@ import unicodecsv as csv
 import os
 from slugify import slugify
 from cvn import settings as st_cvn
+from django.conf import settings as st
 
 
 def write_producciones(csv_writer, name, producciones, fields):
@@ -62,7 +63,7 @@ class InformeCSV:
         file_name = slugify(self.year + "-" + self.unidad) + ".csv"
         file_path = os.path.join(path, file_name)
         with open(file_path, 'wb') as csvfile:
-            csv_writer = csv.writer(csvfile, dialect="investigacion")
+            csv_writer = csv.writer(csvfile, dialect=st.CSV_DIALECT)
             write_producciones(csv_writer, u'Artículos', self.articulos,
                                st_cvn.INFORME_CSV_FIELDS_ARTICULO)
             write_producciones(csv_writer, u'Libros', self.libros,
