@@ -29,7 +29,8 @@ from django.contrib.auth.models import User
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.management.base import BaseCommand
 from django.core.exceptions import ObjectDoesNotExist
-import csv
+from django.conf import settings as st
+import unicodecsv as csv
 import os
 
 
@@ -39,13 +40,13 @@ class Command(BaseCommand):
     def handle(self, *args,  **options):
         cvn_file = os.path.join(st_cvn.MIGRATION_ROOT, 'users_to_migrate.csv')
         with open(cvn_file, 'rb') as csvfile:
-            lines = csv.reader(csvfile, delimiter=';')
+            lines = csv.reader(csvfile, dialect=st.CSV_DIALECT)
             for line in lines:
                 user, created = UserProfile.get_or_create_user(
                     username=unicode(line[0]), documento=unicode(line[1]))
                 if created:
-                    user.first_name = line[3].decode('utf-8')
-                    user.last_name = line[4].decode('utf-8')
+                    user.first_name = line[3]
+                    user.last_name = line[4]
                     user.save()
 
                 # Reload user to have profile updated

@@ -27,8 +27,8 @@ from cvn.settings import MIGRATION_ROOT
 from datetime import datetime
 from django.core.management.base import BaseCommand, CommandError
 from optparse import make_option
-
-import csv
+from django.conf import settings as st
+import unicodecsv as csv
 import os
 import shutil
 
@@ -63,7 +63,7 @@ class Command(BaseCommand):
             os.makedirs(cvn_path)
         csv_file = csv.writer(
             open(os.path.join(MIGRATION_ROOT, 'users_to_migrate.csv'), 'wb'),
-            delimiter=';')
+            dialect=st.CSV_DIALECT)
         lines = 0
         for cvn in CVN.objects.filter(uploaded_at__gte=creation_date):
             lines += 1
@@ -77,8 +77,8 @@ class Command(BaseCommand):
                     cvn.user_profile.user.username,
                     cvn.user_profile.documento,
                     pdf_path,
-                    cvn.user_profile.user.first_name.upper().encode('utf8'),
-                    cvn.user_profile.user.last_name.upper().encode('utf8')])
+                    cvn.user_profile.user.first_name.upper(),
+                    cvn.user_profile.user.last_name.upper()])
                 print u'[%s] Usuario: %s - CVN: %s \t \t OK' % (
                     lines,
                     cvn.user_profile.user.username,
