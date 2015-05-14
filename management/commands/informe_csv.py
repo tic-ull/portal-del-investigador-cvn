@@ -46,36 +46,27 @@ class InformeCSV:
 
     def go(self, team_name, investigadores, articulos, libros, capitulos,
            congresos, proyectos, convenios, tesis, patentes):
-        self.team_name = team_name
-        self.articulos = articulos
-        self.libros = libros
-        self.capitulosLibro = capitulos
-        self.congresos = congresos
-        self.proyectos = proyectos
-        self.convenios = convenios
-        self.tesis = tesis
-        self.patentes = patentes
         path = "%s/%s/%s/" % (st_cvn.REPORTS_ICSV_ROOT, self.model_type,
                               self.year)
         if not os.path.isdir(path):
             os.makedirs(path)
-        file_name = slugify(self.year + "-" + self.team_name) + ".csv"
+        file_name = slugify(self.year + "-" + team_name) + ".csv"
         file_path = os.path.join(path, file_name)
         with open(file_path, 'wb') as csvfile:
             csv_writer = csv.writer(csvfile, dialect=st.CSV_DIALECT)
-            write_producciones(csv_writer, u'Artículos', self.articulos,
+            write_producciones(csv_writer, u'Artículos', articulos,
                                st_cvn.INFORME_CSV_FIELDS_ARTICULO)
-            write_producciones(csv_writer, u'Libros', self.libros,
+            write_producciones(csv_writer, u'Libros', libros,
                                st_cvn.INFORME_CSV_FIELDS_LIBRO)
-            write_producciones(csv_writer, u'Capítulos', self.capitulosLibro,
+            write_producciones(csv_writer, u'Capítulos', capitulos,
                                st_cvn.INFORME_CSV_FIELDS_CAPITULO)
-            write_producciones(csv_writer, u'Congresos', self.congresos,
+            write_producciones(csv_writer, u'Congresos', congresos,
                                st_cvn.INFORME_CSV_FIELDS_CONGRESO)
-            write_producciones(csv_writer, u'Proyecto', self.proyectos,
+            write_producciones(csv_writer, u'Proyecto', proyectos,
                                st_cvn.INFORME_CSV_FIELDS_PROYECTO)
-            write_producciones(csv_writer, u'Convenios', self.convenios,
+            write_producciones(csv_writer, u'Convenios', convenios,
                                st_cvn.INFORME_CSV_FIELDS_CONVENIO)
-            write_producciones(csv_writer, u'Tesis Doctorales', self.tesis,
+            write_producciones(csv_writer, u'Tesis Doctorales', tesis,
                                st_cvn.INFORME_CSV_FIELDS_TESIS)
-            write_producciones(csv_writer, u'Patentes', self.patentes,
+            write_producciones(csv_writer, u'Patentes', patentes,
                                st_cvn.INFORME_CSV_FIELDS_PATENTE)
