@@ -80,24 +80,15 @@ class InformePDF:
         file_name = slugify(self.year + "-" + self.team_name) + ".pdf"
         doc = SimpleDocTemplate(path_file + file_name)
         story = [Spacer(1, 3 * self.DEFAULT_SPACER)]
-        if investigadores:
-            self.show_investigadores(story, investigadores)
-        if articulos:
-            self.show_articulos(story, articulos)
-        if libros:
-            self.show_libros(story, libros)
-        if capitulos:
-            self.show_capitulos(story, capitulos)
-        if congresos:
-            self.show_congresos(story, congresos)
-        if proyectos:
-            self.show_proyectos(story, proyectos)
-        if convenios:
-            self.show_convenios(story, convenios)
-        if tesis:
-            self.show_tesis(story, tesis)
-        if patentes:
-            self.show_patentes(story, patentes)
+        self.show_investigadores(story, investigadores)
+        self.show_articulos(story, articulos)
+        self.show_libros(story, libros)
+        self.show_capitulos(story, capitulos)
+        self.show_congresos(story, congresos)
+        self.show_proyectos(story, proyectos)
+        self.show_convenios(story, convenios)
+        self.show_tesis(story, tesis)
+        self.show_patentes(story, patentes)
         doc.build(story, onFirstPage=self.first_page,
                   onLaterPages=self.later_pages)
 
@@ -106,6 +97,8 @@ class InformePDF:
     # -------------------------------------------------------------------------
 
     def show_investigadores(self, story, investigadores):
+        if not investigadores:
+            return
         story.append(Paragraph('INVESTIGADORES', self.style_h3()))
         text = 'Número de investigadores: ' + str(len(investigadores))
         story.append(Paragraph(text, self.style_n()))
@@ -129,6 +122,8 @@ class InformePDF:
     # -------------------------------------------------------------------------
 
     def show_articulos(self, story, articulos):
+        if not articulos:
+            return
         story.append(PageBreak())
         story.append(Paragraph('ARTÍCULOS', self.style_h3()))
         text = 'Número de artículos: ' + str(len(articulos))
@@ -164,6 +159,8 @@ class InformePDF:
     # -------------------------------------------------------------------------
 
     def show_libros(self, story, libros):
+        if not libros:
+            return
         story.append(PageBreak())
         story.append(Paragraph('LIBROS', self.style_h3()))
         text = 'Número de libros: ' + str(len(libros))
@@ -190,6 +187,8 @@ class InformePDF:
     # -------------------------------------------------------------------------
 
     def show_capitulos(self, story, capitulos):
+        if not capitulos:
+            return
         story.append(PageBreak())
         story.append(Paragraph('CAPÍTULOS DE LIBROS', self.style_h3()))
         text = 'Número de capítulos de libros: ' + str(len(capitulos))
@@ -221,6 +220,8 @@ class InformePDF:
     # -------------------------------------------------------------------------
 
     def show_congresos(self, story, congresos):
+        if not congresos:
+            return
         story.append(PageBreak())
         story.append(Paragraph('COMUNICACIONES EN CONGRESOS', self.style_h3()))
         text = 'Número de comunicaciones en congresos: ' + str(len(congresos))
@@ -254,6 +255,8 @@ class InformePDF:
     # -------------------------------------------------------------------------
 
     def show_proyectos(self, story, proyectos):
+        if not proyectos:
+            return
         story.append(PageBreak())
         story.append(Paragraph('PROYECTOS ACTIVOS', self.style_h3()))
         text = 'Número de proyectos activos: ' + str(len(proyectos))
@@ -282,6 +285,8 @@ class InformePDF:
     # -------------------------------------------------------------------------
 
     def show_convenios(self, story, convenios):
+        if not convenios:
+            return
         story.append(PageBreak())
         story.append(Paragraph('CONVENIOS ACTIVOS', self.style_h3()))
         text = 'Número de convenios activos: ' + str(len(convenios))
@@ -310,6 +315,8 @@ class InformePDF:
     # -------------------------------------------------------------------------
 
     def show_tesis(self, story, tesis):
+        if not tesis:
+            return
         story.append(PageBreak())
         story.append(Paragraph('TESIS DOCTORALES', self.style_h3()))
         text = 'Número de tesis doctorales: ' + str(len(tesis))
@@ -343,6 +350,8 @@ class InformePDF:
     # -------------------------------------------------------------------------
 
     def show_patentes(self, story, patentes):
+        if not patentes:
+            return
         story.append(PageBreak())
         story.append(Paragraph('PROPIEDAD INTELECTUAL', self.style_h3()))
         text = 'Número de Propiedades Intelectuales: ' + str(len(patentes))
