@@ -23,12 +23,9 @@
 #
 
 from core.models import UserProfile
-from core.ws_utils import CachedWS as ws
 from cvn.models import (Articulo, Libro, Capitulo, Congreso, Proyecto,
                         Convenio, TesisDoctoral, Patente)
 from cvn.utils import isdigit
-from django.conf import settings as st
-from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand, CommandError
 from resumen_csv import ResumenCSV
 from informe_pdf import InformePDF
