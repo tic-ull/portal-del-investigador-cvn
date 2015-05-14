@@ -71,18 +71,18 @@ class Command(BaseCommand):
         self.check_args(options)
         year = int(options['year'])
         unit_id = [int(options['id'])] if type(options['id']) is str else None
-        model = None
         if options['type'] == 'a':
-            self.model_type = 'area'
+            model_type = 'area'
         else:
-            self.model_type = 'department'
+            model_type = 'department'
         if options['format'] == 'pdf':
-            self.generator = InformePDF
+            generator = InformePDF
         elif options['format'] == 'icsv':
-            self.generator = InformeCSV
+            generator = InformeCSV
         else:
-            self.generator = ResumenCSV
-        self.create_reports(year, unit_id, model)
+            generator = ResumenCSV
+        self.generator = generator(year, model_type)
+        self.create_reports(unit_id, year, model_type)
 
     def check_args(self, options):
         if not isdigit(options['year']):
@@ -97,9 +97,9 @@ class Command(BaseCommand):
         if not f == 'pdf' and not f == 'csv' and not f == 'icsv':
             raise CommandError("Option `--format=X` must be pdf, csv or icsv")
 
-    def create_reports(self, year, unit_id, model):
+    def create_reports(self, unit_id, year, model_type):
         if unit_id is None:
-            if self.model_type == 'department':
+            if model_type == 'department':
                 units = ws.get(st.WS_DEPARTMENTS_AND_MEMBERS_YEAR % year)
             else:
                 units = ws.get(st.WS_AREAS_AND_MEMBERS_YEAR % year)
@@ -109,7 +109,7 @@ class Command(BaseCommand):
                 self.create_report(year, unit)
         else:
             for code in unit_id:
-                if self.model_type == 'department':
+                if model_type == 'department':
                     unit = ws.get(st.WS_DEPARTMENTS_AND_MEMBERS_UNIT_YEAR % (
                         code, year))
                 else:
@@ -125,12 +125,11 @@ class Command(BaseCommand):
         print 'Generando Informe para [%s] %s ... ' % (
             unit['unidad']['codigo'], unit['unidad']['nombre'])
         if investigadores:
-            informe = self.generator(
-                year, unit['unidad']['nombre'], investigadores, articulos,
-                libros, capitulos_libro, congresos, proyectos, convenios, tesis,
-                patentes, self.model_type
+            self.generator.go(
+                unit['unidad']['nombre'], investigadores,articulos, libros,
+                capitulos_libro, congresos, proyectos, convenios, tesis,
+                patentes
             )
-            informe.go()
             print 'OK\n'
         else:
             print 'ERROR: No hay Investigadores\n'

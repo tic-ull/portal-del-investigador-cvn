@@ -89,11 +89,10 @@ class Command(BaseCommand):
          libros, capitulos_libro, congresos, proyectos,
          convenios, tesis, patentes) = self.get_data(year, nifs)
         if investigadores:
-            informe = self.generator(year, title, investigadores,
-                                     articulos, libros, capitulos_libro,
-                                     congresos, proyectos, convenios, tesis,
-                                     patentes, 'list')
-            informe.go()
+            informe = self.generator(year, 'list')
+            informe.go(title, investigadores, articulos, libros,
+                       capitulos_libro, congresos, proyectos, convenios, tesis,
+                       patentes)
             print 'OK\n'
         else:
             print 'ERROR: No hay Investigadores\n'

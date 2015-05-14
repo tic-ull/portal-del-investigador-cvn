@@ -51,20 +51,8 @@ class InformePDF:
     PAGE_WIDTH = A4[0]
     VIOLET_ULL = colors.HexColor('#7A3B7A')
 
-    def __init__(self, year, unidad, investigadores, articulos, libros,
-                 capitulos_libro, congresos, proyectos, convenios, tesis,
-                 patentes, model_type):
+    def __init__(self, year, model_type):
         self.year = str(year)
-        self.unidad = unidad
-        self.investigadores = investigadores
-        self.articulos = articulos
-        self.libros = libros
-        self.capitulosLibro = capitulos_libro
-        self.congresos = congresos
-        self.proyectos = proyectos
-        self.convenios = convenios
-        self.tesis = tesis
-        self.patentes = patentes
         self.model_type = model_type
         self.set_logo()
 
@@ -82,33 +70,34 @@ class InformePDF:
         self.logo_width *= logo_scale
         self.logo_height *= logo_scale
 
-    def go(self):
+    def go(self, team_name, investigadores, articulos, libros, capitulos,
+           congresos, proyectos, convenios, tesis, patentes):
+        self.team_name = team_name
         path_file = "%s/%s/%s/" % (st_cvn.REPORTS_PDF_ROOT, self.model_type,
                                    self.year)
         if not os.path.isdir(path_file):
             os.makedirs(path_file)
-        file_name = slugify(
-            self.year + "-" + self.unidad) + ".pdf"
+        file_name = slugify(self.year + "-" + self.team_name) + ".pdf"
         doc = SimpleDocTemplate(path_file + file_name)
         story = [Spacer(1, 3 * self.DEFAULT_SPACER)]
-        if self.investigadores:
-            self.showInvestigadores(story)
-        if self.articulos:
-            self.showArticulos(story)
-        if self.libros:
-            self.showLibros(story)
-        if self.capitulosLibro:
-            self.showCapitulosLibro(story)
-        if self.congresos:
-            self.showCongresos(story)
-        if self.proyectos:
-            self.showProyectos(story)
-        if self.convenios:
-            self.showConvenios(story)
-        if self.tesis:
-            self.showTesis(story)
-        if self.patentes:
-            self.showPatentes(story)
+        if investigadores:
+            self.showInvestigadores(story, investigadores)
+        if articulos:
+            self.showArticulos(story, articulos)
+        if libros:
+            self.showLibros(story, libros)
+        if capitulos:
+            self.showCapitulosLibro(story, capitulos)
+        if congresos:
+            self.showCongresos(story, congresos)
+        if proyectos:
+            self.showProyectos(story, proyectos)
+        if convenios:
+            self.showConvenios(story, convenios)
+        if tesis:
+            self.showTesis(story, tesis)
+        if patentes:
+            self.showPatentes(story, patentes)
         doc.build(story, onFirstPage=self.firstPage,
                   onLaterPages=self.laterPages)
 
@@ -116,16 +105,16 @@ class InformePDF:
     # PROCESADO DE LOS DATOS
     # -------------------------------------------------------------------------
 
-    def showInvestigadores(self, story):
+    def showInvestigadores(self, story, investigadores):
         story.append(Paragraph('INVESTIGADORES', self.styleH3()))
-        text = 'Número de investigadores: ' + str(len(self.investigadores))
+        text = 'Número de investigadores: ' + str(len(investigadores))
         story.append(Paragraph(text, self.styleN()))
         story.append(Spacer(1, 1 * self.DEFAULT_SPACER))
-        story.append(self.tableInvestigadores())
+        story.append(self.tableInvestigadores(investigadores))
 
-    def tableInvestigadores(self):
+    def tableInvestigadores(self, investigadores):
         table_inv = []
-        for inv in self.investigadores:
+        for inv in investigadores:
             table_inv.append([
                 inv['cod_persona__nombre'],
                 (inv['cod_persona__apellido1'] + ' ' +
@@ -139,15 +128,15 @@ class InformePDF:
 
     # -------------------------------------------------------------------------
 
-    def showArticulos(self, story):
+    def showArticulos(self, story, articulos):
         story.append(PageBreak())
         story.append(Paragraph('ARTÍCULOS', self.styleH3()))
-        text = 'Número de artículos: ' + str(len(self.articulos))
+        text = 'Número de artículos: ' + str(len(articulos))
         story.append(Paragraph(text, self.styleN()))
-        self.listArticulos(story)
+        self.listArticulos(story, articulos)
 
-    def listArticulos(self, story):
-        for art in self.articulos:
+    def listArticulos(self, story, articulos):
+        for art in articulos:
             text = ""
             if art.fecha:
                 text += u"<b>Fecha:</b> %s <br/>" % (
@@ -174,15 +163,15 @@ class InformePDF:
 
     # -------------------------------------------------------------------------
 
-    def showLibros(self, story):
+    def showLibros(self, story, libros):
         story.append(PageBreak())
         story.append(Paragraph('LIBROS', self.styleH3()))
-        text = 'Número de libros: ' + str(len(self.libros))
+        text = 'Número de libros: ' + str(len(libros))
         story.append(Paragraph(text, self.styleN()))
-        self.listLibros(story)
+        self.listLibros(story, libros)
 
-    def listLibros(self, story):
-        for libro in self.libros:
+    def listLibros(self, story, libros):
+        for libro in libros:
             text = ""
             if libro.fecha:
                 text += u"<b>Fecha:</b> %s <br/>" % (
@@ -200,17 +189,15 @@ class InformePDF:
 
     # -------------------------------------------------------------------------
 
-    def showCapitulosLibro(self, story):
+    def showCapitulosLibro(self, story, capitulos):
         story.append(PageBreak())
         story.append(Paragraph('CAPÍTULOS DE LIBROS', self.styleH3()))
-        text = 'Número de capítulos de libros: ' + str(
-            len(self.capitulosLibro)
-        )
+        text = 'Número de capítulos de libros: ' + str(len(capitulos))
         story.append(Paragraph(text, self.styleN()))
-        self.listCapitulosLibro(story)
+        self.listCapitulosLibro(story, capitulos)
 
-    def listCapitulosLibro(self, story):
-        for capLibro in self.capitulosLibro:
+    def listCapitulosLibro(self, story, capitulos):
+        for capLibro in capitulos:
             text = ""
             if capLibro.fecha:
                 text += u"<b>Fecha:</b> %s <br/>" % (
@@ -233,18 +220,16 @@ class InformePDF:
 
     # -------------------------------------------------------------------------
 
-    def showCongresos(self, story):
+    def showCongresos(self, story, congresos):
         story.append(PageBreak())
         story.append(Paragraph('COMUNICACIONES EN CONGRESOS', self.styleH3()))
-        text = 'Número de comunicaciones en congresos: ' + str(
-            len(self.congresos)
-        )
+        text = 'Número de comunicaciones en congresos: ' + str(len(congresos))
         story.append(Paragraph(text, self.styleN()))
-        self.listCongresos(story)
+        self.listCongresos(story, congresos)
 
-    def listCongresos(self, story):
+    def listCongresos(self, story, congresos):
         translation.activate('es')
-        for congreso in self.congresos:
+        for congreso in congresos:
             text = ""
             if congreso.titulo:
                 text += u"<b>%s</b><br/>" % congreso.titulo
@@ -268,17 +253,15 @@ class InformePDF:
 
     # -------------------------------------------------------------------------
 
-    def showProyectos(self, story):
+    def showProyectos(self, story, proyectos):
         story.append(PageBreak())
         story.append(Paragraph('PROYECTOS ACTIVOS', self.styleH3()))
-        text = 'Número de proyectos activos: ' + str(
-            len(self.proyectos)
-        )
+        text = 'Número de proyectos activos: ' + str(len(proyectos))
         story.append(Paragraph(text, self.styleN()))
-        self.listProyectos(story)
+        self.listProyectos(story, proyectos)
 
-    def listProyectos(self, story):
-        for proy in self.proyectos:
+    def listProyectos(self, story, proyectos):
+        for proy in proyectos:
             text = ""
             if proy.titulo:
                 text += u"<b>%s</b><br/>" % proy.titulo
@@ -298,17 +281,15 @@ class InformePDF:
 
     # -------------------------------------------------------------------------
 
-    def showConvenios(self, story):
+    def showConvenios(self, story, convenios):
         story.append(PageBreak())
         story.append(Paragraph('CONVENIOS ACTIVOS', self.styleH3()))
-        text = 'Número de convenios activos: ' + str(
-            len(self.convenios)
-        )
+        text = 'Número de convenios activos: ' + str(len(convenios))
         story.append(Paragraph(text, self.styleN()))
-        self.listConvenios(story)
+        self.listConvenios(story, convenios)
 
-    def listConvenios(self, story):
-        for conv in self.convenios:
+    def listConvenios(self, story, convenios):
+        for conv in convenios:
             text = ""
             if conv.titulo:
                 text += u"<b>%s</b><br/>" % conv.titulo
@@ -328,17 +309,15 @@ class InformePDF:
 
     # -------------------------------------------------------------------------
 
-    def showTesis(self, story):
+    def showTesis(self, story, tesis):
         story.append(PageBreak())
         story.append(Paragraph('TESIS DOCTORALES', self.styleH3()))
-        text = 'Número de tesis doctorales: ' + str(
-            len(self.tesis)
-        )
+        text = 'Número de tesis doctorales: ' + str(len(tesis))
         story.append(Paragraph(text, self.styleN()))
-        self.listTesis(story)
+        self.listTesis(story, tesis)
 
-    def listTesis(self, story):
-        for t in self.tesis:
+    def listTesis(self, story, tesis):
+        for t in tesis:
             text = ""
             if t.titulo:
                 text += u"<b>%s</b><br/>" % t.titulo
@@ -363,16 +342,15 @@ class InformePDF:
 
     # -------------------------------------------------------------------------
 
-    def showPatentes(self, story):
+    def showPatentes(self, story, patentes):
         story.append(PageBreak())
         story.append(Paragraph('PROPIEDAD INTELECTUAL', self.styleH3()))
-        text = 'Número de Propiedades Intelectuales: ' + str(
-            len(self.patentes))
+        text = 'Número de Propiedades Intelectuales: ' + str(len(patentes))
         story.append(Paragraph(text, self.styleN()))
-        self.listPatentes(story)
+        self.listPatentes(story, patentes)
 
-    def listPatentes(self, story):
-        for pat in self.patentes:
+    def listPatentes(self, story, patentes):
+        for pat in patentes:
             text = ""
             if pat.titulo:
                 text += u"<b>%s</b><br/>" % pat.titulo
@@ -412,17 +390,14 @@ class InformePDF:
         canvas.setFont(self.DEFAULT_FONT, self.PAGE_NUMBERS_SIZE)
         canvas.drawCentredString(self.PAGE_WIDTH / 2.0,
                                  self.PAGE_NUMBERS_MARGIN,
-                                 u'Página %s - %s' % (
-                                     doc.page,
-                                     self.unidad
-                                 ))
+                                 u'Página %s - %s' % (doc.page, self.team_name))
         canvas.restoreState()
 
     def header(self, canvas):
         canvas.setFont(self.DEFAULT_FONT_BOLD, self.HEADER_FONT_SIZE)
         canvas.setFillColor(self.BLUE_ULL)
         canvas.drawString(self.MARGIN, self.PAGE_HEIGHT - 2 * self.MARGIN,
-                          self.unidad)
+                          self.team_name)
         canvas.drawImage(self.logo_path,
                          self.PAGE_WIDTH - self.MARGIN - self.logo_width,
                          self.PAGE_HEIGHT - self.logo_height - self.MARGIN,

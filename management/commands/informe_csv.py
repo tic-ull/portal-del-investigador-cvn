@@ -40,27 +40,26 @@ def write_producciones(csv_writer, name, producciones, fields):
 
 class InformeCSV:
 
-    def __init__(self, year, unidad, investigadores, articulos, libros,
-                 capitulos_libro, congresos, proyectos, convenios, tesis,
-                 patentes, model_type):
+    def __init__(self, year, model_type):
         self.year = str(year)
-        self.unidad = unidad
+        self.model_type = model_type
+
+    def go(self, team_name, investigadores, articulos, libros, capitulos,
+           congresos, proyectos, convenios, tesis, patentes):
+        self.team_name = team_name
         self.articulos = articulos
         self.libros = libros
-        self.capitulosLibro = capitulos_libro
+        self.capitulosLibro = capitulos
         self.congresos = congresos
         self.proyectos = proyectos
         self.convenios = convenios
         self.tesis = tesis
         self.patentes = patentes
-        self.model_type = model_type
-
-    def go(self):
         path = "%s/%s/%s/" % (st_cvn.REPORTS_ICSV_ROOT, self.model_type,
                               self.year)
         if not os.path.isdir(path):
             os.makedirs(path)
-        file_name = slugify(self.year + "-" + self.unidad) + ".csv"
+        file_name = slugify(self.year + "-" + self.team_name) + ".csv"
         file_path = os.path.join(path, file_name)
         with open(file_path, 'wb') as csvfile:
             csv_writer = csv.writer(csvfile, dialect=st.CSV_DIALECT)
