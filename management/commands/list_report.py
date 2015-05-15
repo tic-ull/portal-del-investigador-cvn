@@ -25,10 +25,10 @@
 from optparse import make_option
 from cvn.utils import isdigit
 from django.core.management.base import BaseCommand, CommandError
-from resumen_csv import ResumenCSV
-from informe_pdf import InformePDF
-from informe_csv import InformeCSV
-from reports import ListReport
+from cvn.reports.resumen_csv import ResumenCSV
+from cvn.reports.informe_pdf import InformePDF
+from cvn.reports.informe_csv import InformeCSV
+from cvn.reports.reports import ListReport
 
 
 class Command(BaseCommand):
