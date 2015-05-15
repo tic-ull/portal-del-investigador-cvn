@@ -22,15 +22,13 @@
 #    <http://www.gnu.org/licenses/>.
 #
 
-from core.models import UserProfile
-from cvn.models import (Articulo, Libro, Capitulo, Congreso, Proyecto,
-                        Convenio, TesisDoctoral, Patente)
+from optparse import make_option
 from cvn.utils import isdigit
 from django.core.management.base import BaseCommand, CommandError
 from resumen_csv import ResumenCSV
 from informe_pdf import InformePDF
 from informe_csv import InformeCSV
-from optparse import make_option
+from reports import ListReport
 
 
 class Command(BaseCommand):
@@ -68,54 +66,22 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.check_args(options)
         if options['format'] == 'pdf':
-            self.generator = InformePDF
+            generator_cls = InformePDF
         elif options['format'] == 'icsv':
-            self.generator = InformeCSV
+            generator_cls = InformeCSV
         else:
-            self.generator = ResumenCSV
+            generator_cls = ResumenCSV
         nifs = options["list"].split(",")
-        self.create_report(int(options['year']), nifs, options['title'])
+        year = int(options['year'])
+        generator = generator_cls(year, 'list')
+        report = ListReport(generator)
+        report.create_report(year, nifs, options['title'])
 
-    def check_args(self, options):
+    @staticmethod
+    def check_args(options):
         f = options['format']
         if not f == 'pdf' and not f == 'csv' and not f == 'icsv':
             raise CommandError("Option `--format=X` must be pdf, csv or icsv")
         if not isdigit(options['year']):
             raise CommandError(
                 "Option `--year=YYYY` must exist and be a number")
-
-    def create_report(self, year, nifs, title):
-        (investigadores, articulos,
-         libros, capitulos_libro, congresos, proyectos,
-         convenios, tesis, patentes) = self.get_data(year, nifs)
-        if investigadores:
-            informe = self.generator(year, 'list')
-            informe.go(title, investigadores, articulos, libros,
-                       capitulos_libro, congresos, proyectos, convenios, tesis,
-                       patentes)
-            print 'OK\n'
-        else:
-            print 'ERROR: No hay Investigadores\n'
-
-    def get_data(self, year, nifs):
-        investigadores, usuarios = self.get_investigadores(nifs)
-        articulos = Articulo.objects.byUsuariosYear(usuarios, year)
-        libros = Libro.objects.byUsuariosYear(usuarios, year)
-        capitulos_libro = Capitulo.objects.byUsuariosYear(usuarios, year)
-        congresos = Congreso.objects.byUsuariosYear(usuarios, year)
-        proyectos = Proyecto.objects.byUsuariosYear(usuarios, year)
-        convenios = Convenio.objects.byUsuariosYear(usuarios, year)
-        tesis = TesisDoctoral.objects.byUsuariosYear(usuarios, year)
-        patentes = Patente.objects.byUsuariosYear(usuarios, year)
-        return (investigadores, articulos,
-                libros, capitulos_libro, congresos, proyectos,
-                convenios, tesis, patentes)
-
-    def get_investigadores(self, nifs):
-        profiles = UserProfile.objects.filter(documento__in=nifs)
-        investigadores = [{'cod_persona__nombre': p.user.first_name,
-                           'cod_persona__apellido1': p.user.last_name,
-                           'cod_persona__apellido2': '',
-                           'cod_cce__descripcion': ''}
-                          for p in profiles]
-        return investigadores, profiles
