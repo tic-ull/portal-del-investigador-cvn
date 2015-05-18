@@ -72,7 +72,7 @@ class UnitReport(Report):
         return self.Unit.objects.values_list('code', flat=True)
 
     def get_investigadores(self, unit, year, title):
-        unit_content = ws.get(self.WS_URL % (unit, year))
+        unit_content = ws.get(self.WS_URL % (unit, year))[0]
         investigadores = list()
         usuarios = list()
         for inv in unit_content['miembros']:
@@ -84,7 +84,7 @@ class UnitReport(Report):
             except ObjectDoesNotExist:
                 pass
         if title is None:
-            title = unit['unidad']['nombre']
+            title = unit_content['unidad']['nombre']
         return investigadores, usuarios, title
 
     @staticmethod
