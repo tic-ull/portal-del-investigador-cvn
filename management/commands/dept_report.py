@@ -33,6 +33,7 @@ from django.core.management.base import BaseCommand, CommandError
 from cvn.reports.resumen_csv import ResumenCSV
 from cvn.reports.informe_pdf import InformePDF
 from cvn.reports.informe_csv import InformeCSV
+from cvn.reports.reports import DeptReport, AreaReport
 from optparse import make_option
 
 
@@ -71,18 +72,23 @@ class Command(BaseCommand):
         self.check_args(options)
         year = int(options['year'])
         unit_id = [int(options['id'])] if type(options['id']) is str else None
+        if options['format'] == 'pdf':
+            generator_cls = InformePDF
+        elif options['format'] == 'icsv':
+            generator_cls = InformeCSV
+        else:
+            generator_cls = ResumenCSV
         if options['type'] == 'a':
+            reports_cls = AreaReport
             model_type = 'area'
         else:
+            reports_cls = DeptReport
             model_type = 'department'
-        if options['format'] == 'pdf':
-            generator = InformePDF
-        elif options['format'] == 'icsv':
-            generator = InformeCSV
-        else:
-            generator = ResumenCSV
-        self.generator = generator(year, model_type)
-        self.create_reports(unit_id, year, model_type)
+        generator = generator_cls(year, model_type)
+        report = reports_cls(generator)
+        report.create_reports(year, unit_id)
+        #self.generator = generator_cls(year, model_type)
+        #self.create_reports(unit_id, year, model_type)
 
     def check_args(self, options):
         if not isdigit(options['year']):
