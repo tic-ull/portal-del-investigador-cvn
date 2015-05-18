@@ -66,16 +66,14 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.check_args(options)
         if options['format'] == 'pdf':
-            generator_cls = InformePDF
+            Generator = InformePDF
         elif options['format'] == 'icsv':
-            generator_cls = InformeCSV
+            Generator = InformeCSV
         else:
-            generator_cls = ResumenCSV
+            Generator = ResumenCSV
         nifs = options["list"].split(",")
-        year = int(options['year'])
-        generator = generator_cls(year, 'list')
-        report = ListReport(generator)
-        report.create_report(year, nifs, options['title'])
+        report = ListReport(Generator, int(options['year']))
+        report.create_report(nifs, options['title'])
 
     @staticmethod
     def check_args(options):

@@ -67,20 +67,17 @@ class Command(BaseCommand):
         year = int(options['year'])
         unit_id = [int(options['id'])] if type(options['id']) is str else None
         if options['format'] == 'pdf':
-            generator_cls = InformePDF
+            Generator = InformePDF
         elif options['format'] == 'icsv':
-            generator_cls = InformeCSV
+            Generator = InformeCSV
         else:
-            generator_cls = ResumenCSV
+            Generator = ResumenCSV
         if options['type'] == 'a':
-            reports_cls = AreaReport
-            model_type = 'area'
+            Report = AreaReport
         else:
-            reports_cls = DeptReport
-            model_type = 'department'
-        generator = generator_cls(year, model_type)
-        report = reports_cls(generator)
-        report.create_reports(year, unit_id)
+            Report = DeptReport
+        report = Report(Generator, year)
+        report.create_reports(unit_id)
 
     def check_args(self, options):
         if not isdigit(options['year']):

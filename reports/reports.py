@@ -10,41 +10,43 @@ from core.models import UserProfile
 from core.ws_utils import CachedWS as ws
 
 
-class Report:
+class BaseReport:
 
     __metaclass__ = ABCMeta
 
-    def __init__(self, generator):
-        self.generator = generator
+    report_type = None
+
+    def __init__(self, generator_cls, year):
+        self.year = year
+        self.generator = generator_cls(self.year, self.report_type)
 
     def get_all_units(self):
         # Override this if you want to call create_reports with empty units
         return []
 
-    def get_investigadores(self, unit, year, title):
+    def get_investigadores(self, unit, title):
         return NotImplemented
 
-    def create_reports(self, year, units=None):
+    def create_reports(self, units=None):
         if units is None:
             units = self.get_all_units()
         for unit in units:
-            self.create_report(year, unit)
+            self.create_report(unit)
 
-    def create_report(self, year, unit, title=None):
+    def create_report(self, unit, title=None):
         try:
-            inv, profiles, unit_name = self.get_investigadores(
-                unit, year, title)
+            inv, profiles, unit_name = self.get_investigadores(unit, title)
         except UnitDoesNotExist:
             print('ERROR: La unidad ' + unit + ' no existe\n')
             return
-        articulos = Articulo.objects.byUsuariosYear(profiles, year)
-        libros = Libro.objects.byUsuariosYear(profiles, year)
-        capitulos_libro = Capitulo.objects.byUsuariosYear(profiles, year)
-        congresos = Congreso.objects.byUsuariosYear(profiles, year)
-        proyectos = Proyecto.objects.byUsuariosYear(profiles, year)
-        convenios = Convenio.objects.byUsuariosYear(profiles, year)
-        tesis = TesisDoctoral.objects.byUsuariosYear(profiles, year)
-        patentes = Patente.objects.byUsuariosYear(profiles, year)
+        articulos = Articulo.objects.byUsuariosYear(profiles, self.year)
+        libros = Libro.objects.byUsuariosYear(profiles, self.year)
+        capitulos_libro = Capitulo.objects.byUsuariosYear(profiles, self.year)
+        congresos = Congreso.objects.byUsuariosYear(profiles, self.year)
+        proyectos = Proyecto.objects.byUsuariosYear(profiles, self.year)
+        convenios = Convenio.objects.byUsuariosYear(profiles, self.year)
+        tesis = TesisDoctoral.objects.byUsuariosYear(profiles, self.year)
+        patentes = Patente.objects.byUsuariosYear(profiles, self.year)
         print('Generando Informe para ' + unit_name + "...\n")
         if inv:
             self.generator.go(unit_name, inv,articulos, libros, capitulos_libro,
@@ -54,9 +56,11 @@ class Report:
             print('ERROR: No hay Investigadores\n')
 
 
-class ListReport(Report):
+class ListReport(BaseReport):
 
-    def get_investigadores(self, unit, year, title):
+    report_type = 'list'
+
+    def get_investigadores(self, unit, title):
         profiles = UserProfile.objects.filter(documento__in=unit)
         investigadores = [{'cod_persona__nombre': p.user.first_name,
                            'cod_persona__apellido1': p.user.last_name,
@@ -68,7 +72,7 @@ class ListReport(Report):
         return investigadores, profiles, title
 
 
-class UnitReport(Report):
+class UnitReport(BaseReport):
 
     Unit = None
     WS_URL = None
@@ -76,8 +80,8 @@ class UnitReport(Report):
     def get_all_units(self):
         return self.Unit.objects.values_list('code', flat=True)
 
-    def get_investigadores(self, unit, year, title):
-        unit_content = ws.get(self.WS_URL % (unit, year))[0]
+    def get_investigadores(self, unit, title):
+        unit_content = ws.get(self.WS_URL % (unit, self.year))[0]
         if unit_content["unidad"] == {}:
             raise UnitDoesNotExist
         investigadores = []
@@ -108,11 +112,13 @@ class UnitReport(Report):
 
 
 class DeptReport(UnitReport):
+    report_type = 'department'
     Unit = Department
     WS_URL = st.WS_DEPARTMENTS_AND_MEMBERS_UNIT_YEAR
 
 
 class AreaReport(UnitReport):
+    report_type = 'area'
     Unit = Area
     WS_URL = st.WS_AREAS_AND_MEMBERS_UNIT_YEAR
 
