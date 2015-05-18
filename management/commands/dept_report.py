@@ -22,13 +22,7 @@
 #    <http://www.gnu.org/licenses/>.
 #
 
-from core.models import UserProfile
-from core.ws_utils import CachedWS as ws
-from cvn.models import (Articulo, Libro, Capitulo, Congreso, Proyecto,
-                        Convenio, TesisDoctoral, Patente)
 from cvn.utils import isdigit
-from django.conf import settings as st
-from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand, CommandError
 from cvn.reports.generators import ResumenCSV
 from cvn.reports.generators import InformePDF
@@ -87,8 +81,6 @@ class Command(BaseCommand):
         generator = generator_cls(year, model_type)
         report = reports_cls(generator)
         report.create_reports(year, unit_id)
-        #self.generator = generator_cls(year, model_type)
-        #self.create_reports(unit_id, year, model_type)
 
     def check_args(self, options):
         if not isdigit(options['year']):
@@ -102,78 +94,3 @@ class Command(BaseCommand):
         f = options['format']
         if not f == 'pdf' and not f == 'csv' and not f == 'icsv':
             raise CommandError("Option `--format=X` must be pdf, csv or icsv")
-
-    def create_reports(self, unit_id, year, model_type):
-        if unit_id is None:
-            if model_type == 'department':
-                units = ws.get(st.WS_DEPARTMENTS_AND_MEMBERS_YEAR % year)
-            else:
-                units = ws.get(st.WS_AREAS_AND_MEMBERS_YEAR % year)
-            if units is None:
-                raise IOError('WS does not work')
-            for unit in units:
-                self.create_report(year, unit)
-        else:
-            for code in unit_id:
-                if model_type == 'department':
-                    unit = ws.get(st.WS_DEPARTMENTS_AND_MEMBERS_UNIT_YEAR % (
-                        code, year))
-                else:
-                    unit = ws.get(st.WS_AREAS_AND_MEMBERS_UNIT_YEAR % (
-                        code, year))
-                if unit is not None:
-                    self.create_report(year, unit.pop())
-
-    def create_report(self, year, unit):
-        (investigadores, articulos,
-         libros, capitulos_libro, congresos, proyectos,
-         convenios, tesis, patentes) = self.get_data(year, unit)
-        print 'Generando Informe para [%s] %s ... ' % (
-            unit['unidad']['codigo'], unit['unidad']['nombre'])
-        if investigadores:
-            self.generator.go(
-                unit['unidad']['nombre'], investigadores,articulos, libros,
-                capitulos_libro, congresos, proyectos, convenios, tesis,
-                patentes
-            )
-            print 'OK\n'
-        else:
-            print 'ERROR: No hay Investigadores\n'
-
-    def get_data(self, year, unit):
-        investigadores, usuarios = self.get_investigadores(unit)
-        articulos = Articulo.objects.byUsuariosYear(usuarios, year)
-        libros = Libro.objects.byUsuariosYear(usuarios, year)
-        capitulos_libro = Capitulo.objects.byUsuariosYear(usuarios, year)
-        congresos = Congreso.objects.byUsuariosYear(usuarios, year)
-        proyectos = Proyecto.objects.byUsuariosYear(usuarios, year)
-        convenios = Convenio.objects.byUsuariosYear(usuarios, year)
-        tesis = TesisDoctoral.objects.byUsuariosYear(usuarios, year)
-        patentes = Patente.objects.byUsuariosYear(usuarios, year)
-        return (investigadores, articulos,
-                libros, capitulos_libro, congresos, proyectos,
-                convenios, tesis, patentes)
-
-    def get_investigadores(self, unit):
-        investigadores = list()
-        usuarios = list()
-        for inv in unit['miembros']:
-            inv = self.check_inves(inv)
-            investigadores.append(inv)
-            try:
-                user = UserProfile.objects.get(rrhh_code=inv['cod_persona'])
-                usuarios.append(user)
-            except ObjectDoesNotExist:
-                pass
-        return investigadores, usuarios
-
-    def check_inves(self, inv):
-        if 'cod_persona__nombre' not in inv:
-            inv['cod_persona__nombre'] = ''
-        if 'cod_persona__apellido1' not in inv:
-            inv['cod_persona__apellido1'] = ''
-        if 'cod_persona__apellido2' not in inv:
-            inv['cod_persona__apellido2'] = ''
-        if 'cod_cce__descripcion' not in inv:
-            inv['cod_cce_descripcion'] = ''
-        return inv
