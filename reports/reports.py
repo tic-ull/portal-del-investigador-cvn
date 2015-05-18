@@ -31,7 +31,12 @@ class Report:
             self.create_report(year, unit)
 
     def create_report(self, year, unit, title=None):
-        inv, profiles, unit_name = self.get_investigadores(unit, year, title)
+        try:
+            inv, profiles, unit_name = self.get_investigadores(
+                unit, year, title)
+        except UnitDoesNotExist:
+            print('ERROR: La unidad ' + unit + ' no existe\n')
+            return
         articulos = Articulo.objects.byUsuariosYear(profiles, year)
         libros = Libro.objects.byUsuariosYear(profiles, year)
         capitulos_libro = Capitulo.objects.byUsuariosYear(profiles, year)
@@ -73,8 +78,10 @@ class UnitReport(Report):
 
     def get_investigadores(self, unit, year, title):
         unit_content = ws.get(self.WS_URL % (unit, year))[0]
-        investigadores = list()
-        usuarios = list()
+        if unit_content["unidad"] == {}:
+            raise UnitDoesNotExist
+        investigadores = []
+        usuarios = []
         for inv in unit_content['miembros']:
             inv = self.check_inves(inv)
             investigadores.append(inv)
@@ -108,3 +115,7 @@ class DeptReport(UnitReport):
 class AreaReport(UnitReport):
     Unit = Area
     WS_URL = st.WS_AREAS_AND_MEMBERS_UNIT_YEAR
+
+
+class UnitDoesNotExist(Exception):
+    pass
