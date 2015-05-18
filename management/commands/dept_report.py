@@ -30,9 +30,9 @@ from cvn.utils import isdigit
 from django.conf import settings as st
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand, CommandError
-from cvn.reports.resumen_csv import ResumenCSV
-from cvn.reports.informe_pdf import InformePDF
-from cvn.reports.informe_csv import InformeCSV
+from cvn.reports.generators import ResumenCSV
+from cvn.reports.generators import InformePDF
+from cvn.reports.generators import InformeCSV
 from cvn.reports.reports import DeptReport, AreaReport
 from optparse import make_option
 
