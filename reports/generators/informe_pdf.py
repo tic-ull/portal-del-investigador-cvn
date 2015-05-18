@@ -23,6 +23,7 @@
 #
 
 from PIL import Image
+from xml.sax.saxutils import escape
 from cvn import settings as st_cvn
 from django.utils import translation
 from django.utils.translation import ugettext
@@ -138,7 +139,7 @@ class InformePDF:
                     art.fecha.strftime("%d/%m/%Y")
                 )
             if art.titulo:
-                text += u"<b>%s</b><br/>" % art.titulo
+                text += u"<b>%s</b><br/>" % escape(art.titulo)
             if art.autores:
                 text += u"%s<br/>" % art.autores
             if art.nombre_publicacion:
