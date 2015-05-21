@@ -5,7 +5,6 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings as st
 from cvn.models import (Articulo, Libro, Capitulo, Congreso, Proyecto,
                         Convenio, TesisDoctoral, Patente)
-from statistics.models import Area, Department
 from core.models import UserProfile
 from core.ws_utils import CachedWS as ws
 
@@ -37,7 +36,8 @@ class BaseReport:
         try:
             inv, profiles, unit_name = self.get_investigadores(unit, title)
         except UnitDoesNotExist:
-            print('ERROR: La unidad ' + unit + ' no existe\n')
+            print('WARNING: La unidad ' + str(unit) + ' no existe el año '
+                  + str(self.year) + '\n')
             return
         articulos = Articulo.objects.byUsuariosYear(profiles, self.year)
         libros = Libro.objects.byUsuariosYear(profiles, self.year)
@@ -47,7 +47,7 @@ class BaseReport:
         convenios = Convenio.objects.byUsuariosYear(profiles, self.year)
         tesis = TesisDoctoral.objects.byUsuariosYear(profiles, self.year)
         patentes = Patente.objects.byUsuariosYear(profiles, self.year)
-        print('Generando Informe para ' + unit_name + "...\n")
+        print('Generando Informe para ' + unit_name + "... ")
         if inv:
             self.generator.go(unit_name, inv,articulos, libros, capitulos_libro,
                               congresos, proyectos, convenios, tesis, patentes)
@@ -74,14 +74,14 @@ class ListReport(BaseReport):
 
 class UnitReport(BaseReport):
 
-    Unit = None
-    WS_URL = None
+    WS_URL_ALL = None
+    WS_URL_DETAIL = None
 
     def get_all_units(self):
-        return self.Unit.objects.values_list('code', flat=True)
+        return map(lambda x: x['codigo'], ws.get(self.WS_URL_ALL))
 
     def get_investigadores(self, unit, title):
-        unit_content = ws.get(self.WS_URL % (unit, self.year))[0]
+        unit_content = ws.get(self.WS_URL_DETAIL % (unit, self.year))[0]
         if unit_content["unidad"] == {}:
             raise UnitDoesNotExist
         investigadores = []
@@ -113,14 +113,14 @@ class UnitReport(BaseReport):
 
 class DeptReport(UnitReport):
     report_type = 'department'
-    Unit = Department
-    WS_URL = st.WS_DEPARTMENTS_AND_MEMBERS_UNIT_YEAR
+    WS_URL_ALL = st.WS_DEPARTMENTS_ALL
+    WS_URL_DETAIL = st.WS_DEPARTMENTS_AND_MEMBERS_UNIT_YEAR
 
 
 class AreaReport(UnitReport):
     report_type = 'area'
-    Unit = Area
-    WS_URL = st.WS_AREAS_AND_MEMBERS_UNIT_YEAR
+    WS_URL_ALL = st.WS_AREAS_ALL
+    WS_URL_DETAIL = st.WS_AREAS_AND_MEMBERS_UNIT_YEAR
 
 
 class UnitDoesNotExist(Exception):
