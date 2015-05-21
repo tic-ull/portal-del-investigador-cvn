@@ -33,11 +33,11 @@ class BaseReport:
             self.create_report(unit)
 
     def create_report(self, unit, title=None):
-        try:
-            inv, profiles, unit_name = self.get_investigadores(unit, title)
-        except UnitDoesNotExist:
-            print('WARNING: La unidad ' + str(unit) + ' no existe el año '
-                  + str(self.year) + '\n')
+        inv, profiles, unit_name = self.get_investigadores(unit, title)
+        if not inv:
+            print(u'WARNING: No hay Investigadores en la unidad ' + unit_name
+                  + u' en el año ' + unicode(self.year)
+                  + u'. No se generará informe\n')
             return
         articulos = Articulo.objects.byUsuariosYear(profiles, self.year)
         libros = Libro.objects.byUsuariosYear(profiles, self.year)
@@ -47,13 +47,9 @@ class BaseReport:
         convenios = Convenio.objects.byUsuariosYear(profiles, self.year)
         tesis = TesisDoctoral.objects.byUsuariosYear(profiles, self.year)
         patentes = Patente.objects.byUsuariosYear(profiles, self.year)
-        print('Generando Informe para ' + unit_name + "... ")
-        if inv:
-            self.generator.go(unit_name, inv,articulos, libros, capitulos_libro,
-                              congresos, proyectos, convenios, tesis, patentes)
-            print('OK\n')
-        else:
-            print('ERROR: No hay Investigadores\n')
+        print(u'Generando Informe para ' + unit_name + u"...\n")
+        self.generator.go(unit_name, inv,articulos, libros, capitulos_libro,
+                          congresos, proyectos, convenios, tesis, patentes)
 
 
 class ListReport(BaseReport):
@@ -78,12 +74,17 @@ class UnitReport(BaseReport):
     WS_URL_DETAIL = None
 
     def get_all_units(self):
-        return map(lambda x: x['codigo'], ws.get(self.WS_URL_ALL))
+        units = ws.get(self.WS_URL_ALL)
+        # Save unit names bc the ws doesn't return it when there are no members
+        self.unit_names = {}
+        for unit in units:
+            self.unit_names[unit['codigo']] = unit['nombre']
+        return map(lambda x: x['codigo'], units)
 
     def get_investigadores(self, unit, title):
         unit_content = ws.get(self.WS_URL_DETAIL % (unit, self.year))[0]
         if unit_content["unidad"] == {}:
-            raise UnitDoesNotExist
+            return [], [], self.unit_names[unit]
         investigadores = []
         usuarios = []
         for inv in unit_content['miembros']:
@@ -121,7 +122,3 @@ class AreaReport(UnitReport):
     report_type = 'area'
     WS_URL_ALL = st.WS_AREAS_ALL
     WS_URL_DETAIL = st.WS_AREAS_AND_MEMBERS_UNIT_YEAR
-
-
-class UnitDoesNotExist(Exception):
-    pass
