@@ -195,13 +195,14 @@ class CVN(models.Model):
 
     @classmethod
     def _insert_profession(cls, ws_url, user, parser, start_date, end_date):
-        items = ws.get(url=ws_url % user.profile.rrhh_code, use_redis=True)
+        items = ws.get(url=ws_url % user.profile.id_without_control_digit,
+                       use_redis=True)
         counter = 0
         if items is None:
             return counter
         for item in items:
             values = item.copy()
-            cls._cleaned_data_profession(values)
+            cls._clean_data_profession(values)
             if u'f_toma_posesion' in item:
                 initial_date = values[u'f_toma_posesion']
             else:
@@ -215,18 +216,16 @@ class CVN(models.Model):
         return counter
 
     @staticmethod
-    def _cleaned_data_profession(item):
+    def _clean_data_profession(item):
         if u'f_toma_posesion' in item and item[u'f_toma_posesion'] is not None:
-            item[u'f_toma_posesion'] = datetime.datetime.strptime(
-                item[u'f_toma_posesion'], "%d-%m-%Y").date()
+            item[u'f_toma_posesion'] = dateutil.parser.parse(
+                item[u'f_toma_posesion']).date()
 
         if u'f_desde' in item and item[u'f_desde'] is not None:
-            item[u'f_desde'] = datetime.datetime.strptime(
-                item[u'f_desde'], "%d-%m-%Y").date()
+            item[u'f_desde'] = dateutil.parser.parse(item[u'f_desde']).date()
 
         if u'f_hasta' in item and item[u'f_hasta'] is not None:
-            item[u'f_hasta'] = datetime.datetime.strptime(
-                item[u'f_hasta'], "%d-%m-%Y").date()
+            item[u'f_hasta'] = dateutil.parser.parse(item[u'f_hasta']).date()
         else:
             item[u'f_hasta'] = None
 

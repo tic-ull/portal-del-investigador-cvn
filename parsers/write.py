@@ -218,35 +218,35 @@ class CvnXmlWriter:
 
     def add_profession(self, employer=st_cvn.UNIVERSITY,
                        des1_cargo=None, f_toma_posesion=None,
-                       des1_cce=None, f_desde=None,
-                       f_hasta=None, centro=None, departamento=None,
-                       dedicacion=None):
+                       des_cce=None, f_desde=None,
+                       f_hasta=None, centro=None, des1_departamento=None,
+                       des1_dedicacion=None):
 
         values = {'employer': employer,
                   'centre': centro,
-                  'department': departamento,
+                  'department': des1_departamento,
                   'dedication_code': None,
                   'dedication_type': None,
                   }
 
         if des1_cargo is not None:
             values['title'] = des1_cargo
-        elif des1_cce is not None:
-            values['title'] = des1_cce
+        elif des_cce is not None:
+            values['title'] = des_cce
 
         if f_toma_posesion is not None:
             values['start_date'] = f_toma_posesion.strftime(self.DATE_FORMAT)
         elif f_desde is not None:
             values['start_date'] = f_desde.strftime(self.DATE_FORMAT)
 
-        if dedicacion is not None:
+        if des1_dedicacion is not None:
             values['dedication_code'] = (
                 st_cvn.ProfessionCode.CURRENT_TRIMMED.value
                 if f_hasta is None else
                 st_cvn.ProfessionCode.OLD_TRIMMED.value)
             values['dedication_type'] = (
                 st_cvn.DedicationType.TOTAL.value
-                if dedicacion else
+                if des1_dedicacion else
                 st_cvn.DedicationType.PARTIAL.value)
 
         xml = st_cvn.XML_CURRENT_PROFESSION
@@ -263,14 +263,14 @@ class CvnXmlWriter:
             self._remove_parent_node_by_code(
                 xml=profession, node='EntityName', code=centre_code)
 
-        if departamento is None:
+        if des1_departamento is None:
             department_code = (st_cvn.Entity.CURRENT_DEPT.value
                                if f_hasta is None else
                                st_cvn.Entity.DEPT.value)
             self._remove_parent_node_by_code(
                 xml=profession, node='EntityName', code=department_code)
 
-        if dedicacion is None:
+        if des1_dedicacion is None:
             self._remove_node(xml=profession, node='Dedication')
 
         self.xml.append(profession)

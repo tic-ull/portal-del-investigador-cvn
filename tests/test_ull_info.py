@@ -101,7 +101,7 @@ class UllInfoTestCase(TestCase):
         cvn_items = etree.parse(cvn.xml_file).findall('CvnItem')
         ws_content = CachedWS.get(st.WS_ULL_CARGOS % 'example_code')
         for w in ws_content:
-            CVN._cleaned_data_profession(w)
+            CVN._clean_data_profession(w)
             if not u'employer' in w:
                 w[u'employer'] = u'Universidad de La Laguna'
         pdf_content = []
@@ -129,7 +129,7 @@ class UllInfoTestCase(TestCase):
         cvn_items = etree.parse(cvn.xml_file).findall('CvnItem')
         ws_content = CachedWS.get(st.WS_ULL_CONTRATOS % 'example_code')
         for w in ws_content:
-            CVN._cleaned_data_profession(w)
+            CVN._clean_data_profession(w)
             if not u'employer' in w:
                 w[u'employer'] = u'Universidad de La Laguna'
         pdf_content = []
@@ -191,7 +191,7 @@ class UllInfoTestCase(TestCase):
         ws_content = CachedWS.get(st.WS_ULL_CARGOS % 'example_code')
         self.assertEqual(len(ws_content), 1)
         w = ws_content[0]
-        CVN._cleaned_data_profession(w)
+        CVN._clean_data_profession(w)
         if not u'employer' in w:
             w[u'employer'] = u'Universidad de La Laguna'
         self.assertEqual(cmp(item, w), 0)
@@ -213,7 +213,7 @@ class UllInfoTestCase(TestCase):
         ws_content = CachedWS.get(st.WS_ULL_CONTRATOS % 'example_code')
         self.assertEqual(len(ws_content), 1)
         w = ws_content[0]
-        CVN._cleaned_data_profession(w)
+        CVN._clean_data_profession(w)
         if not u'employer' in w:
             w[u'employer'] = u'Universidad de La Laguna'
         self.assertEqual(cmp(item, w), 0)
@@ -336,7 +336,7 @@ class UllInfoTestCase(TestCase):
         ws_content = CachedWS.get(st.WS_ULL_CONTRATOS % 'example_code')
         w = ws_content[0]
         w[u'dedicacion'] = u'Tiempo completo'
-        CVN._cleaned_data_profession(w)
+        CVN._clean_data_profession(w)
         self.assertTrue(w[u'dedicacion'])
 
     @classmethod
