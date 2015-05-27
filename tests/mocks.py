@@ -37,10 +37,10 @@ def get_all(cls, url, use_redis=True, timeout=None):
                  u'f_expedicion': u'2006-07-07T00:00:00',
                  u'des1_titulacion': u'Doctor por la Universidad de La Laguna'}]
     elif url == st.WS_ULL_CARGOS % 'example_code':
-        return [{u'dedicacion': u'Tiempo Completo',
+        return [{u'des1_dedicacion': u'Tiempo Completo',
                  u'des1_cargo': u'SECRETARIO DPTO ANALISIS MATEMATICO',
                  u'centro': u'DPTO.ANALISIS MATEMATICO',
-                 u'departamento': u'AN\xc1LISIS MATEM\xc1TICO',
+                 u'des1_departamento': u'AN\xc1LISIS MATEM\xc1TICO',
                  u'f_hasta': u'13-02-2013', u'f_toma_posesion': u'30-11-2010'}]
 
 
@@ -105,10 +105,10 @@ def get_learning_doctor_no_f_expedicion(cls, url, use_redis=True,
 @classmethod
 def get_cargos(cls, url, use_redis=True, timeout=None):
     if url == st.WS_ULL_CARGOS % 'example_code':
-        return [{u'dedicacion': u'Tiempo Completo',
+        return [{u'des1_dedicacion': u'Tiempo Completo',
                  u'des1_cargo': u'SECRETARIO DPTO ANALISIS MATEMATICO',
                  u'centro': u'DPTO.ANALISIS MATEMATICO',
-                 u'departamento': u'AN\xc1LISIS MATEM\xc1TICO',
+                 u'des1_departamento': u'AN\xc1LISIS MATEM\xc1TICO',
                  u'f_hasta': u'13-02-2013',
                  u'f_toma_posesion': u'30-11-2010'}]
     else:
@@ -118,10 +118,10 @@ def get_cargos(cls, url, use_redis=True, timeout=None):
 @classmethod
 def get_cargos_no_f_hasta(cls, url, use_redis=True, timeout=None):
     if url == st.WS_ULL_CARGOS % 'example_code':
-        return [{u'dedicacion': u'Tiempo Completo',
+        return [{u'des1_dedicacion': u'Tiempo Completo',
                  u'des1_cargo': u'SUBDIRECTOR DPTO FILOLOGIA MODERNA',
                  u'centro': u'DPTO.FILOLOGIA MODERNA',
-                 u'departamento': u'FILOLOGÍA FRANCESA Y ROMÁNICA',
+                 u'des1_departamento': u'FILOLOGÍA FRANCESA Y ROMÁNICA',
                  u'f_toma_posesion': u'29-01-1996'}]
     else:
         return []
@@ -130,7 +130,7 @@ def get_cargos_no_f_hasta(cls, url, use_redis=True, timeout=None):
 @classmethod
 def get_cargos_no_departamento(cls, url, use_redis=True, timeout=None):
     if url == st.WS_ULL_CARGOS % 'example_code':
-        return [{u'dedicacion': u'Tiempo Completo',
+        return [{u'des1_dedicacion': u'Tiempo Completo',
                  u'des1_cargo': u'DIRECTOR OFICINA TRANSF.RESUL.INVEST',
                  u'centro': u'VICERRECTORADO INVEST,DESAR TECNOL E INN',
                  u'f_toma_posesion': u'08-05-2000',
@@ -144,7 +144,7 @@ def get_cargos_no_dedicacion(cls, url, use_redis=True, timeout=None):
     if url == st.WS_ULL_CARGOS % 'example_code':
         return [{u'des1_cargo': u'DIRECTOR ETS. INGENIERIA CIVIL E INDUS',
                  u'centro': u'E.U. ENFERMERIA Y FISIOTERAPIA',
-                 u'departamento': u'ECONOMÍA APLICADA',
+                 u'des1_departamento': u'ECONOMÍA APLICADA',
                  u'f_toma_posesion': u'08-05-2000',
                  u'f_hasta': u'01-09-2004'}]
     else:
@@ -154,10 +154,10 @@ def get_cargos_no_dedicacion(cls, url, use_redis=True, timeout=None):
 @classmethod
 def get_contratos(cls, url, use_redis=True, timeout=None):
     if url == st.WS_ULL_CONTRATOS % 'example_code':
-        return [{u'dedicacion': u'Tiempo Completo',
-                 u'des1_cce': u'PROFESOR ASOCIADO',
+        return [{u'des1_dedicacion': u'Tiempo Completo',
+                 u'des_cce': u'PROFESOR ASOCIADO',
                  u'centro': u'DPTO.ANALISIS MATEMATICO',
-                 u'departamento': u'AN\xc1LISIS MATEM\xc1TICO',
+                 u'des1_departamento': u'AN\xc1LISIS MATEM\xc1TICO',
                  u'f_hasta': u'27-11-2002',
                  u'f_desde': u'01-10-1999'}]
     else:
@@ -167,10 +167,10 @@ def get_contratos(cls, url, use_redis=True, timeout=None):
 @classmethod
 def get_contratos_no_f_hasta(cls, url, use_redis=True, timeout=None):
     if url == st.WS_ULL_CONTRATOS % 'example_code':
-        return [{u'dedicacion': u'Tiempo Completo',
-                 u'des1_cce': u'PROFESOR TITULAR UNIVERSIDAD',
+        return [{u'des1_dedicacion': u'Tiempo Completo',
+                 u'des_cce': u'PROFESOR TITULAR UNIVERSIDAD',
                  u'centro': u'DPTO.ANALISIS MATEMATICO',
-                 u'departamento': u'AN\xc1LISIS MATEM\xc1TICO',
+                 u'des1_departamento': u'AN\xc1LISIS MATEM\xc1TICO',
                  u'f_desde': u'28-11-2002'}]
     else:
         return []

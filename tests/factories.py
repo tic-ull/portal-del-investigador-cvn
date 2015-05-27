@@ -41,9 +41,9 @@ class ProfessionFactory(factory.Factory):
         [None, FuzzyDate(d).fuzz()]))
     centro = FuzzyAttribute(lambda: random.choice(
         [None, 'Centro #' + str(randint(0, 100))]))
-    departamento = FuzzyAttribute(lambda: random.choice(
+    des1_departamento = FuzzyAttribute(lambda: random.choice(
         [None, 'Departamento #' + str(randint(0, 100))]))
-    dedicacion = FuzzyChoice([True, False, None])
+    des1_dedicacion = FuzzyChoice([True, False, None])
 
     class Meta:
         model = dict

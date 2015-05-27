@@ -139,7 +139,7 @@ class UllInfoTestCase(TestCase):
         for pi in pdf_content:
             pi[u'f_desde'] = pi[u'f_toma_posesion']
             del pi[u'f_toma_posesion']
-            pi[u'des1_cce'] = pi[u'des1_cargo']
+            pi[u'des_cce'] = pi[u'des1_cargo']
             del pi[u'des1_cargo']
         allequal = True
         for wi in ws_content:
@@ -208,7 +208,7 @@ class UllInfoTestCase(TestCase):
         item = parse_cvnitem(cvn_items[0])
         item[u'f_desde'] = item[u'f_toma_posesion']
         del item[u'f_toma_posesion']
-        item[u'des1_cce'] = item[u'des1_cargo']
+        item[u'des_cce'] = item[u'des1_cargo']
         del item[u'des1_cargo']
         ws_content = CachedWS.get(st.WS_ULL_CONTRATOS % 'example_code')
         self.assertEqual(len(ws_content), 1)

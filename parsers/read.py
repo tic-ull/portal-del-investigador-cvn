@@ -41,7 +41,7 @@ def _parse_cvnitem_profession(node):
 
     dedicacion = parse_dedication_type(node.find('Dedication/Item'))
     if dedicacion is not None:
-        item[u'dedicacion'] = dedicacion
+        item[u'des1_dedicacion'] = dedicacion
 
     entities = parse_entities(node.findall('Entity'))
 
@@ -56,9 +56,9 @@ def _parse_cvnitem_profession(node):
         item[u'centro'] = entities[st_cvn.Entity.CURRENT_CENTRE.value]
 
     if entities[st_cvn.Entity.DEPT.value] is not None:
-        item[u'departamento'] = entities[st_cvn.Entity.DEPT.value]
+        item[u'des1_departamento'] = entities[st_cvn.Entity.DEPT.value]
     elif entities[st_cvn.Entity.CURRENT_DEPT.value] is not None:
-        item[u'departamento'] = entities[st_cvn.Entity.CURRENT_DEPT.value]
+        item[u'des1_departamento'] = entities[st_cvn.Entity.CURRENT_DEPT.value]
 
     return item
 
