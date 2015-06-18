@@ -381,56 +381,6 @@ class Publicacion(models.Model):
 
     updated_at = models.DateTimeField(_(u'Actualizado'), auto_now=True)
 
-    # tipo_de_soporte = models.CharField(_(u'Tipo de soporte'),
-    #                                    max_length=1000, blank=True,
-    #                                    null=True)
-    # Publicaciones con nombre de hasta 1400 caracteres
-    # editorial = models.CharField(_(u'Editorial'),
-    #                              max_length=500, blank=True, null=True)
-    # Otros campos
-    # posicion_sobre_total = models.IntegerField(_(u'Posición sobre total'),
-    #                                            blank=True, null=True)
-    # en_calidad_de = models.CharField(_(u'En calidad de'),
-    #                                  max_length=500, blank=True, null=True)
-    # url = models.URLField(_(u'URL'), max_length=500, blank=True, null=True)
-    # coleccion = models.CharField(_(u'Colección'),
-    #                              max_length=150, blank=True, null=True)
-    # ciudad = models.CharField(_(u'Ciudad'),
-    #                           max_length=500,  blank=True, null=True)
-    # pais = models.CharField(_(u'País'),
-    #                         max_length=500, blank=True, null=True)
-    # comunidad_or_region = models.CharField(_(u'Autónoma/Reg. de trabajo'),
-    #                                        max_length=500,
-    #                                        blank=True, null=True)
-    # Índice de impacto
-    # fuente_de_impacto = models.CharField(_(u'Fuente de impacto'),
-    #                                    max_length=500, blank=True, null=True)
-    # categoria = models.CharField(_(u'Categoría'),
-    #                              max_length=500, blank=True, null=True)
-    # indice_de_impacto = models.CharField(_(u'Índice de impacto'),
-    #                                    max_length=500, blank=True, null=True)
-    # posicion = models.IntegerField(_(u'Posicion'), blank=True, null=True)
-    # num_revistas = models.IntegerField(
-    #     _(u'Número de revistas en la categoría'),
-    #     blank=True, null=True)
-    # revista_25 = models.CharField(_(u'Revista dentro del 25%'),
-    #                               max_length=50, blank=True, null=True)
-    # Citas
-    # fuente_de_citas = models.CharField(_(u'Fuente de citas'),
-    #                                    max_length=500, blank=True, null=True)
-    # citas = models.CharField(_(u'Citas'), max_length=500,
-    #                          blank=True, null=True)
-    # publicacion_relevante = models.CharField(_(u'Publicación relevante'),
-    #                                          max_length=50,
-    #                                          blank=True, null=True)
-    # resenyas_en_revista = models.CharField(_(u'Reseñas en revistas'),
-    #                                        max_length=500,
-    #                                        blank=True, null=True)
-    # filtro = models.CharField(_(u'Filtro'), max_length=500,
-    #                           blank=True, null=True)
-    # resultados_destacados = models.TextField(_(u'Resultados destacados'),
-    #                                          blank=True, null=True)
-
     def __unicode__(self):
         return "%s" % self.titulo
 
@@ -521,64 +471,6 @@ class Congreso(models.Model):
     created_at = models.DateTimeField(_(u'Creado'), auto_now_add=True)
 
     updated_at = models.DateTimeField(_(u'Actualizado'), auto_now=True)
-
-    # pais_de_realizacion = models.CharField(_(u'País de realización'),
-    #                                        max_length=500,
-    #                                        blank=True, null=True)
-    # comunidad_or_region_realizacion = models.CharField(
-    #     _(u'Comunidad/Región de realizacion'),
-    #     max_length=500, blank=True, null=True
-    # )
-    # entidad_organizadora = models.CharField(_(u'Entidad organizadora'),
-    #                                         max_length=250,
-    #                                         blank=True, null=True)
-    # ciudad = models.CharField(_(u'Ciudad'), max_length=500,
-    #                           blank=True, null=True)
-    # pais = models.CharField(_(u'País'), max_length=500, blank=True,
-    #                         null=True)
-    # comunidad_or_region = models.CharField(_(u'Comunidad autónoma/Región'),
-    #                                        max_length=500,
-    #                                        blank=True, null=True)
-    # titulo_publicacion = models.CharField(_(u'Título de la publicación'),
-    #                                       max_length=250,
-    #                                       blank=True, null=True)
-    # tipo_evento = models.CharField(_(u'Tipo evento'),
-    #                                max_length=50, blank=True, null=True)
-    # tipo = models.CharField(_(u'Tipo'), max_length=250, blank=True,
-    #                         null=True)
-    # nombre_de_publicacion = models.CharField(_(u'Nombre de la publicación'),
-    #                                          max_length=250,
-    #                                          blank=True, null=True)
-    # comite_admision_externa = models.CharField(
-    #     _(u'Con comité de admisión externa'),
-    #     max_length=250, blank=True, null=True
-    # )
-    # tipo_de_participacion = models.CharField(_(u'Tipo de participación'),
-    #                                          max_length=250,
-    #                                          blank=True, null=True)
-    # intervencion_por = models.CharField(_(u'Intevención por'),
-    #                                     max_length=250,
-    #                                     blank=True, null=True)
-    # volumen = models.CharField(_(u'Volumen'),
-    #                            max_length=100, blank=True, null=True)
-    # numero = models.CharField(_(u'Número'), max_length=100,
-    #                           blank=True, null=True)
-    # pagina_inicial = models.CharField(_(u'Página Inicial'),
-    #                                   max_length=100, blank=True, null=True)
-    # pagina_final = models.CharField(_(u'Página Final'),
-    #                                 max_length=100, blank=True, null=True)
-    # editorial = models.CharField(_(u'Editorial'),
-    #                              max_length=500, blank=True, null=True)
-    # isbn = models.CharField(_(u'ISBN'), max_length=150,
-    #                         blank=True, null=True)
-    # issn = models.CharField(_(u'ISSN'), max_length=150,
-    #                         blank=True, null=True)
-    # url = models.URLField(_(u'URL'), max_length=500, blank=True, null=True)
-    # pais = models.CharField(_(u'País'), max_length=500,
-    #                         blank=True, null=True)
-    # comunidad_or_region = models.CharField(_(u'Comunidad Autónoma/Región'),
-    #                                        max_length=500,
-    #                                        blank=True, null=True)
 
     @classmethod
     def remove_by_userprofile(cls, user_profile):
@@ -737,36 +629,6 @@ class TesisDoctoral(models.Model):
     created_at = models.DateTimeField(_(u'Creado'), auto_now_add=True)
 
     updated_at = models.DateTimeField(_(u'Actualizado'), auto_now=True)
-
-    # ciudad_del_trabajo = models.CharField(_(u'Ciudad del trabajo'),
-    #                                       max_length=500,
-    #                                       blank=True, null=True)
-    # pais_del_trabajo = models.CharField(_(u'País del trabajo'),
-    #                                     max_length=500, blank=True,
-    #                                     null=True)
-    # comunidad_or_region_trabajo = models.CharField(
-    #     _(u'Comunidad/Región del trabajo'),
-    #     max_length=500, blank=True, null=True
-    # )
-    # tipo_de_proyecto = models.CharField(_(u'Tipo de proyecto'),
-    #                                     max_length=150, blank=True,
-    #                                     null=True)
-    # calificacion = models.CharField(_(u'Calificación'),
-    #                                 max_length=100, blank=True, null=True)
-    # mencion_de_calidad = models.CharField(_(u'Mención de calidad'),
-    #                                       max_length=4, blank=True,
-    #                                       null=True)
-    # fecha_mencion_de_calidad = models.DateField(
-    #     _(u'Fecha mención de calidad'), blank=True, null=True)
-    # doctorado_europeo = models.CharField(_(u'Doctorado europeo'),
-    #                                      max_length=4, blank=True, null=True)
-    # fecha_mencion_doctorado_europeo = models.DateField(
-    #     _(u'Fecha de mención de doctorado europeo'),
-    #     blank=True, null=True
-    # )
-    # palabras_clave_titulo = models.CharField(_(u'Palabras clave del título'),
-    #                                          max_length=500,
-    #                                          blank=True, null=True)
 
     @classmethod
     def remove_by_userprofile(cls, user_profile):
