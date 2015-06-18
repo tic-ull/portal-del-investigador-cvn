@@ -27,7 +27,7 @@ from django.core.management.base import BaseCommand, CommandError
 from cvn.reports.generators import ResumenCSV
 from cvn.reports.generators import InformePDF
 from cvn.reports.generators import InformeCSV
-from cvn.reports.reports import DeptReport, AreaReport
+from cvn.reports.reports import DeptReport, AreaReport, UsersReport
 from optparse import make_option
 
 
@@ -41,53 +41,77 @@ class Command(BaseCommand):
             help="Specify the year in format YYYY",
         ),
         make_option(
-            "-i",
-            "--id",
-            dest="id",
-            help="Specify the ID of the Department/Area",
+            "-u",
+            "--unit_code",
+            dest="unit_code",
+            help="Source unit (department or area) code. Only for -t=a or -t=d",
+        ),
+        make_option(
+            "-l",
+            "--user_list",
+            dest="user_list",
+            help="Source user list (comma separated NIFs). Only for -t=u",
         ),
         make_option(
             "-t",
             "--type",
             dest="type",
             default='d',
-            help="Specify the type of filtering: d (department) or a (area)",
+            help="Type of filtering: d (department), a (area) or u (user list)",
         ),
         make_option(
             "-f",
             "--format",
             dest="format",
             default='pdf',
-            help="Specify the output format",
+            help="Specify the output format: ipdf, icsv, rcsv",
+        ),
+        make_option(
+            "--title",
+            dest="title",
+            default=u'Producción científica',
+            help="Specify a name for the report",
         ),
     )
 
     def handle(self, *args, **options):
         self.check_args(options)
         year = int(options['year'])
-        unit_id = [int(options['id'])] if type(options['id']) is str else None
-        if options['format'] == 'pdf':
+        if options['format'] == 'ipdf':
             Generator = InformePDF
         elif options['format'] == 'icsv':
             Generator = InformeCSV
         else:
             Generator = ResumenCSV
-        if options['type'] == 'a':
-            Report = AreaReport
+        if options['type'] in ['a', 'd']:
+            unit_id = [int(options['unit_code'])] if type(options['unit_code']) is str else None
+            if options['type'] == 'a':
+                Report = AreaReport
+            else:
+                Report = DeptReport
+            report = Report(Generator, year)
+            report.create_reports(unit_id)
         else:
-            Report = DeptReport
-        report = Report(Generator, year)
-        report.create_reports(unit_id)
+            nifs = options["list"].split(",")
+            report = UsersReport(Generator, int(options['year']))
+            report.create_report(nifs, options['title'])
 
     def check_args(self, options):
+
         if not isdigit(options['year']):
             raise CommandError(
                 "Option `--year=YYYY` must exist and be a number")
-        if (not isdigit(options['id'])) and options['id'] is not None:
-            raise CommandError("Option `--id=X` must be a number")
-        if not options['type'] == 'a' and not options['type'] == 'd':
-            raise CommandError("Option `--type=X` must be a (area) "
-                               "or d (department)")
-        f = options['format']
-        if not f == 'pdf' and not f == 'csv' and not f == 'icsv':
-            raise CommandError("Option `--format=X` must be pdf, csv or icsv")
+        if options['unit_code'] is not None:
+            if not isdigit(options['unit_code']):
+                raise CommandError("Option `--unit_code=X` must be a number")
+        if not options['type'] in ['a', 'd', 'u']:
+            raise CommandError("Option `--type=X` must be a (area),"
+                               " d (department) or u (user list)")
+        if not options['format'] in ['ipdf', 'icsv', 'rcsv']:
+            raise CommandError("Option `--format=X` must be ipdf, icsv or rcsv")
+
+        if options['type'] in ['a', 'd'] and options['user_list'] is not None:
+            raise CommandError("You can't provide a user list for this type")
+
+        if options['type'] == 'u' and options['unit_code'] is not None:
+            raise CommandError("You can't provide a unit code for this type")
