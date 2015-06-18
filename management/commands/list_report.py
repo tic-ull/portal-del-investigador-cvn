@@ -28,7 +28,7 @@ from django.core.management.base import BaseCommand, CommandError
 from cvn.reports.generators import ResumenCSV
 from cvn.reports.generators import InformePDF
 from cvn.reports.generators import InformeCSV
-from cvn.reports.reports import ListReport
+from cvn.reports.reports import UsersReport
 
 
 class Command(BaseCommand):
@@ -72,7 +72,7 @@ class Command(BaseCommand):
         else:
             Generator = ResumenCSV
         nifs = options["list"].split(",")
-        report = ListReport(Generator, int(options['year']))
+        report = UsersReport(Generator, int(options['year']))
         report.create_report(nifs, options['title'])
 
     @staticmethod

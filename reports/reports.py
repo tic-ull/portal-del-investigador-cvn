@@ -52,7 +52,7 @@ class BaseReport:
                           congresos, proyectos, convenios, tesis, patentes)
 
 
-class ListReport(BaseReport):
+class UsersReport(BaseReport):
 
     report_type = 'list'
 
