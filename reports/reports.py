@@ -82,7 +82,7 @@ class UnitReport(BaseReport):
         if unit_content["unidad"] == {}:
             try:
                 unit_name = self.unit_names['unit']
-            except AttributeError:
+            except (AttributeError, KeyError):
                 unit_name = unit
             return [], [], unit_name
         investigadores = []
