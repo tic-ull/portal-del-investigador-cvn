@@ -92,7 +92,7 @@ class Command(BaseCommand):
             report = Report(Generator, year)
             report.create_reports(unit_id)
         else:
-            nifs = options["list"].split(",")
+            nifs = options["user_list"].split(",")
             report = UsersReport(Generator, int(options['year']))
             report.create_report(nifs, options['title'])
 
