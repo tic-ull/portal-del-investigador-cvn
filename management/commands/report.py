@@ -115,3 +115,6 @@ class Command(BaseCommand):
 
         if options['type'] == 'u' and options['unit_code'] is not None:
             raise CommandError("You can't provide a unit code for this type")
+
+        if options['type'] == 'u' and options['user_list'] is None:
+            raise CommandError("You must provide a user list for this type")

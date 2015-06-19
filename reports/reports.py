@@ -80,7 +80,11 @@ class UnitReport(BaseReport):
     def get_investigadores(self, unit, title):
         unit_content = ws.get(self.WS_URL_DETAIL % (unit, self.year))[0]
         if unit_content["unidad"] == {}:
-            return [], [], self.unit_names[unit]
+            try:
+                unit_name = self.unit_names['unit']
+            except AttributeError:
+                unit_name = unit
+            return [], [], unit_name
         investigadores = []
         usuarios = []
         for inv in unit_content['miembros']:
