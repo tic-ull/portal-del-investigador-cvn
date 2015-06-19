@@ -35,9 +35,6 @@ class BaseReport:
     def create_report(self, unit, title=None):
         inv, profiles, unit_name = self.get_investigadores(unit, title)
         if not inv:
-            print(u'WARNING: No hay Investigadores en la unidad ' + unit_name
-                  + u' en el año ' + unicode(self.year)
-                  + u'. No se generará informe\n')
             return
         articulos = Articulo.objects.byUsuariosYear(profiles, self.year)
         libros = Libro.objects.byUsuariosYear(profiles, self.year)
@@ -47,7 +44,6 @@ class BaseReport:
         convenios = Convenio.objects.byUsuariosYear(profiles, self.year)
         tesis = TesisDoctoral.objects.byUsuariosYear(profiles, self.year)
         patentes = Patente.objects.byUsuariosYear(profiles, self.year)
-        print(u'Generando Informe para ' + unit_name + u"...\n")
         self.generator.go(unit_name, inv,articulos, libros, capitulos_libro,
                           congresos, proyectos, convenios, tesis, patentes)
 
