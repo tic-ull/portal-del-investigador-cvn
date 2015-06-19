@@ -74,7 +74,7 @@ class InformePDF:
     def go(self, team_name, investigadores, articulos, libros, capitulos,
            congresos, proyectos, convenios, tesis, patentes):
         self.team_name = team_name
-        path_file = "%s/%s/%s/" % (st_cvn.REPORTS_PDF_ROOT, self.model_type,
+        path_file = "%s/%s/%s/" % (st_cvn.REPORTS_IPDF_ROOT, self.model_type,
                                    self.year)
         if not os.path.isdir(path_file):
             os.makedirs(path_file)
