@@ -35,6 +35,7 @@ from cvn.parsers.read_helpers import (_parse_produccion_type,
                                       _parse_produccion_subtype)
 from core.tests.helpers import init, clean
 from core.tests.factories import UserFactory
+from utils import get_cvn_path
 
 
 class CVNTestCase(TestCase):
@@ -54,8 +55,7 @@ class CVNTestCase(TestCase):
     def test_insert_xml_ull(self):
         """ Insert the data of XML in the database """
         user = UserFactory.create()
-        cvn = CVN(user=user, pdf_path=os.path.join(
-            st_cvn.FILE_TEST_ROOT, 'cvn/CVN-ULL.pdf'))
+        cvn = CVN(user=user, pdf_path=get_cvn_path('CVN-ULL'))
         cvn.insert_xml()
         self.assertEqual(user.profile.articulo_set.count(), 1214)
         self.assertEqual(user.profile.libro_set.count(), 6)
@@ -67,8 +67,7 @@ class CVNTestCase(TestCase):
 
     def test_delete_producciones(self):
         user = UserFactory.create()
-        cvn = CVN(user=user, pdf_path=os.path.join(
-            st_cvn.FILE_TEST_ROOT, 'cvn/CVN-Test.pdf'))
+        cvn = CVN(user=user, pdf_path=get_cvn_path('CVN-Test'))
         cvn.insert_xml()
         cvn.remove_producciones()
         self.assertEqual(user.profile.articulo_set.count(), 0)
@@ -228,16 +227,14 @@ class CVNTestCase(TestCase):
 
     def test_productions_no_title(self):
         u = UserFactory.create()
-        cvn = CVN(user=u, pdf_path=os.path.join(
-            st_cvn.FILE_TEST_ROOT, 'cvn/produccion_sin_titulo.pdf'))
+        cvn = CVN(user=u, pdf_path=get_cvn_path('produccion_sin_titulo'))
         cvn.insert_xml()
         self.assertEqual(len(u.profile.proyecto_set.all()), 3)
         self.assertEqual(len(Articulo.objects.filter(user_profile__user=u)), 3)
 
     def test_insert_patentes(self):
         u = UserFactory.create()
-        cvn = CVN(user=u, pdf_path=os.path.join(
-            st_cvn.FILE_TEST_ROOT, 'cvn/cvn-patentes.pdf'))
+        cvn = CVN(user=u, pdf_path=get_cvn_path('cvn-patentes'))
         cvn.insert_xml()
         patente = Patente.objects.get(num_solicitud=111111111111111)
         self.assertEqual(patente.titulo, "Patente uno")
