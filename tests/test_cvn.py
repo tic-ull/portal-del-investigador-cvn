@@ -30,6 +30,7 @@ from cvn import settings as st_cvn
 from cvn.models import CVN, OldCvnPdf
 from core.tests.helpers import init, clean
 from core.tests.factories import UserFactory
+from utils import get_cvn_path
 
 
 class CVNTestCase(TestCase):
@@ -48,8 +49,7 @@ class CVNTestCase(TestCase):
 
     def test_on_insert_cvn_old_pdf_is_moved(self):
         user = UserFactory.create()
-        cvn = CVN(user=user, pdf_path=os.path.join(
-            st_cvn.FILE_TEST_ROOT, 'cvn/CVN-Test.pdf'))
+        cvn = CVN(user=user, pdf_path=get_cvn_path('CVN-Test'))
         cvn.save()
         filename = cvn.cvn_file.name.split('/')[-1].replace(
             u'.pdf', u'-' + str(
@@ -57,8 +57,7 @@ class CVNTestCase(TestCase):
             ) + u'.pdf')
         old_cvn_path = os.path.join(
             '/'.join(cvn.cvn_file.path.split('/')[:-1]), 'old', filename)
-        CVN(user=user, pdf_path=os.path.join(
-            st_cvn.FILE_TEST_ROOT, 'cvn/CVN-Test.pdf'))
+        CVN(user=user, pdf_path=get_cvn_path('CVN-Test'))
         self.assertTrue(os.path.isfile(old_cvn_path))
         self.assertEqual(OldCvnPdf.objects.filter(
             user_profile=user.profile, uploaded_at=cvn.uploaded_at).count(), 1)
@@ -67,15 +66,13 @@ class CVNTestCase(TestCase):
         user = UserFactory.create()
         user.profile.documento = '11111111H'
         user.profile.save()
-        cvn = CVN(user=user, pdf_path=os.path.join(
-            st_cvn.FILE_TEST_ROOT, 'cvn/CVN-NIF-sin_letra.pdf'))
+        cvn = CVN(user=user, pdf_path=get_cvn_path('CVN-NIF-sin_letra'))
         self.assertNotEqual(cvn.status, st_cvn.CVNStatus.INVALID_IDENTITY)
 
     def test_update_from_pdf(self):
         us = UserFactory.create()
         cvn = CVN(user=us)
-        pdf_file = file(os.path.join(
-            st_cvn.FILE_TEST_ROOT, 'cvn/CVN-Test.pdf'))
+        pdf_file = file(get_cvn_path('CVN-Test'))
         cvn.update_from_pdf(pdf_file.read())
         self.assertTrue(cvn.xml_file and cvn.cvn_file)
 

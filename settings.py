@@ -49,6 +49,10 @@ MIGRATION_ROOT = os.path.join(st.BASE_DIR, 'importCVN')
 XML_TEMPLATE = os.path.join(st.BASE_DIR, 'cvn/templates/cvn/xml')
 # ******************************* PATHS *************************************
 
+# ******************************* TESTS *************************************
+CVN_VERS_TEST = '1.3'
+# ******************************* TESTS *************************************
+
 # ******************************* XML FILES *********************************
 XML_SKELETON_PATH = os.path.join(XML_TEMPLATE, 'skeleton.xml')
 XML_CURRENT_PROFESSION = os.path.join(XML_TEMPLATE, 'current_profession.xml')
