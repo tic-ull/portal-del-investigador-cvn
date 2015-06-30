@@ -22,12 +22,7 @@
 #    <http://www.gnu.org/licenses/>.
 #
 
-from . import signals
-from .forms import UploadCVNForm, GetDataCVNULL
-from .models import CVN
-from .utils import (scientific_production_to_context, cvn_to_context,
-                    stats_to_context)
-from cvn import settings as st_cvn
+import datetime
 from django.conf import settings as st
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import User
@@ -35,8 +30,15 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, Http404
 from django.shortcuts import render
 from django.utils.translation import ugettext as _
+from django.views.generic import TemplateView
+from cvn import settings as st_cvn
+from . import signals
+from .forms import UploadCVNForm, GetDataCVNULL
+from .models import CVN
+from .utils import (scientific_production_to_context, cvn_to_context,
+                    stats_to_context)
 
-import datetime
+
 
 
 @login_required
@@ -134,3 +136,7 @@ def export_data_ull(request):
 
         context['form'] = form
     return render(request, 'cvn/export_data_ull.html', context)
+
+
+class ReportsView(TemplateView):
+    template_name = "cvn/reports.html"
