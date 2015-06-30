@@ -25,7 +25,7 @@
 from django.conf.urls import patterns, url
 from django.http import HttpResponse
 from .settings import HISTORICAL_YEAR
-from .views import ReportsView
+from .views import ReportsView, DownloadReportView
 
 urlpatterns = patterns(
     'cvn.views',
@@ -36,4 +36,5 @@ urlpatterns = patterns(
     url(r'^waiting/$', lambda r: HttpResponse(status=204), name='waiting'),
     url(r'^export_data/$', 'export_data_ull', name='export_data_ull'),
     url(r'^reports/$', ReportsView.as_view(), name='reports'),
+    url(r'^reports/(?P<type>\w+)/(?P<code>[0-9]+)/$', DownloadReportView.as_view(), name='download_report'),
 )

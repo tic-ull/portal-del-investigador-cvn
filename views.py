@@ -30,7 +30,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, Http404
 from django.shortcuts import render
 from django.utils.translation import ugettext as _
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, View
 from cvn import settings as st_cvn
 from . import signals
 from .forms import UploadCVNForm, GetDataCVNULL
@@ -145,3 +145,9 @@ class ReportsView(TemplateView):
         context['depts'] = DeptReport.get_all_units_names()
         context['areas'] = AreaReport.get_all_units_names()
         return context
+
+
+class DownloadReportView(View):
+
+    def get(self, request, *args, **kwargs):
+        return HttpResponse("Not Implemented Yet")
