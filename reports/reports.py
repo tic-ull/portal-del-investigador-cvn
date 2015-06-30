@@ -69,13 +69,18 @@ class UnitReport(BaseReport):
     WS_URL_ALL = None
     WS_URL_DETAIL = None
 
+    @classmethod
+    def get_all_units_names(cls, year=None):
+        ws_url = cls.WS_URL_ALL
+        if year:
+            ws_url += '?year=' + year
+        units = ws.get(ws_url)
+        return {unit['codigo']: unit['nombre'] for unit in units}
+
     def get_all_units(self):
-        units = ws.get(self.WS_URL_ALL)
         # Save unit names bc the ws doesn't return it when there are no members
-        self.unit_names = {}
-        for unit in units:
-            self.unit_names[unit['codigo']] = unit['nombre']
-        return map(lambda x: x['codigo'], units)
+        self.unit_names = self.get_all_units_names()
+        return self.unit_names.keys()
 
     def get_investigadores(self, unit, title):
         unit_content = ws.get(self.WS_URL_DETAIL % (unit, self.year))[0]
