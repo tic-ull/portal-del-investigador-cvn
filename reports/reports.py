@@ -35,9 +35,6 @@ class BaseReport:
     def create_report(self, unit, title=None):
         inv, profiles, unit_name = self.get_investigadores(unit, title)
         if not inv:
-            print(u'WARNING: No hay Investigadores en la unidad ' + unit_name
-                  + u' en el año ' + unicode(self.year)
-                  + u'. No se generará informe\n')
             return
         articulos = Articulo.objects.byUsuariosYear(profiles, self.year)
         libros = Libro.objects.byUsuariosYear(profiles, self.year)
@@ -47,12 +44,11 @@ class BaseReport:
         convenios = Convenio.objects.byUsuariosYear(profiles, self.year)
         tesis = TesisDoctoral.objects.byUsuariosYear(profiles, self.year)
         patentes = Patente.objects.byUsuariosYear(profiles, self.year)
-        print(u'Generando Informe para ' + unit_name + u"...\n")
         self.generator.go(unit_name, inv,articulos, libros, capitulos_libro,
                           congresos, proyectos, convenios, tesis, patentes)
 
 
-class ListReport(BaseReport):
+class UsersReport(BaseReport):
 
     report_type = 'list'
 
@@ -84,7 +80,11 @@ class UnitReport(BaseReport):
     def get_investigadores(self, unit, title):
         unit_content = ws.get(self.WS_URL_DETAIL % (unit, self.year))[0]
         if unit_content["unidad"] == {}:
-            return [], [], self.unit_names[unit]
+            try:
+                unit_name = self.unit_names['unit']
+            except (AttributeError, KeyError):
+                unit_name = unit
+            return [], [], unit_name
         investigadores = []
         usuarios = []
         for inv in unit_content['miembros']:
