@@ -8,5 +8,29 @@
 {% endblock breadcrumb %}
 
 {% block main %}
+    <script src="{% static datatables_js_url %}"></script>
+    <script src="{% static datatables_sort_normalize %}"></script>
+    <script src="{% static datatables_sort_date %}"></script>
+    <link property="stylesheet" rel="stylesheet" type="text/css" href="{{ datatables_css_url }}"/>
+    <div class="nav-ull">
+        <ul class="nav nav-tabs">
+            <li class="active"><a href="#dept" data-toggle="tab">{% trans 'Departments' %}</a></li>
+            <li><a href="#area" data-toggle="tab">{% trans 'Areas' %}</a></li>
+        </ul>
+
+        <div class="tab-content">
+            <div id="dept" class="tab-pane active">
+                <div class="panel-group" id="depts">
+                    {% include 'cvn/partials/reports_table.html' with entity_type='current_dept' entities=depts %}
+                </div>
+            </div>
+
+            <div id="area" class="tab-pane">
+                <div class="panel-group" id="areas">
+                    {% include 'cvn/partials/reports_table.html' with entity_type='current_area' entities=areas %}
+                </div>
+            </div>
+        </div>
+    </div>
 
 {% endblock main %}

@@ -37,8 +37,7 @@ from .forms import UploadCVNForm, GetDataCVNULL
 from .models import CVN
 from .utils import (scientific_production_to_context, cvn_to_context,
                     stats_to_context)
-
-
+from .reports import DeptReport, AreaReport
 
 
 @login_required
@@ -140,3 +139,9 @@ def export_data_ull(request):
 
 class ReportsView(TemplateView):
     template_name = "cvn/reports.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(ReportsView, self).get_context_data(**kwargs)
+        context['depts'] = DeptReport.get_all_units_names()
+        context['areas'] = AreaReport.get_all_units_names()
+        return context
