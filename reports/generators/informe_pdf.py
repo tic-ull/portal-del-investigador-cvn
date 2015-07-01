@@ -71,7 +71,8 @@ class InformePDF:
         if not os.path.isdir(path_file):
             os.makedirs(path_file)
         file_name = slugify(self.year + "-" + self.team_name) + ".pdf"
-        doc = SimpleDocTemplate(path_file + file_name)
+        full_path = path_file + file_name
+        doc = SimpleDocTemplate(full_path)
         story = [Spacer(1, 3 * self.DEFAULT_SPACER)]
         self.show_investigadores(story, investigadores)
         self.show_articulos(story, articulos)
@@ -84,6 +85,7 @@ class InformePDF:
         self.show_patentes(story, patentes)
         doc.build(story, onFirstPage=self.first_page,
                   onLaterPages=self.later_pages)
+        return full_path
 
     def set_logo(self):
         img_path = st_cvn.REPORTS_IMAGES

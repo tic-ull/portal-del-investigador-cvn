@@ -44,8 +44,9 @@ class BaseReport:
         convenios = Convenio.objects.byUsuariosYear(profiles, self.year)
         tesis = TesisDoctoral.objects.byUsuariosYear(profiles, self.year)
         patentes = Patente.objects.byUsuariosYear(profiles, self.year)
-        self.generator.go(unit_name, inv,articulos, libros, capitulos_libro,
-                          congresos, proyectos, convenios, tesis, patentes)
+        return self.generator.go(unit_name, inv,articulos, libros,
+                                 capitulos_libro, congresos, proyectos,
+                                 convenios, tesis, patentes)
 
 
 class UsersReport(BaseReport):
@@ -73,7 +74,7 @@ class UnitReport(BaseReport):
     def get_all_units_names(cls, year=None):
         ws_url = cls.WS_URL_ALL
         if year:
-            ws_url += '?year=' + year
+            ws_url += '?year=' + str(year)
         units = ws.get(ws_url)
         return {unit['codigo']: unit['nombre'] for unit in units}
 

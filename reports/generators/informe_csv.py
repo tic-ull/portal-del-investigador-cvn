@@ -75,3 +75,4 @@ class InformeCSV:
                                st_cvn.INFORME_CSV_FIELDS_TESIS)
             write_producciones(csv_writer, u'Patentes', patentes,
                                st_cvn.INFORME_CSV_FIELDS_PATENTE)
+        return file_path

@@ -38,6 +38,7 @@ from .models import CVN
 from .utils import (scientific_production_to_context, cvn_to_context,
                     stats_to_context)
 from .reports import DeptReport, AreaReport
+from .reports.generators import InformeCSV, InformePDF, ResumenCSV
 
 
 @login_required
@@ -142,12 +143,19 @@ class ReportsView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(ReportsView, self).get_context_data(**kwargs)
-        context['depts'] = DeptReport.get_all_units_names()
-        context['areas'] = AreaReport.get_all_units_names()
+        context['depts'] = DeptReport.get_all_units_names(year=2015)
+        context['areas'] = AreaReport.get_all_units_names(year=2015)
         return context
 
 
 class DownloadReportView(View):
 
+    generator_type = {"ipdf": InformePDF,
+                      'icsv': InformeCSV}
+
     def get(self, request, *args, **kwargs):
-        return HttpResponse("Not Implemented Yet")
+        code = kwargs['code']
+        Generator = self.generator_type[kwargs['type']]
+        report = DeptReport(Generator, 2015)
+        path = report.create_report(code)
+        return HttpResponse(path)

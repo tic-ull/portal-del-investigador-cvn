@@ -34,7 +34,11 @@ class ResumenCSV:
 
     def __init__(self, year, model_type):
         self.year = str(year)
-        self.filename = self.get_save_path(self.year, model_type)
+        path = self.get_save_path(self.year, model_type)
+        if not os.path.isdir(path):
+            os.makedirs(path)
+        self.filename = os.path.join(
+            path, self.year + '-' + model_type + ".csv")
         self.writer = csv.DictWriter(
             open(self.filename, 'wb'), dialect=st.CSV_DIALECT,
             fieldnames=[u'Nombre', u'Investigadores', u'Artículos', u'Libros',
@@ -45,10 +49,7 @@ class ResumenCSV:
 
     @staticmethod
     def get_save_path(year, model_type):
-        path = "%s/%s/%s/" % (st_cvn.REPORTS_RCSV_ROOT, model_type, year)
-        if not os.path.isdir(path):
-            os.makedirs(path)
-        return os.path.join(path, year + '-' + model_type + ".csv")
+        return "%s/%s/%s/" % (st_cvn.REPORTS_RCSV_ROOT, model_type, year)
 
     def go(self, team_name, investigadores, articulos, libros, capitulos,
            congresos, proyectos, convenios, tesis, patentes):
@@ -62,3 +63,4 @@ class ResumenCSV:
                               u'Convenios': len(convenios),
                               u'Tesis': len(tesis),
                               u'Propiedad Intelectual': len(patentes)})
+        return self.filename
