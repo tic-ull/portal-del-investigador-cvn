@@ -29,15 +29,12 @@ from django.conf import settings as st
 
 
 class ResumenCSV:
+    # Do not touch the method definitions if you don't know what you are doing.
+    # (All the generators should have the same definitions)
 
     def __init__(self, year, model_type):
         self.year = str(year)
-        path = "%s/%s/%s/" % (st_cvn.REPORTS_RCSV_ROOT, model_type,
-                              self.year)
-        if not os.path.isdir(path):
-            os.makedirs(path)
-        self.filename = os.path.join(path, self.year +
-                                     '-' + model_type + ".csv")
+        self.filename = self.get_save_path(self.year, model_type)
         self.writer = csv.DictWriter(
             open(self.filename, 'wb'), dialect=st.CSV_DIALECT,
             fieldnames=[u'Nombre', u'Investigadores', u'Artículos', u'Libros',
@@ -45,6 +42,13 @@ class ResumenCSV:
                         u'Tesis', u'Propiedad Intelectual']
         )
         self.writer.writeheader()
+
+    @staticmethod
+    def get_save_path(year, model_type):
+        path = "%s/%s/%s/" % (st_cvn.REPORTS_RCSV_ROOT, model_type, year)
+        if not os.path.isdir(path):
+            os.makedirs(path)
+        return os.path.join(path, year + '-' + model_type + ".csv")
 
     def go(self, team_name, investigadores, articulos, libros, capitulos,
            congresos, proyectos, convenios, tesis, patentes):

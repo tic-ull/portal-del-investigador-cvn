@@ -39,15 +39,20 @@ def write_producciones(csv_writer, name, producciones, fields):
 
 
 class InformeCSV:
+    # Do not touch the method definitions if you don't know what you are doing.
+    # (All the generators should have the same definitions)
 
     def __init__(self, year, model_type):
         self.year = str(year)
         self.model_type = model_type
 
+    @staticmethod
+    def get_save_path(year, model_type):
+        return "%s/%s/%s/" % (st_cvn.REPORTS_ICSV_ROOT, model_type, year)
+
     def go(self, team_name, investigadores, articulos, libros, capitulos,
            congresos, proyectos, convenios, tesis, patentes):
-        path = "%s/%s/%s/" % (st_cvn.REPORTS_ICSV_ROOT, self.model_type,
-                              self.year)
+        path = self.get_save_path(self.year, self.model_type)
         if not os.path.isdir(path):
             os.makedirs(path)
         file_name = slugify(self.year + "-" + team_name) + ".csv"

@@ -39,6 +39,9 @@ import os
 
 
 class InformePDF:
+    # Do not touch the method definitions if you don't know what you are doing.
+    # (All the generators should have the same definitions)
+
     BLUE_SECONDARY_ULL = colors.HexColor('#EBF3FA')
     BLUE_ULL = colors.HexColor('#006699')
     DEFAULT_FONT = 'Helvetica'
@@ -57,25 +60,14 @@ class InformePDF:
         self.model_type = model_type
         self.set_logo()
 
-    def set_logo(self):
-        img_path = st_cvn.REPORTS_IMAGES
-        if not os.path.exists(img_path + 'logo' + self.year + '.png'):
-            logo = 'logo.png'
-        else:
-            logo = 'logo' + self.year + '.png'
-        self.logo_path = img_path + logo
-
-        self.logo_width, self.logo_height = Image.open(self.logo_path).size
-
-        logo_scale = 0.35
-        self.logo_width *= logo_scale
-        self.logo_height *= logo_scale
+    @staticmethod
+    def get_save_path(year, model_type):
+        return "%s/%s/%s/" % (st_cvn.REPORTS_IPDF_ROOT, model_type, year)
 
     def go(self, team_name, investigadores, articulos, libros, capitulos,
            congresos, proyectos, convenios, tesis, patentes):
         self.team_name = team_name
-        path_file = "%s/%s/%s/" % (st_cvn.REPORTS_IPDF_ROOT, self.model_type,
-                                   self.year)
+        path_file = self.get_save_path(self.year, self.model_type)
         if not os.path.isdir(path_file):
             os.makedirs(path_file)
         file_name = slugify(self.year + "-" + self.team_name) + ".pdf"
@@ -92,6 +84,20 @@ class InformePDF:
         self.show_patentes(story, patentes)
         doc.build(story, onFirstPage=self.first_page,
                   onLaterPages=self.later_pages)
+
+    def set_logo(self):
+        img_path = st_cvn.REPORTS_IMAGES
+        if not os.path.exists(img_path + 'logo' + self.year + '.png'):
+            logo = 'logo.png'
+        else:
+            logo = 'logo' + self.year + '.png'
+        self.logo_path = img_path + logo
+
+        self.logo_width, self.logo_height = Image.open(self.logo_path).size
+
+        logo_scale = 0.35
+        self.logo_width *= logo_scale
+        self.logo_height *= logo_scale
 
     # -------------------------------------------------------------------------
     # PROCESADO DE LOS DATOS
