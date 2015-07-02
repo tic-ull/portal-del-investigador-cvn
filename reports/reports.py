@@ -32,7 +32,7 @@ class BaseReport:
         for unit in units:
             self.create_report(unit)
 
-    def create_report(self, unit, title=None):
+    def create_report(self, unit=None, title=None):
         inv, profiles, unit_name = self.get_investigadores(unit, title)
         if not inv:
             return
@@ -53,7 +53,10 @@ class UsersReport(BaseReport):
     report_type = 'list'
 
     def get_investigadores(self, unit, title):
-        profiles = UserProfile.objects.filter(documento__in=unit)
+        if unit is None:
+            profiles = UserProfile.objects.all()
+        else:
+            profiles = UserProfile.objects.filter(documento__in=unit)
         investigadores = [{'cod_persona__nombre': p.user.first_name,
                            'cod_persona__apellido1': p.user.last_name,
                            'cod_persona__apellido2': '',
@@ -78,6 +81,8 @@ class UnitReport(BaseReport):
         return map(lambda x: x['codigo'], units)
 
     def get_investigadores(self, unit, title):
+        if unit is None:
+            return NotImplemented
         unit_content = ws.get(self.WS_URL_DETAIL % (unit, self.year))[0]
         if unit_content["unidad"] == {}:
             try:
