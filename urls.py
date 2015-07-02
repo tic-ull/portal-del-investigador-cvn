@@ -36,5 +36,5 @@ urlpatterns = patterns(
     url(r'^waiting/$', lambda r: HttpResponse(status=204), name='waiting'),
     url(r'^export_data/$', 'export_data_ull', name='export_data_ull'),
     url(r'^reports/$', ReportsView.as_view(), name='reports'),
-    url(r'^reports/(?P<type>\w+)/(?P<code>[0-9]+)/$', DownloadReportView.as_view(), name='download_report'),
+    url(r'^reports/(?P<type>\w+)/(?P<code>[0-9]+)/(?P<year>[0-9]{4})/(?P<unit_type>\w+)$', DownloadReportView.as_view(), name='download_report'),
 )

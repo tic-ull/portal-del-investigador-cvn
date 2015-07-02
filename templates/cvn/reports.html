@@ -12,22 +12,35 @@
     <script src="{% static datatables_sort_normalize %}"></script>
     <script src="{% static datatables_sort_date %}"></script>
     <link property="stylesheet" rel="stylesheet" type="text/css" href="{{ datatables_css_url }}"/>
-    <div class="nav-ull">
-        <ul class="nav nav-tabs">
-            <li class="active"><a href="#dept" data-toggle="tab">{% trans 'Departments' %}</a></li>
-            <li><a href="#area" data-toggle="tab">{% trans 'Areas' %}</a></li>
+    <div class="section">
+        <ul class="nav nav-tabs header">
+            <li class="active">Informes</li>
         </ul>
+        <div class="content">
+            <div class="nav-ull">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#dept" data-toggle="tab">{% trans 'Departments' %}</a></li>
+                    <li><a href="#area" data-toggle="tab">{% trans 'Areas' %}</a></li>
+                </ul>
 
-        <div class="tab-content">
-            <div id="dept" class="tab-pane active">
-                <div class="panel-group" id="depts">
-                    {% include 'cvn/partials/reports_table.html' with entity_type='current_dept' entities=depts %}
-                </div>
-            </div>
+                <div class="tab-content">
+                    <div id="dept" class="tab-pane active">
+                        <div class="panel-group" id="depts">
+                            {% for year, items in depts.items %}
+                                <h2>{{ year }}</h2>
+                                {% include 'cvn/partials/reports_table.html' with unit_type="dept" year=year entities=items %}
+                            {% endfor %}
+                        </div>
+                    </div>
 
-            <div id="area" class="tab-pane">
-                <div class="panel-group" id="areas">
-                    {% include 'cvn/partials/reports_table.html' with entity_type='current_area' entities=areas %}
+                    <div id="area" class="tab-pane">
+                        <div class="panel-group" id="areas">
+                            {% for year, items in areas.items %}
+                                <h2>{{ year }}</h2>
+                                {% include 'cvn/partials/reports_table.html' with unit_type="area" year=year entities=items %}
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

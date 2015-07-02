@@ -143,8 +143,12 @@ class ReportsView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(ReportsView, self).get_context_data(**kwargs)
-        context['depts'] = DeptReport.get_all_units_names(year=2015)
-        context['areas'] = AreaReport.get_all_units_names(year=2015)
+        years = st.HISTORICAL.keys() + [str(datetime.date.today().year)]
+        context['depts'] = {}
+        context['areas'] = {}
+        for year in years:
+            context['depts'][year] = DeptReport.get_all_units_names(year=year)
+            context['areas'][year] = AreaReport.get_all_units_names(year=year)
         return context
 
 
@@ -153,9 +157,25 @@ class DownloadReportView(View):
     generator_type = {"ipdf": InformePDF,
                       'icsv': InformeCSV}
 
+    report_type = {"dept": DeptReport,
+                   "area": AreaReport}
+
     def get(self, request, *args, **kwargs):
         code = kwargs['code']
+        year = int(kwargs['year'])
+        Report = self.report_type[kwargs['unit_type']]
         Generator = self.generator_type[kwargs['type']]
-        report = DeptReport(Generator, 2015)
-        path = report.create_report(code)
-        return HttpResponse(path)
+        report = Report(Generator, year)
+        if year != datetime.date.today().year:
+            path = report.get_full_path(code)
+            return HttpResponse(path)
+        else:
+            path = report.create_report(code)
+        try:
+            pdf = open(path)
+        except (IOError, TypeError):
+            raise Http404
+        response = HttpResponse(pdf, content_type='text/csv')
+        response['Content-Disposition'] = 'inline; filename=%s' % (
+            path.split('/')[-1])
+        return response
