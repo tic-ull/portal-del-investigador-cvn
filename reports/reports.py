@@ -1,6 +1,7 @@
 # -*- encoding: UTF-8 -*-
 
 from abc import ABCMeta
+import os
 from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings as st
 from cvn.models import (Articulo, Libro, Capitulo, Congreso, Proyecto,
@@ -47,6 +48,13 @@ class BaseReport:
         return self.generator.go(unit_name, inv,articulos, libros,
                                  capitulos_libro, congresos, proyectos,
                                  convenios, tesis, patentes)
+
+    def get_full_path(self, unit):
+        unit_name = self.get_investigadores(unit, None)[2]
+        return os.path.join(
+            self.generator.get_save_path(self.year, self.report_type),
+            self.generator.get_filename(self.year, unit_name, self.report_type)
+        )
 
 
 class UsersReport(BaseReport):

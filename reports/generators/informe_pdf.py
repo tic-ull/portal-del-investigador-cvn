@@ -64,13 +64,17 @@ class InformePDF:
     def get_save_path(year, model_type):
         return "%s/%s/%s/" % (st_cvn.REPORTS_IPDF_ROOT, model_type, year)
 
+    @staticmethod
+    def get_filename(year, team_name, model_type=None):
+        return slugify(str(year) + "-" + team_name) + ".pdf"
+
     def go(self, team_name, investigadores, articulos, libros, capitulos,
            congresos, proyectos, convenios, tesis, patentes):
         self.team_name = team_name
         path_file = self.get_save_path(self.year, self.model_type)
         if not os.path.isdir(path_file):
             os.makedirs(path_file)
-        file_name = slugify(self.year + "-" + self.team_name) + ".pdf"
+        file_name = self.get_filename(self.year, team_name)
         full_path = path_file + file_name
         doc = SimpleDocTemplate(full_path)
         story = [Spacer(1, 3 * self.DEFAULT_SPACER)]

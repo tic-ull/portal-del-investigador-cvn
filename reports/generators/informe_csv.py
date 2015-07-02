@@ -50,14 +50,18 @@ class InformeCSV:
     def get_save_path(year, model_type):
         return "%s/%s/%s/" % (st_cvn.REPORTS_ICSV_ROOT, model_type, year)
 
+    @staticmethod
+    def get_filename(year, team_name, model_type=None):
+        return slugify(str(year) + "-" + team_name) + ".csv"
+
     def go(self, team_name, investigadores, articulos, libros, capitulos,
            congresos, proyectos, convenios, tesis, patentes):
         path = self.get_save_path(self.year, self.model_type)
         if not os.path.isdir(path):
             os.makedirs(path)
-        file_name = slugify(self.year + "-" + team_name) + ".csv"
-        file_path = os.path.join(path, file_name)
-        with open(file_path, 'wb') as csvfile:
+        file_name = self.get_filename(self.year, team_name)
+        full_path = os.path.join(path, file_name)
+        with open(full_path, 'wb') as csvfile:
             csv_writer = csv.writer(csvfile, dialect=st.CSV_DIALECT)
             write_producciones(csv_writer, u'Artículos', articulos,
                                st_cvn.INFORME_CSV_FIELDS_ARTICULO)
@@ -75,4 +79,4 @@ class InformeCSV:
                                st_cvn.INFORME_CSV_FIELDS_TESIS)
             write_producciones(csv_writer, u'Patentes', patentes,
                                st_cvn.INFORME_CSV_FIELDS_PATENTE)
-        return file_path
+        return full_path
