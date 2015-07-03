@@ -34,7 +34,7 @@ from django.views.generic import TemplateView, View
 from django.utils.decorators import method_decorator
 from cvn import settings as st_cvn
 from . import signals
-from .forms import UploadCVNForm, GetDataCVNULL
+from .forms import UploadCVNForm, GetDataCVNULL, DownloadReportForm
 from .models import CVN
 from .utils import (scientific_production_to_context, cvn_to_context,
                     stats_to_context)
@@ -168,6 +168,8 @@ class DownloadReportView(View):
     report_type = {"dept": DeptReport,
                    "area": AreaReport}
 
+    form_class = DownloadReportForm
+
     @method_decorator(login_required)
     @method_decorator(user_can_view_reports)
     def dispatch(self, *args, **kwargs):
@@ -185,12 +187,16 @@ class DownloadReportView(View):
         return response
 
     def get(self, request, *args, **kwargs):
-        generator_type = kwargs['type']
-        year = int(kwargs['year'])
-        Report = self.report_type[kwargs['unit_type']]
+        form = self.form_class(kwargs)
+        if not form.is_valid():
+            raise Http404
+        params = form.cleaned_data
+        generator_type = params['type']
+        year = int(params['year'])
+        Report = self.report_type[params['unit_type']]
         Generator = self.generator_type[generator_type]
         report = Report(Generator, year)
-        code = kwargs['code'] if generator_type != 'rcsv' else None
+        code = params['code'] if generator_type != 'rcsv' else None
         if year != datetime.date.today().year:
             path = report.get_full_path(code)
             return HttpResponse(path)

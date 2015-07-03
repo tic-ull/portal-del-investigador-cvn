@@ -138,3 +138,21 @@ class UserProfileAdminForm(forms.ModelForm):
         if self.instance and self.instance.pk:
             self.fields['first_name'].initial = self.instance.user.first_name
             self.fields['last_name'].initial = self.instance.user.last_name
+
+class DownloadReportForm(forms.Form):
+    type = forms.CharField()
+    code = forms.IntegerField(required=False)
+    year = forms.IntegerField()
+    unit_type = forms.CharField()
+
+    def clean_type(self):
+        generator_type = self.cleaned_data['type']
+        if generator_type not in ['ipdf', 'icsv', 'rcsv']:
+            self.add_error('type', 'Invalid generator type')
+        return generator_type
+
+    def clean_unit_type(self):
+        unit_type = self.cleaned_data['unit_type']
+        if unit_type not in ['dept', 'area']:
+            self.add_error('type', 'Invalid unit type')
+        return unit_type
