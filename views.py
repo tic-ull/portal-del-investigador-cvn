@@ -31,6 +31,7 @@ from django.http import HttpResponse, Http404
 from django.shortcuts import render
 from django.utils.translation import ugettext as _
 from django.views.generic import TemplateView, View
+from django.utils.decorators import method_decorator
 from cvn import settings as st_cvn
 from . import signals
 from .forms import UploadCVNForm, GetDataCVNULL
@@ -39,6 +40,7 @@ from .utils import (scientific_production_to_context, cvn_to_context,
                     stats_to_context)
 from .reports import DeptReport, AreaReport
 from .reports.generators import InformeCSV, InformePDF, ResumenCSV
+from .decorators import user_can_view_reports
 
 
 @login_required
@@ -74,7 +76,7 @@ def download_cvn(request):
         pdf = open(cvn.cvn_file.path)
     except IOError:
         raise Http404
-    response = HttpResponse(pdf, content_type='application/pdf')
+    response = HttpResponse(pdf, content_type=st.MIMETYPES['pdf'])
     response['Content-Disposition'] = 'inline; filename=%s' % (
         cvn.cvn_file.name.split('/')[-1])
     signals.cvn_downloaded.send(sender=None)
@@ -141,6 +143,11 @@ def export_data_ull(request):
 class ReportsView(TemplateView):
     template_name = "cvn/reports.html"
 
+    @method_decorator(login_required)
+    @method_decorator(user_can_view_reports)
+    def dispatch(self, *args, **kwargs):
+        return super(ReportsView, self).dispatch(*args, **kwargs)
+
     def get_context_data(self, **kwargs):
         context = super(ReportsView, self).get_context_data(**kwargs)
         years = st.HISTORICAL.keys() + [str(datetime.date.today().year)]
@@ -155,27 +162,42 @@ class ReportsView(TemplateView):
 class DownloadReportView(View):
 
     generator_type = {"ipdf": InformePDF,
-                      'icsv': InformeCSV}
+                      'icsv': InformeCSV,
+                      'rcsv': ResumenCSV}
 
     report_type = {"dept": DeptReport,
                    "area": AreaReport}
 
-    def get(self, request, *args, **kwargs):
-        code = kwargs['code']
-        year = int(kwargs['year'])
-        Report = self.report_type[kwargs['unit_type']]
-        Generator = self.generator_type[kwargs['type']]
-        report = Report(Generator, year)
-        if year != datetime.date.today().year:
-            path = report.get_full_path(code)
-            return HttpResponse(path)
-        else:
-            path = report.create_report(code)
+    @method_decorator(login_required)
+    @method_decorator(user_can_view_reports)
+    def dispatch(self, *args, **kwargs):
+        return super(DownloadReportView, self).dispatch(*args, **kwargs)
+
+    def create_response(self, path):
         try:
             pdf = open(path)
         except (IOError, TypeError):
             raise Http404
-        response = HttpResponse(pdf, content_type='text/csv')
+        response = HttpResponse(
+            pdf, content_type=st.MIMETYPES[path.split('.')[-1]])
         response['Content-Disposition'] = 'inline; filename=%s' % (
             path.split('/')[-1])
+        return response
+
+    def get(self, request, *args, **kwargs):
+        generator_type = kwargs['type']
+        year = int(kwargs['year'])
+        Report = self.report_type[kwargs['unit_type']]
+        Generator = self.generator_type[generator_type]
+        report = Report(Generator, year)
+        code = kwargs['code'] if generator_type != 'rcsv' else None
+        if year != datetime.date.today().year:
+            path = report.get_full_path(code)
+            return HttpResponse(path)
+        elif generator_type == 'rcsv':
+            report.create_reports()
+            path = report.get_full_path()
+        else:
+            path = report.create_report(code)
+        response = self.create_response(path)
         return response

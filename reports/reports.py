@@ -49,8 +49,11 @@ class BaseReport:
                                  capitulos_libro, congresos, proyectos,
                                  convenios, tesis, patentes)
 
-    def get_full_path(self, unit):
-        unit_name = self.get_investigadores(unit, None)[2]
+    def get_full_path(self, unit=None):
+        if unit != None:
+            unit_name = self.get_investigadores(unit, None)[2]
+        else:
+            unit_name = None
         return os.path.join(
             self.generator.get_save_path(self.year, self.report_type),
             self.generator.get_filename(self.year, unit_name, self.report_type)
