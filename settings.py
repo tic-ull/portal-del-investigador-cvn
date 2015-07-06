@@ -40,10 +40,6 @@ st.CONSTANCE_CONFIG['EXPIRY_DATE'] = (
 UNIVERSITY = _(u'Universidad de La Laguna')
 
 # ******************************* PATHS *************************************
-REPORTS_IPDF_ROOT = os.path.join(st.MEDIA_ROOT, 'cvn/reports/ipdf')
-REPORTS_RCSV_ROOT = os.path.join(st.MEDIA_ROOT, 'cvn/reports/rcsv')
-REPORTS_ICSV_ROOT = os.path.join(st.MEDIA_ROOT, 'cvn/reports/icsv')
-REPORTS_IMAGES = os.path.join(st.STATIC_ROOT, 'images/')
 FILE_TEST_ROOT = os.path.join(st.BASE_DIR, 'cvn/tests/files/')
 MIGRATION_ROOT = os.path.join(st.BASE_DIR, 'importCVN')
 XML_TEMPLATE = os.path.join(st.BASE_DIR, 'cvn/templates/cvn/xml')
@@ -300,6 +296,19 @@ CVN_PDF_AUTHOR_NOAUT = [u'FECYT - Author of Example', ]
 HISTORICAL_YEAR = '2013'
 
 
+# ************************* REPORTS *******************************************
+
+class REPORTS_DIRECTORY(Enum):
+    DEPT = 'department'
+    AREA = 'area'
+    USERS = 'users'
+
+# Paths
+REPORTS_IPDF_ROOT = os.path.join(st.MEDIA_ROOT, 'cvn/reports/ipdf')
+REPORTS_RCSV_ROOT = os.path.join(st.MEDIA_ROOT, 'cvn/reports/rcsv')
+REPORTS_ICSV_ROOT = os.path.join(st.MEDIA_ROOT, 'cvn/reports/icsv')
+REPORTS_IMAGES = os.path.join(st.STATIC_ROOT, 'images/')
+
 # Fields on the csv file of informe_csv (dept_report and list_report management commands)
 INFORME_CSV_FIELDS_ARTICULO = [
     'titulo', 'nombre_publicacion', 'fecha', 'autores', 'volumen', 'numero',
@@ -344,6 +353,7 @@ INFORME_CSV_FIELDS_PATENTE = [
     'titulo', 'fecha', 'fecha_concesion', 'num_solicitud', 'lugar_prioritario',
     'lugares', 'entidad_titular', 'empresas'
 ]
+# ************************* REPORTS *******************************************
 
 # ************************* SETTINGS LOCAL ***********************************
 try:
