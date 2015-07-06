@@ -25,6 +25,7 @@
 from abc import ABCMeta
 from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings as st
+from cvn import settings as st_cvn
 from cvn.models import (Articulo, Libro, Capitulo, Congreso, Proyecto,
                         Convenio, TesisDoctoral, Patente)
 from core.models import UserProfile
@@ -72,7 +73,7 @@ class BaseReport:
 
 class UsersReport(BaseReport):
 
-    report_type = 'list'
+    report_type = st_cvn.REPORTS_DIRECTORY.USERS.value
 
     def get_investigadores(self, unit, title):
         if unit is None:
@@ -140,12 +141,12 @@ class UnitReport(BaseReport):
 
 
 class DeptReport(UnitReport):
-    report_type = 'department'
+    report_type = st_cvn.REPORTS_DIRECTORY.DEPT.value
     WS_URL_ALL = st.WS_DEPARTMENTS_ALL
     WS_URL_DETAIL = st.WS_DEPARTMENTS_AND_MEMBERS_UNIT_YEAR
 
 
 class AreaReport(UnitReport):
-    report_type = 'area'
+    report_type = st_cvn.REPORTS_DIRECTORY.AREA.value
     WS_URL_ALL = st.WS_AREAS_ALL
     WS_URL_DETAIL = st.WS_AREAS_AND_MEMBERS_UNIT_YEAR
