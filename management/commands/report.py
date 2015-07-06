@@ -92,10 +92,8 @@ class Command(BaseCommand):
             report = Report(Generator, year)
             report.create_reports(unit_id)
         else:
-            if not options["user_list"]:
-                nifs = None
-            else:
-                nifs = options["user_list"].split(",")
+            ul = options["user_list"]
+            nifs = ul.split(",") if ul is not None else None
             report = UsersReport(Generator, int(options['year']))
             report.create_report(nifs, options['title'])
 
