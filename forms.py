@@ -138,3 +138,8 @@ class UserProfileAdminForm(forms.ModelForm):
         if self.instance and self.instance.pk:
             self.fields['first_name'].initial = self.instance.user.first_name
             self.fields['last_name'].initial = self.instance.user.last_name
+
+
+class ChangeDNIForm(forms.Form):
+    _selected_action = forms.CharField(widget=forms.HiddenInput)
+    new_dni = forms.CharField(label=_('New DNI'), max_length=20, required=False, widget=forms.TextInput())

@@ -23,12 +23,15 @@
 #
 
 from .admin_base import OldCvnPdfInline, BaseUserProfileAdmin, BaseCvnInline
-from .forms import UploadCVNForm
+from .forms import UploadCVNForm, ChangeDNIForm
 from .models import (Congreso, Proyecto, Convenio, TesisDoctoral, Articulo,
                      Libro, CVN, Capitulo, Patente, OldCvnPdf)
 from core.models import UserProfile
 from core.widgets import FileFieldURLWidget
 from django.contrib import admin
+from django.http import HttpResponseRedirect
+from django.shortcuts import render
+from django.contrib import messages
 
 
 class CVNAdmin(admin.ModelAdmin):
@@ -73,6 +76,30 @@ class CVNInline(BaseCvnInline):
 class UserProfileAdmin(BaseUserProfileAdmin):
     inlines = [CVNInline, OldCvnPdfInline]
     readonly_fields = ('rrhh_code', )
+    actions = ['change_dni',]
+
+    def change_dni(self, request, queryset):
+        form = None
+        if len(queryset) > 1:
+            self.message_user(request, "You cannot change more than one dni at a time.",level=messages.ERROR)
+            return HttpResponseRedirect(request.get_full_path())
+        if 'apply' in request.POST:
+            form = ChangeDNIForm(request.POST)
+            if form.is_valid():
+                dni = form.cleaned_data['new_dni']
+                for user in queryset:
+                    user.documento=dni
+                    user.save()
+                self.message_user(request, "Successfully changed dni.")
+                return HttpResponseRedirect(request.get_full_path())
+
+        if form is None:
+            form = ChangeDNIForm(initial={'_selected_action': request.POST.getlist(admin.ACTION_CHECKBOX_NAME)[0]})
+
+        return render(request,'../templates/cvn/dni_change/dni_change.html', {'usuarios': queryset,
+                                                                              'change_dni_form': form,
+                                                                              })
+    change_dni.short_description = "Change user's DNI"
 
 
 class ProductionAdmin(admin.ModelAdmin):
