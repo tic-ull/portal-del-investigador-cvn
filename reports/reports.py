@@ -23,6 +23,7 @@
 #
 
 from abc import ABCMeta
+import logging
 from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings as st
 from cvn import settings as st_cvn
@@ -30,6 +31,8 @@ from cvn.models import (Articulo, Libro, Capitulo, Congreso, Proyecto,
                         Convenio, TesisDoctoral, Patente)
 from core.models import UserProfile
 from core.ws_utils import CachedWS as ws
+
+logger = logging.getLogger(__name__)
 
 
 class BaseReport:
@@ -80,6 +83,10 @@ class UsersReport(BaseReport):
             profiles = UserProfile.objects.all()
         else:
             profiles = UserProfile.objects.filter(documento__in=unit)
+            nonexistent_users = list(set(unit) - set([p.documento for p in profiles]))
+            if nonexistent_users:
+                logger.warn(u"No se encuentran los siguientes usuarios: "
+                            + str(nonexistent_users))
         investigadores = [{'cod_persona__nombre': p.user.first_name,
                            'cod_persona__apellido1': p.user.last_name,
                            'cod_persona__apellido2': '',
@@ -109,9 +116,11 @@ class UnitReport(BaseReport):
         unit_content = ws.get(self.WS_URL_DETAIL % (unit, self.year))[0]
         if unit_content["unidad"] == {}:
             try:
-                unit_name = self.unit_names['unit']
+                unit_name = self.unit_names[unit]
             except (AttributeError, KeyError):
                 unit_name = unit
+            logger.warn(u"La unidad " + unicode(unit_name)
+                        + u" no tiene información en " + unicode(self.year))
             return [], [], unit_name
         investigadores = []
         usuarios = []
