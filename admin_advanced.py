@@ -32,7 +32,7 @@ from django.contrib import admin
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.contrib import messages
-from django.core.files.base import ContentFile
+from core.admin_advanced import change_dni
 
 class CVNAdmin(admin.ModelAdmin):
 
@@ -76,9 +76,11 @@ class CVNInline(BaseCvnInline):
 class UserProfileAdmin(BaseUserProfileAdmin):
     inlines = [CVNInline, OldCvnPdfInline]
     readonly_fields = ('rrhh_code', )
-    actions = ['change_dni',]
+    actions = ['admin_change_dni',]
 
-    def change_dni(self, request, queryset):
+
+
+    def admin_change_dni(self, request, queryset):
         form = None
         if len(queryset) > 1:
             self.message_user(request, "You cannot change more than one dni at a time.",level=messages.ERROR)
@@ -88,24 +90,7 @@ class UserProfileAdmin(BaseUserProfileAdmin):
             if form.is_valid():
                 dni = form.cleaned_data['new_dni']
                 for user_profile in queryset:
-                    user_profile.documento = dni
-                    user_profile.save()
-
-                    try:
-                        #Latest CVNs
-                        f_pdf = open(user_profile.cvn.cvn_file.path).read()
-                        user_profile.cvn.cvn_file.save(u'Useful_name.pdf',ContentFile(f_pdf))
-                        f_xml = open(user_profile.cvn.xml_file.path).read()
-                        user_profile.cvn.xml_file.save(u'Useful_name.xml',ContentFile(f_xml))
-                        #Old CVNs
-                        #import pdb; pdb.set_trace()
-                        # for oldcvn in user_profile.oldcvnpdf_set.all():
-                        #     f_pdf = open(oldcvn.cvn_file.path).read()
-                        #     filename = oldcvn.cvn_file.name.split('/')[-1].replace(u'.pdf', u'-' + str(oldcvn.uploaded_at.strftime('%Y-%m-%d-%Hh%Mm%Ss')) + u'.pdf')
-                        #     oldcvn.cvn_file.save(filename, ContentFile(f_pdf))
-                        # user_profile.oldcvnpdf_set.save()
-                    except:
-                        print("user has no CVN uploaded!")
+                   change_dni(user_profile, dni)
 
                 self.message_user(request, "Successfully changed dni.")
                 return HttpResponseRedirect(request.get_full_path())
@@ -117,7 +102,8 @@ class UserProfileAdmin(BaseUserProfileAdmin):
                                                                               'change_dni_form': form,
                                                                               })
 
-    change_dni.short_description = "Change user's DNI"
+
+    admin_change_dni.short_description = "Change user's DNI"
 
 
 class ProductionAdmin(admin.ModelAdmin):

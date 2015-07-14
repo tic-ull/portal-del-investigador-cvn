@@ -283,10 +283,7 @@ class CVN(models.Model):
             logger.error(str(e))
 
     def _backup_pdf(self):
-        filename = self.cvn_file.name.split('/')[-1].replace(
-            u'.pdf', u'-' + str(
-                self.uploaded_at.strftime('%Y-%m-%d-%Hh%Mm%Ss')
-            ) + u'.pdf')
+        filename = OldCvnPdf.create_filename(self)
         try:
             old_cvn_file = SimpleUploadedFile(
                 filename, self.cvn_file.read(), content_type="application/pdf")
@@ -707,6 +704,15 @@ class OldCvnPdf(models.Model):
 
     def __unicode__(self):
         return '%s ' % self.cvn_file.name.split('/')[-1]
+
+
+    @staticmethod
+    def create_filename(cvn):
+        return cvn.cvn_file.name.split('/')[-1].replace(
+            u'.pdf', u'-' + str(
+                cvn.uploaded_at.strftime('%Y-%m-%d-%Hh%Mm%Ss')
+            ) + u'.pdf')
+
 
     class Meta:
         verbose_name_plural = _(u'Histórico de Currículum Vitae Normalizado')
