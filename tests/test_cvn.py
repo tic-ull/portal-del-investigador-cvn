@@ -22,15 +22,19 @@
 #    <http://www.gnu.org/licenses/>.
 #
 
+
 import os
-
+from os.path import join as os_path_join
 from django.test import TestCase
-
+from django.conf import settings as st
 from cvn import settings as st_cvn
 from cvn.models import CVN, OldCvnPdf
+from cvn.helpers import get_cvn_path as get_cvn_helpers_path
+from cvn.helpers import get_old_cvn_path
 from core.tests.helpers import init, clean
 from core.tests.factories import UserFactory
 from utils import get_cvn_path
+from core.admin_advanced import change_dni_cvn, change_dni_cvn_old
 
 
 class CVNTestCase(TestCase):
@@ -87,3 +91,32 @@ class CVNTestCase(TestCase):
     @classmethod
     def tearDownClass(cls):
         clean()
+
+    def test_dni_change(self):
+        #LATEST CVN TEST
+        user = UserFactory.create()
+        cvn = CVN(user=user, pdf_path=get_cvn_path('CVN-Test'))
+        cvn.save()
+        user.profile.documento = '88888888O'
+        user.profile.save()
+        pdf_rel_path = get_cvn_helpers_path(cvn, u'test.pdf')
+        pdf_path = os_path_join(st.MEDIA_ROOT, pdf_rel_path)
+        xml_rel_path = get_cvn_helpers_path(cvn, u'test.xml')
+        xml_path = os_path_join(st.MEDIA_ROOT, xml_rel_path)
+        change_dni_cvn(user.profile)
+        self.assertEqual(cvn.cvn_file.path,pdf_path)
+        self.assertEqual(cvn.xml_file.path,xml_path)
+
+        #OLD CVN TEST
+        user_old = UserFactory.create()
+        cvn2 = CVN(user=user_old, pdf_path=get_cvn_path('CVN-Test'))
+        cvn2.save()
+        CVN(user=user_old, pdf_path=get_cvn_path('CVN-Test'))
+        user_old.profile.documento = '7777777D'
+        user_old.save()
+        filename_old = 'CVN-%s-%s.pdf'%(user_old.profile.documento, user_old.profile.oldcvnpdf_set.all()[0].uploaded_at.strftime('%Y-%m-%d-%Hh%Mm%Ss'))
+        pdf_path_old = get_old_cvn_path(cvn2, filename_old)
+        path_old = os_path_join(st.MEDIA_ROOT, pdf_path_old)
+        change_dni_cvn_old(user_old.profile)
+        cvn_old =user_old.profile.oldcvnpdf_set.all()[0]
+        self.assertEqual(cvn_old.cvn_file.path, path_old)
