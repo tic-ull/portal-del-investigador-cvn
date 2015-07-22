@@ -37,6 +37,10 @@ from managers import CongresoManager, ScientificExpManager, CvnItemManager
 from parsers.read_helpers import parse_date, parse_nif, parse_cvnitem_to_class
 from parsers.write import CvnXmlWriter
 from constance import config
+from os import makedirs
+from os.path import join as os_path_join
+from os.path import isdir as os_path_isdir
+from django.core.files.move import file_move_safe
 
 import datetime
 import fecyt
@@ -283,7 +287,7 @@ class CVN(models.Model):
             logger.error(str(e))
 
     def _backup_pdf(self):
-        filename = OldCvnPdf.create_filename(self)
+        filename = OldCvnPdf.create_filename(self.cvn_file.name, self.uploaded_at)
         try:
             old_cvn_file = SimpleUploadedFile(
                 filename, self.cvn_file.read(), content_type="application/pdf")
@@ -327,6 +331,23 @@ class CVN(models.Model):
             if produccion is None:
                 continue
             produccion.objects.create(cvnitem, self.user_profile)
+
+    def change_dni_cvn(self):
+        # Latest CVN
+        relative_pdf_path = get_cvn_path(self, u'fake.pdf')
+        full_pdf_path = os_path_join(st.MEDIA_ROOT, relative_pdf_path)
+        xml_path = get_cvn_path(self, u'fake.xml')
+        new_xml_path = os_path_join(st.MEDIA_ROOT, xml_path)
+        root_path = '/'.join(full_pdf_path.split('/')[:-1])
+        if not os_path_isdir(root_path):
+            makedirs(root_path)
+        if self.cvn_file.path != full_pdf_path:
+            file_move_safe(self.cvn_file.path, full_pdf_path, allow_overwrite=True)
+            self.cvn_file.name = relative_pdf_path
+        if self.xml_file.path != new_xml_path:
+            file_move_safe(self.xml_file.path, new_xml_path, allow_overwrite=True)
+            self.xml_file.name = xml_path
+        self.save()
 
     def __unicode__(self):
         return '%s ' % self.cvn_file.name.split('/')[-1]
@@ -705,14 +726,26 @@ class OldCvnPdf(models.Model):
     def __unicode__(self):
         return '%s ' % self.cvn_file.name.split('/')[-1]
 
-
     @staticmethod
-    def create_filename(cvn):
-        return cvn.cvn_file.name.split('/')[-1].replace(
+    def create_filename(filename, uploaded_at):
+        return filename.split('/')[-1].replace(
             u'.pdf', u'-' + str(
-                cvn.uploaded_at.strftime('%Y-%m-%d-%Hh%Mm%Ss')
+                uploaded_at.strftime('%Y-%m-%d-%Hh%Mm%Ss')
             ) + u'.pdf')
 
+    def change_dni_cvn_old(self):
+        filename = 'CVN-%s-%s.pdf' % (self.user_profile.documento, self.uploaded_at.strftime('%Y-%m-%d-%Hh%Mm%Ss'))
+        relative_pdf_path = get_old_cvn_path(self, filename)
+        full_pdf_path = os_path_join(st.MEDIA_ROOT, relative_pdf_path)
+        if self.cvn_file.path != full_pdf_path:
+            root_path = '/'.join(full_pdf_path.split('/')[:-1])
+            if not os_path_isdir(root_path):
+                makedirs(root_path)
+            # This just moves the file from the old path to the new one,
+            file_move_safe(self.cvn_file.path, full_pdf_path, allow_overwrite=True)
+            # so is therefore necessary to update the name with the new relative path before saving the model
+            self.cvn_file.name = relative_pdf_path
+            self.save()
 
     class Meta:
         verbose_name_plural = _(u'Histórico de Currículum Vitae Normalizado')

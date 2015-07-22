@@ -32,7 +32,7 @@ from django.contrib import admin
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.contrib import messages
-from core.admin_advanced import change_dni
+
 
 class CVNAdmin(admin.ModelAdmin):
 
@@ -76,32 +76,30 @@ class CVNInline(BaseCvnInline):
 class UserProfileAdmin(BaseUserProfileAdmin):
     inlines = [CVNInline, OldCvnPdfInline]
     readonly_fields = ('rrhh_code', )
-    actions = ['admin_change_dni',]
-
-
+    actions = ['admin_change_dni', ]
 
     def admin_change_dni(self, request, queryset):
-        form = None
         if len(queryset) > 1:
-            self.message_user(request, "You cannot change more than one dni at a time.",level=messages.ERROR)
+            self.message_user(request, "You cannot change more than one dni at "
+                                       "a time.", level=messages.ERROR)
             return HttpResponseRedirect(request.get_full_path())
         if 'apply' in request.POST:
             form = ChangeDNIForm(request.POST)
             if form.is_valid():
                 dni = form.cleaned_data['new_dni']
                 for user_profile in queryset:
-                   change_dni(user_profile, dni)
+                    user_profile.change_dni(dni)
 
                 self.message_user(request, "Successfully changed dni.")
                 return HttpResponseRedirect(request.get_full_path())
 
-        if form is None:
-            form = ChangeDNIForm(initial={'_selected_action': request.POST.getlist(admin.ACTION_CHECKBOX_NAME)[0]})
+        else:
+            action = request.POST.getlist(admin.ACTION_CHECKBOX_NAME)[0]
+            form = ChangeDNIForm(initial={'_selected_action': action})
 
-        return render(request,'../templates/cvn/dni_change/dni_change.html', {'usuarios': queryset,
-                                                                              'change_dni_form': form,
-                                                                              })
-
+        return render(request,
+                      '../templates/cvn/dni_change/dni_change.html',
+                      {'usuarios': queryset, 'change_dni_form': form,})
 
     admin_change_dni.short_description = "Change user's DNI"
 
