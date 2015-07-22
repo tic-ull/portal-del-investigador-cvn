@@ -46,7 +46,8 @@ class InformeCSV:
 
     def go(self, team_name, investigadores, articulos, libros, capitulos,
            congresos, proyectos, convenios, tesis, patentes):
-        path = "%s/%s/%s/" % (st_cvn.REPORTS_ICSV_ROOT, self.model_type,
+        full_path = os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_ICSV_PATH)
+        path = "%s/%s/%s/" % (full_path, self.model_type,
                               self.year)
         if not os.path.isdir(path):
             os.makedirs(path)

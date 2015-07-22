@@ -304,9 +304,9 @@ class REPORTS_DIRECTORY(Enum):
     USERS = 'users'
 
 # Paths
-REPORTS_IPDF_ROOT = os.path.join(st.MEDIA_ROOT, 'cvn/reports/ipdf')
-REPORTS_RCSV_ROOT = os.path.join(st.MEDIA_ROOT, 'cvn/reports/rcsv')
-REPORTS_ICSV_ROOT = os.path.join(st.MEDIA_ROOT, 'cvn/reports/icsv')
+REPORTS_IPDF_PATH = 'cvn/reports/ipdf'
+REPORTS_RCSV_PATH = 'cvn/reports/rcsv'
+REPORTS_ICSV_PATH = 'cvn/reports/icsv'
 REPORTS_IMAGES = os.path.join(st.STATIC_ROOT, 'images/')
 
 # Fields on the csv file of informe_csv (dept_report and list_report management commands)

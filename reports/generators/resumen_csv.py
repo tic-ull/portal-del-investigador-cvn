@@ -32,7 +32,8 @@ class ResumenCSV:
 
     def __init__(self, year, model_type):
         self.year = str(year)
-        path = "%s/%s/%s/" % (st_cvn.REPORTS_RCSV_ROOT, model_type,
+        full_path = os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_RCSV_PATH)
+        path = "%s/%s/%s/" % (full_path, model_type,
                               self.year)
         if not os.path.isdir(path):
             os.makedirs(path)

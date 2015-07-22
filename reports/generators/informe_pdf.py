@@ -36,6 +36,7 @@ from reportlab.platypus import (SimpleDocTemplate, Paragraph, Spacer, Table,
 from reportlab.platypus.flowables import PageBreak
 from slugify import slugify
 import os
+from django.conf import settings as st
 
 
 class InformePDF:
@@ -74,7 +75,8 @@ class InformePDF:
     def go(self, team_name, investigadores, articulos, libros, capitulos,
            congresos, proyectos, convenios, tesis, patentes):
         self.team_name = team_name
-        path_file = "%s/%s/%s/" % (st_cvn.REPORTS_IPDF_ROOT, self.model_type,
+        full_path = os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_IPDF_PATH)
+        path_file = "%s/%s/%s/" % (full_path, self.model_type,
                                    self.year)
         if not os.path.isdir(path_file):
             os.makedirs(path_file)
