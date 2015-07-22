@@ -30,10 +30,10 @@ _ = lambda s: s
 
 # DJANGO CONSTANCE
 st.CONSTANCE_CONFIG['EXPIRY_DATE'] = (
-    datetime.date(2013, 12, 31), _(u'Expiry date for a CVN'))
+    datetime.date(2013, 12, 31), _("Expiry date for a CVN"))
 
 # Default Entity
-UNIVERSITY = _(u'Universidad de La Laguna')
+UNIVERSITY = _("University of La Laguna")
 
 # WS FECYT
 FECYT_USER = "user"

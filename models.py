@@ -51,20 +51,20 @@ class CVN(models.Model):
 
     xml_file = models.FileField(_(u'XML'), upload_to=get_cvn_path)
 
-    fecha = models.DateField(_(u'Fecha del CVN'))
+    fecha = models.DateField(_("Date of CVN"))
 
-    created_at = models.DateTimeField(_(u'Creado'), auto_now_add=True)
+    created_at = models.DateTimeField(_("Created"), auto_now_add=True)
 
-    updated_at = models.DateTimeField(_(u'Actualizado'), auto_now=True)
+    updated_at = models.DateTimeField(_("Updated"), auto_now=True)
 
     uploaded_at = models.DateTimeField(
-        _(u'PDF Subido'), default=datetime.datetime(2014, 10, 18))
+        _("Uploaded PDF"), default=datetime.datetime(2014, 10, 18))
 
     user_profile = models.OneToOneField(UserProfile)
 
-    status = models.IntegerField(_(u'Estado'), choices=st_cvn.CVN_STATUS)
+    status = models.IntegerField(_("Status"), choices=st_cvn.CVN_STATUS)
 
-    is_inserted = models.BooleanField(_(u'Insertado'), default=False)
+    is_inserted = models.BooleanField(_("Inserted"), default=False)
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
@@ -335,7 +335,7 @@ class CVN(models.Model):
         return '%s ' % self.cvn_file.name.split('/')[-1]
 
     class Meta:
-        verbose_name_plural = _(u'Currículum Vitae Normalizado')
+        verbose_name_plural = _("Normalized Curriculum Vitae")
         ordering = ['-uploaded_at', '-updated_at']
 
 
@@ -347,45 +347,45 @@ class Publicacion(models.Model):
     objects = CvnItemManager()
 
     titulo = models.TextField(
-        _(u'Título de la publicación'), blank=True, null=True)
+        _("Publication title"), blank=True, null=True)
 
     user_profile = models.ManyToManyField(UserProfile, blank=True, null=True)
 
-    fecha = models.DateField(_(u'Fecha'), blank=True, null=True)
+    fecha = models.DateField(_("Date"), blank=True, null=True)
 
     nombre_publicacion = models.TextField(
-        _(u'Nombre de la publicación'), blank=True, null=True)
+        _("Publication name"), blank=True, null=True)
 
     volumen = models.CharField(
-        _(u'Volumen'), max_length=100, blank=True, null=True)
+        _("Volume"), max_length=100, blank=True, null=True)
 
     numero = models.CharField(
-        _(u'Número'), max_length=100, blank=True, null=True)
+        _("Number"), max_length=100, blank=True, null=True)
 
     pagina_inicial = models.CharField(
-        _(u'Página Inicial'), max_length=100, blank=True, null=True)
+        _("First page"), max_length=100, blank=True, null=True)
 
     pagina_final = models.CharField(
-        _(u'Página Final'), max_length=100, blank=True, null=True)
+        _("Last page"), max_length=100, blank=True, null=True)
 
-    autores = models.TextField(_(u'Autores'), blank=True, null=True)
+    autores = models.TextField(_("Authors"), blank=True, null=True)
 
     isbn = models.CharField(_(u'ISBN'), max_length=150, blank=True, null=True)
 
     issn = models.CharField(_(u'ISSN'), max_length=150, blank=True, null=True)
 
     deposito_legal = models.CharField(
-        _(u'Depósito legal'), max_length=150, blank=True, null=True)
+        _("Legal deposit"), max_length=150, blank=True, null=True)
 
-    created_at = models.DateTimeField(_(u'Creado'), auto_now_add=True)
+    created_at = models.DateTimeField(_("Created"), auto_now_add=True)
 
-    updated_at = models.DateTimeField(_(u'Actualizado'), auto_now=True)
+    updated_at = models.DateTimeField(_("Updated"), auto_now=True)
 
     def __unicode__(self):
         return "%s" % self.titulo
 
     class Meta:
-        verbose_name_plural = _(u'Publicaciones')
+        verbose_name_plural = _("Publications")
         ordering = ['-fecha', 'titulo']
         abstract = True
 
@@ -399,7 +399,7 @@ class Articulo(Publicacion):
         cls.objects.filter(user_profile__isnull=True).delete()
 
     class Meta:
-        verbose_name_plural = _(u'Artículos')
+        verbose_name_plural = _("Articles")
         ordering = ['-fecha', 'titulo']
 
 
@@ -412,7 +412,7 @@ class Libro(Publicacion):
         cls.objects.filter(user_profile__isnull=True).delete()
 
     class Meta:
-        verbose_name_plural = _(u'Libros')
+        verbose_name_plural = _("Books")
         ordering = ['-fecha', 'titulo']
 
 
@@ -425,7 +425,7 @@ class Capitulo(Publicacion):
         cls.objects.filter(user_profile__isnull=True).delete()
 
     class Meta:
-        verbose_name_plural = _(u'Capítulos de Libros')
+        verbose_name_plural = _("Chapters of books")
         ordering = ['-fecha', 'titulo']
 
 
@@ -438,39 +438,39 @@ class Congreso(models.Model):
 
     user_profile = models.ManyToManyField(UserProfile, blank=True, null=True)
 
-    titulo = models.TextField(_(u'Título'), blank=True, null=True)
+    titulo = models.TextField(_("Title"), blank=True, null=True)
 
     fecha_de_inicio = models.DateField(
-        _(u'Fecha de realización'), blank=True, null=True)
+        _("Creation Date"), blank=True, null=True)
 
     fecha_de_fin = models.DateField(
-        _(u'Fecha de finalización'), blank=True, null=True)
+        _("End date"), blank=True, null=True)
 
     nombre_del_congreso = models.TextField(
-        _(u'Nombre del congreso'), blank=True, null=True)
+        _("Name of the conference"), blank=True, null=True)
 
     ciudad_de_realizacion = models.CharField(
-        _(u'Ciudad de realización'), max_length=500, blank=True, null=True)
+        _("City"), max_length=500, blank=True, null=True)
 
-    autores = models.TextField(_(u'Autores'), blank=True, null=True)
+    autores = models.TextField(_("Authors"), blank=True, null=True)
 
-    fecha = models.DateField(_(u'Fecha'), blank=True, null=True)
+    fecha = models.DateField(_("Date"), blank=True, null=True)
 
     ambito = models.CharField(
-        _(u'Ámbito del congreso'), max_length=50, blank=True, null=True)
+        _("Field of the conference"), max_length=50, blank=True, null=True)
 
     otro_ambito = models.CharField(
-        _(u'Otro ámbito'), max_length=250, blank=True, null=True)
+        _("Another area"), max_length=250, blank=True, null=True)
 
     deposito_legal = models.CharField(
-        _(u'Depósito legal'), max_length=150, blank=True, null=True)
+        _("Legal deposit"), max_length=150, blank=True, null=True)
 
     publicacion_acta_congreso = models.CharField(
-        _(u'Publicación en acta'), max_length=100, blank=True, null=True)
+        _("Publication in conference proceedings"), max_length=100, blank=True, null=True)
 
-    created_at = models.DateTimeField(_(u'Creado'), auto_now_add=True)
+    created_at = models.DateTimeField(_("Created"), auto_now_add=True)
 
-    updated_at = models.DateTimeField(_(u'Actualizado'), auto_now=True)
+    updated_at = models.DateTimeField(_("Updated"), auto_now=True)
 
     @classmethod
     def remove_by_userprofile(cls, user_profile):
@@ -482,7 +482,7 @@ class Congreso(models.Model):
         return "%s" % self.titulo
 
     class Meta:
-        verbose_name_plural = _(u'Congresos')
+        verbose_name_plural = _("Conferences")
         ordering = ['-fecha_de_inicio', 'titulo']
 
 
@@ -493,49 +493,49 @@ class ScientificExp(models.Model):
     user_profile = models.ManyToManyField(UserProfile, blank=True, null=True)
 
     titulo = models.CharField(
-        _(u'Denominación'), max_length=1000, blank=True, null=True)
+        _("Designation"), max_length=1000, blank=True, null=True)
 
     numero_de_investigadores = models.IntegerField(
-        _(u'Número de investigadores/as'), blank=True, null=True)
+        _("Number of researchers"), blank=True, null=True)
 
-    autores = models.TextField(_(u'Autores'), blank=True, null=True)
+    autores = models.TextField(_("Authors"), blank=True, null=True)
 
     fecha_de_inicio = models.DateField(
-        _(u'Fecha de inicio'), blank=True, null=True)
+        _("Start date"), blank=True, null=True)
 
     fecha_de_fin = models.DateField(
-        _(u'Fecha de finalización'), blank=True, null=True)
+        _("End date"), blank=True, null=True)
 
     duracion = models.IntegerField(
-        _(u'Duración (en días)'), blank=True, null=True)
+        _("Duration (in days)"), blank=True, null=True)
 
     ambito = models.CharField(
-        _(u'Ámbito'), max_length=50, blank=True, null=True)
+        _("Scope"), max_length=50, blank=True, null=True)
 
     otro_ambito = models.CharField(
-        _(u'Otro ámbito'), max_length=250, blank=True, null=True)
+        _("Another area"), max_length=250, blank=True, null=True)
 
     cod_segun_financiadora = models.CharField(
-        _(u'Código según financiadora'), max_length=150, blank=True, null=True)
+        _("Code acc. to the funding institution"), max_length=150, blank=True, null=True)
 
     cuantia_total = models.CharField(
-        _(u'Cuantía'), max_length=19, blank=True, null=True)
+        _("Total amount"), max_length=19, blank=True, null=True)
 
     cuantia_subproyecto = models.CharField(
-        _(u'Cuantía subproyecto'), max_length=19, blank=True, null=True)
+        _("Sub-project amount"), max_length=19, blank=True, null=True)
 
     porcentaje_en_subvencion = models.CharField(
-        _(u'Porcentaje en subvención'), max_length=19, blank=True, null=True)
+        _("Percentage as grant"), max_length=19, blank=True, null=True)
 
     porcentaje_en_credito = models.CharField(
-        _(u'Porcentaje en crédito'), max_length=19, blank=True, null=True)
+        _("Percentage as credit"), max_length=19, blank=True, null=True)
 
     porcentaje_mixto = models.CharField(
-        _(u'Porcentaje mixto'), max_length=19, blank=True, null=True)
+        _("Mixed percentage"), max_length=19, blank=True, null=True)
 
-    created_at = models.DateTimeField(_(u'Creado'), auto_now_add=True)
+    created_at = models.DateTimeField(_("Created"), auto_now_add=True)
 
-    updated_at = models.DateTimeField(_(u'Actualizado'), auto_now=True)
+    updated_at = models.DateTimeField(_("Updated"), auto_now=True)
 
     def __unicode__(self):
         return u'%s' % self.titulo
@@ -565,7 +565,7 @@ class ScientificExp(models.Model):
         super(ScientificExp, self).save(*args, **kwargs)
 
     class Meta:
-        verbose_name_plural = _(u'Experiencia Científica')
+        verbose_name_plural = _("Scientific Experience")
         ordering = ['-fecha_de_inicio', 'titulo']
         abstract = True
 
@@ -583,7 +583,7 @@ class Convenio(ScientificExp):
         cls.objects.filter(user_profile__isnull=True).delete()
 
     class Meta(ScientificExp.Meta):
-        verbose_name_plural = _(u'Convenios')
+        verbose_name_plural = _("Agreements")
         ordering = ['-fecha_de_inicio', 'titulo']
 
 
@@ -600,7 +600,7 @@ class Proyecto(ScientificExp):
         cls.objects.filter(user_profile__isnull=True).delete()
 
     class Meta:
-        verbose_name_plural = _(u'Proyectos')
+        verbose_name_plural = _("Projects")
         ordering = ['-fecha_de_inicio', 'titulo']
 
 
@@ -613,22 +613,22 @@ class TesisDoctoral(models.Model):
 
     user_profile = models.ManyToManyField(UserProfile, blank=True, null=True)
 
-    titulo = models.TextField(_(u'Título del trabajo'), blank=True, null=True)
+    titulo = models.TextField(_("Project title"), blank=True, null=True)
 
-    fecha = models.DateField(_(u'Fecha de lectura'), blank=True, null=True)
+    fecha = models.DateField(_("Date of reading"), blank=True, null=True)
 
     autor = models.CharField(
-        _(u'Autor'), max_length=256, blank=True, null=True)
+        _("Author"), max_length=256, blank=True, null=True)
 
     universidad_que_titula = models.CharField(_(
         u'Universidad que titula'), max_length=500, blank=True, null=True)
 
     codirector = models.CharField(
-        _(u'Codirector'), max_length=256, blank=True, null=True)
+        _("Co-director"), max_length=256, blank=True, null=True)
 
-    created_at = models.DateTimeField(_(u'Creado'), auto_now_add=True)
+    created_at = models.DateTimeField(_("Created"), auto_now_add=True)
 
-    updated_at = models.DateTimeField(_(u'Actualizado'), auto_now=True)
+    updated_at = models.DateTimeField(_("Updated"), auto_now=True)
 
     @classmethod
     def remove_by_userprofile(cls, user_profile):
@@ -640,7 +640,7 @@ class TesisDoctoral(models.Model):
         return "%s" % self.titulo
 
     class Meta:
-        verbose_name_plural = _(u'Tesis Doctorales')
+        verbose_name_plural = _("Doctoral Thesis")
         ordering = ['-fecha', 'titulo']
 
 
@@ -653,31 +653,31 @@ class Patente(models.Model):
 
     user_profile = models.ManyToManyField(UserProfile, blank=True, null=True)
 
-    titulo = models.TextField(_(u'Denominación'), blank=True, null=True)
+    titulo = models.TextField(_("Designation"), blank=True, null=True)
 
-    fecha = models.DateField(_(u'Fecha'), blank=True, null=True)
+    fecha = models.DateField(_("Date"), blank=True, null=True)
 
     fecha_concesion = models.DateField(
-        _(u'Fecha de concesión'), blank=True, null=True)
+        _("Concession date"), blank=True, null=True)
 
     num_solicitud = models.CharField(
-        _(u'Número de solicitud'), max_length=100, blank=True, null=True)
+        _("Request number"), max_length=100, blank=True, null=True)
 
     lugar_prioritario = models.CharField(
-        _(u'País de prioridad'), max_length=100, blank=True, null=True)
+        _("Priority country"), max_length=100, blank=True, null=True)
 
-    lugares = models.TextField(_(u'Países'), blank=True, null=True)
+    lugares = models.TextField(_("Countries"), blank=True, null=True)
 
-    autores = models.TextField(_(u'Autores'), blank=True, null=True)
+    autores = models.TextField(_("Authors"), blank=True, null=True)
 
     entidad_titular = models.CharField(
-        _(u'Entidad titular'), max_length=255, blank=True, null=True)
+        _("Owner entity"), max_length=255, blank=True, null=True)
 
-    empresas = models.TextField(_(u'Empresas'), blank=True, null=True)
+    empresas = models.TextField(_("Companies"), blank=True, null=True)
 
-    created_at = models.DateTimeField(_(u'Creado'), auto_now_add=True)
+    created_at = models.DateTimeField(_("Created"), auto_now_add=True)
 
-    updated_at = models.DateTimeField(_(u'Actualizado'), auto_now=True)
+    updated_at = models.DateTimeField(_("Updated"), auto_now=True)
 
     @classmethod
     def remove_by_userprofile(cls, user_profile):
@@ -689,7 +689,7 @@ class Patente(models.Model):
         return "%s" % self.titulo
 
     class Meta:
-        verbose_name_plural = _(u'Propiedades Intelectuales')
+        verbose_name_plural = _("Intellectual Properties")
         ordering = ['-fecha', 'titulo']
 
 
@@ -699,15 +699,15 @@ class OldCvnPdf(models.Model):
 
     cvn_file = models.FileField(_(u'PDF'), upload_to=get_old_cvn_path)
 
-    uploaded_at = models.DateTimeField(_(u'PDF Subido'))
+    uploaded_at = models.DateTimeField(_("Uploaded PDF"))
 
-    created_at = models.DateTimeField(_(u'Creado'), auto_now_add=True)
+    created_at = models.DateTimeField(_("Created"), auto_now_add=True)
 
-    updated_at = models.DateTimeField(_(u'Actualizado'), auto_now=True)
+    updated_at = models.DateTimeField(_("Updated"), auto_now=True)
 
     def __unicode__(self):
         return '%s ' % self.cvn_file.name.split('/')[-1]
 
     class Meta:
-        verbose_name_plural = _(u'Histórico de Currículum Vitae Normalizado')
+        verbose_name_plural = _("Historical Normalized Curriculum Vitae")
         ordering = ['-uploaded_at']
