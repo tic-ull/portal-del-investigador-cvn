@@ -196,11 +196,69 @@ class CVNTestCase(TestCase):
         self.assertEqual(int(data[8]), Patente.objects.filter(
             fecha__year='2013').count())
 
+    def pdf_test(self, output_file, Report, range):
+        for i in range:
+            u = UserFactory.create()
+            u.profile.rrhh_code = i
+            u.profile.save()
+
+            a = Articulo(titulo="ArtName" + str(i),
+                         fecha=datetime.date(randint(2012, 2014), 1, 1))
+            a.save()
+            a.user_profile.add(u.profile)
+
+            a = Capitulo(titulo="CapName" + str(i),
+                         fecha=datetime.date(randint(2012, 2014), 1, 1))
+            a.save()
+            a.user_profile.add(u.profile)
+
+            a = Congreso(
+                titulo="ConName" + str(i),
+                fecha_de_inicio=datetime.date(randint(2012, 2014), 1, 1)
+            )
+            a.save()
+            a.user_profile.add(u.profile)
+
+            a = Convenio(
+                titulo="ConvName" + str(i),
+                fecha_de_inicio=datetime.date(randint(2012, 2014), 1, 1)
+            )
+            a.save()
+            a.user_profile.add(u.profile)
+
+            a = Patente(titulo="PatName" + str(i),
+                        fecha=datetime.date(randint(2012, 2014), 1, 1))
+            a.save()
+            a.user_profile.add(u.profile)
+
+            a = Proyecto(
+                titulo="ProName" + str(i),
+                fecha_de_inicio=datetime.date(randint(2012, 2014), 1, 1)
+            )
+            a.save()
+            a.user_profile.add(u.profile)
+
+            a = TesisDoctoral(titulo="TesisName" + str(i),
+                              fecha=datetime.date(randint(2012, 2014), 1, 1))
+            a.save()
+            a.user_profile.add(u.profile)
+
+        report = Report(InformePDF, 2013)
+        report.create_report('404')
+        self.assertTrue(os.path.isfile(output_file))
+
+
     @patch.object(CachedWS, 'get', get_area_404)
     def test_area_icsv(self):
         output_file = (os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_ICSV_PATH)
                 + '/area/2013/2013-area-aria.csv')
         self.icsv_test(output_file, AreaReport, range(1, 5))
+
+    @patch.object(CachedWS, 'get', get_area_404)
+    def test_area_ipdf(self):
+        output_file = (os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_IPDF_PATH)
+                + '/area/2013/2013-area-aria.pdf')
+        self.pdf_test(output_file, AreaReport, range(1, 5))
 
     @patch.object(CachedWS, 'get', get_area_404)
     def test_area_rcsv(self):
@@ -213,6 +271,12 @@ class CVNTestCase(TestCase):
         output_file = (os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_ICSV_PATH)
                 + '/department/2013/2013-departamento-departamental.csv')
         self.icsv_test(output_file, DeptReport, range(5, 8))
+
+    @patch.object(CachedWS, 'get', get_dept_404)
+    def test_dept_ipdf(self):
+        output_file = (os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_IPDF_PATH)
+                + '/department/2013/2013-departamento-departamental.pdf')
+        self.pdf_test(output_file, DeptReport, range(5, 8))
 
     @patch.object(CachedWS, 'get', get_dept_404)
     def test_dept_rcsv(self):
