@@ -1,17 +1,17 @@
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-07-22 14:04+0100\n"
-"PO-Revision-Date: 2015-03-04 09:34-0102\n"
-"Last-Translator: RAYCO ADAL ABAD MARTIN <rabadmar@ull.edu.es>\n"
+"PO-Revision-Date: 2015-07-23 10:32-0102\n"
+"Last-Translator: HUGO JIMENEZ HERNANDEZ <hjimeneh@ull.edu.es>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Translated-Using: django-rosetta 0.7.5\n"
+"X-Translated-Using: django-rosetta 0.7.6\n"
 
 #: admin_base.py:62 forms.py:125
 msgid "Name"
@@ -245,7 +245,7 @@ msgstr "Autor"
 
 #: models.py:624
 msgid "Universidad que titula"
-msgstr ""
+msgstr "University issuing the qualification"
 
 #: models.py:627 templates/cvn/partials/producciones_chart.html:293
 msgid "Co-director"
@@ -289,7 +289,7 @@ msgstr "Histórico de Currículum Vitae Normalizado"
 
 #: settings.py:37 settings_local-sample.py:33 settings_local.py:11
 msgid "Expiry date for a CVN"
-msgstr ""
+msgstr "Fecha de expiración para un CVN"
 
 #: settings.py:40 settings_local-sample.py:36 settings_local.py:14
 msgid "University of La Laguna"
@@ -309,8 +309,8 @@ msgstr "Este proceso puede tardar unos minutos, por favor espere."
 
 #: settings.py:83
 msgid ""
-"Connection has been established with the FECYT. Your CVN is being processed, "
-"please wait."
+"Connection has been established with the FECYT. Your CVN is being processed,"
+" please wait."
 msgstr ""
 "Se ha establecido la conexión con la FECYT. Su CVN se está procesando, por "
 "favor espere."
@@ -412,8 +412,8 @@ msgstr "Exportar mi información ULL"
 
 #: templates/cvn/base.html:31
 msgid ""
-"The CVN format has been developed by Fundación Española para la Ciencia y la "
-"Tecnología"
+"The CVN format has been developed by Fundación Española para la Ciencia y la"
+" Tecnología"
 msgstr ""
 "El formato CVN ha sido desarrollado por la Fundación Española para la "
 "Ciencia y la Tecnología"
@@ -641,13 +641,4 @@ msgstr "No disponible"
 
 #: views.py:124
 msgid "No dispone de información en el periodo seleccionado"
-msgstr ""
-
-#~ msgid "University issuing the qualification"
-#~ msgstr "Universidad que titula"
-
-#~ msgid "Fecha de caducidad de un CVN"
-#~ msgstr "Expiry date for a CVN"
-
-#~ msgid "No information in this period"
-#~ msgstr "No dispone de información en el periodo seleccionado"
+msgstr "No information in this period"
