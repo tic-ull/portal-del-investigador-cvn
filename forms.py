@@ -66,7 +66,8 @@ class UploadCVNForm(forms.ModelForm):
             if ('/Author' in pdf_info and
                     pdf_info['/Author'] in st_cvn.CVN_PDF_AUTHOR_NOAUT):
                 raise forms.ValidationError(
-                    _(u'El CVN debe estar generado desde el Editor CVN de la FECYT')
+                    _(u'El CVN debe estar generado '
+                      u'desde el Editor CVN de la FECYT')
                 )
         except PdfReadError:
             raise forms.ValidationError(
@@ -142,4 +143,5 @@ class UserProfileAdminForm(forms.ModelForm):
 
 class ChangeDNIForm(forms.Form):
     _selected_action = forms.CharField(widget=forms.HiddenInput)
-    new_dni = forms.CharField(label=_('New DNI'), max_length=20, required=False, widget=forms.TextInput())
+    new_dni = forms.CharField(label=_('New DNI'), max_length=20,
+                              required=False, widget=forms.TextInput())

@@ -32,6 +32,7 @@ from django.contrib import admin
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.contrib import messages
+from django.utils.translation import ugettext_lazy as _
 
 
 class CVNAdmin(admin.ModelAdmin):
@@ -80,8 +81,9 @@ class UserProfileAdmin(BaseUserProfileAdmin):
 
     def admin_change_dni(self, request, queryset):
         if len(queryset) > 1:
-            self.message_user(request, "You cannot change more than one dni at "
-                                       "a time.", level=messages.ERROR)
+            self.message_user(request,
+                              _("You cannot change more than one dni at "
+                                "a time."), level=messages.ERROR)
             return HttpResponseRedirect(request.get_full_path())
         if 'apply' in request.POST:
             form = ChangeDNIForm(request.POST)
@@ -90,7 +92,7 @@ class UserProfileAdmin(BaseUserProfileAdmin):
                 for user_profile in queryset:
                     user_profile.change_dni(dni)
 
-                self.message_user(request, "Successfully changed dni.")
+                self.message_user(request, _("Successfully changed dni."))
                 return HttpResponseRedirect(request.get_full_path())
 
         else:
@@ -98,10 +100,10 @@ class UserProfileAdmin(BaseUserProfileAdmin):
             form = ChangeDNIForm(initial={'_selected_action': action})
 
         return render(request,
-                      '../templates/cvn/dni_change/dni_change.html',
-                      {'usuarios': queryset, 'change_dni_form': form,})
+                      'cvn/dni_change/dni_change.html',
+                      {'usuarios': queryset, 'change_dni_form': form, })
 
-    admin_change_dni.short_description = "Change user's DNI"
+    admin_change_dni.short_description = _("Change user's DNI")
 
 
 class ProductionAdmin(admin.ModelAdmin):

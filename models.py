@@ -332,20 +332,20 @@ class CVN(models.Model):
                 continue
             produccion.objects.create(cvnitem, self.user_profile)
 
-    def change_dni_cvn(self):
+    def update_document_in_path(self):
         # Latest CVN
         relative_pdf_path = get_cvn_path(self, u'fake.pdf')
         full_pdf_path = os_path_join(st.MEDIA_ROOT, relative_pdf_path)
         xml_path = get_cvn_path(self, u'fake.xml')
-        new_xml_path = os_path_join(st.MEDIA_ROOT, xml_path)
+        full_xml_path = os_path_join(st.MEDIA_ROOT, xml_path)
         root_path = '/'.join(full_pdf_path.split('/')[:-1])
         if not os_path_isdir(root_path):
             makedirs(root_path)
         if self.cvn_file.path != full_pdf_path:
             file_move_safe(self.cvn_file.path, full_pdf_path, allow_overwrite=True)
             self.cvn_file.name = relative_pdf_path
-        if self.xml_file.path != new_xml_path:
-            file_move_safe(self.xml_file.path, new_xml_path, allow_overwrite=True)
+        if self.xml_file.path != full_xml_path:
+            file_move_safe(self.xml_file.path, full_xml_path, allow_overwrite=True)
             self.xml_file.name = xml_path
         self.save()
 
@@ -733,7 +733,7 @@ class OldCvnPdf(models.Model):
                 uploaded_at.strftime('%Y-%m-%d-%Hh%Mm%Ss')
             ) + u'.pdf')
 
-    def change_dni_cvn_old(self):
+    def update_document_in_path(self):
         filename = 'CVN-%s-%s.pdf' % (self.user_profile.documento, self.uploaded_at.strftime('%Y-%m-%d-%Hh%Mm%Ss'))
         relative_pdf_path = get_old_cvn_path(self, filename)
         full_pdf_path = os_path_join(st.MEDIA_ROOT, relative_pdf_path)
