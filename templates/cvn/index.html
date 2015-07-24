@@ -62,12 +62,12 @@
                                         <strong>{% trans "Status" %}</strong>
                                         <a href="{% url 'faq' %}3/"><i class="fa fa-info-circle"></i></a>
                                     </th>
-                                    {% if cvn_status == "Actualizado" %}
+                                    {% if cvn_status == "Updated" %}
                                         <td class="alert alert-success align-center"><b>{% trans cvn_status %}</b></td>
                                     {% else %}
                                         <td class="alert alert-danger align-center">
                                             <b>{% trans cvn_status %}</b>
-                                            {% if cvn_status == "NIF/NIE Incorrecto" %}
+                                            {% if cvn_status == "Invalid Identity" %}
                                                 <br>
                                                 {% if nif_invalid %}
                                                     {% trans "The NIF/NIE of your CVN" %} ({{ nif_invalid }})

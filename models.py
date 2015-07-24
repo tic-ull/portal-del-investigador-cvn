@@ -441,7 +441,7 @@ class Congreso(models.Model):
     titulo = models.TextField(_("Title"), blank=True, null=True)
 
     fecha_de_inicio = models.DateField(
-        _("Creation Date"), blank=True, null=True)
+        _("Date"), blank=True, null=True)
 
     fecha_de_fin = models.DateField(
         _("End date"), blank=True, null=True)
@@ -620,8 +620,10 @@ class TesisDoctoral(models.Model):
     autor = models.CharField(
         _("Author"), max_length=256, blank=True, null=True)
 
-    universidad_que_titula = models.CharField(_(
-        u'Universidad que titula'), max_length=500, blank=True, null=True)
+    universidad_que_titula = models.CharField(
+        _(u'University issuing the qualification'),
+        max_length=500, blank=True, null=True
+    )
 
     codirector = models.CharField(
         _("Co-director"), max_length=256, blank=True, null=True)

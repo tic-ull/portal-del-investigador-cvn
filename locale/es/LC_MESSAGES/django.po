@@ -1,9 +1,9 @@
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-07-22 14:04+0100\n"
+"POT-Creation-Date: 2015-07-24 11:01+0100\n"
 "PO-Revision-Date: 2015-07-23 10:32-0102\n"
 "Last-Translator: HUGO JIMENEZ HERNANDEZ <hjimeneh@ull.edu.es>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -287,11 +287,11 @@ msgstr "Propiedades Intelectuales"
 msgid "Historical Normalized Curriculum Vitae"
 msgstr "Histórico de Currículum Vitae Normalizado"
 
-#: settings.py:37 settings_local-sample.py:33 settings_local.py:11
+#: settings.py:37 settings_local-sample.py:33
 msgid "Expiry date for a CVN"
 msgstr "Fecha de expiración para un CVN"
 
-#: settings.py:40 settings_local-sample.py:36 settings_local.py:14
+#: settings.py:40 settings_local-sample.py:36
 msgid "University of La Laguna"
 msgstr "Universidad de La Laguna"
 
@@ -309,8 +309,8 @@ msgstr "Este proceso puede tardar unos minutos, por favor espere."
 
 #: settings.py:83
 msgid ""
-"Connection has been established with the FECYT. Your CVN is being processed,"
-" please wait."
+"Connection has been established with the FECYT. Your CVN is being processed, "
+"please wait."
 msgstr ""
 "Se ha establecido la conexión con la FECYT. Su CVN se está procesando, por "
 "favor espere."
@@ -412,8 +412,8 @@ msgstr "Exportar mi información ULL"
 
 #: templates/cvn/base.html:31
 msgid ""
-"The CVN format has been developed by Fundación Española para la Ciencia y la"
-" Tecnología"
+"The CVN format has been developed by Fundación Española para la Ciencia y la "
+"Tecnología"
 msgstr ""
 "El formato CVN ha sido desarrollado por la Fundación Española para la "
 "Ciencia y la Tecnología"
@@ -642,3 +642,8 @@ msgstr "No disponible"
 #: views.py:124
 msgid "No dispone de información en el periodo seleccionado"
 msgstr "No information in this period"
+
+#, fuzzy
+#~| msgid "University of La Laguna"
+#~ msgid "Universidad de La Laguna"
+#~ msgstr "Universidad de La Laguna"
