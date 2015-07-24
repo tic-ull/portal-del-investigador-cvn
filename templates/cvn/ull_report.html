@@ -4,10 +4,10 @@
 {% load staticfiles %}
 
 {% block breadcrumb %}	
-    <li><a href='{% url 'ull_report' %}'>{% trans "Informe ULL" %}</a></li>
+    <li><a href='{% url 'ull_report' %}'>{% trans "Report ULL" %}</a></li>
 {% endblock breadcrumb %}
 
 {% block main %}
-	<h1 class="page-header">{% trans "Actividad Científica en la Universidad de La Laguna" %} [{{ report_date }}]</h1>
+	<h1 class="page-header">{% trans "Scientific Activity at the Universidad of la Laguna" %} [{{ report_date }}]</h1>
     {% include 'cvn/partials/producciones_chart.html' %}
 {% endblock main %}

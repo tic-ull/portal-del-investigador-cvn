@@ -59,11 +59,11 @@ class BaseUserProfileAdmin(admin.ModelAdmin):
 
     def get_first_name(self, obj):
         return obj.user.first_name
-    get_first_name.short_description = _(u'Nombre')
+    get_first_name.short_description = _("Name")
 
     def get_last_name(self, obj):
         return obj.user.last_name
-    get_last_name.short_description = _(u'Apellidos')
+    get_last_name.short_description = _("Surname")
 
     search_fields = ['user__username', 'documento', 'rrhh_code',
                      'user__first_name', 'user__last_name', ]
