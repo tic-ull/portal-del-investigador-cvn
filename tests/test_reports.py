@@ -45,7 +45,7 @@ class CVNTestCase(TestCase):
     def setUpClass(cls):
         init()
 
-    def icsv_test(self, output_file, Report, range):
+    def icsv_test(self, output_file, Report, range, params):
         for i in range:
             u = UserFactory.create()
             u.profile.rrhh_code = i
@@ -62,7 +62,7 @@ class CVNTestCase(TestCase):
             a.user_profile.add(u.profile)
 
             a = Libro(titulo="LibName" + str(i),
-                         fecha=datetime.date(randint(2012, 2014), 1, 1))
+                      fecha=datetime.date(randint(2012, 2014), 1, 1))
             a.save()
             a.user_profile.add(u.profile)
 
@@ -98,7 +98,7 @@ class CVNTestCase(TestCase):
             a.user_profile.add(u.profile)
 
         report = Report(InformeCSV, 2013)
-        report.create_report('404')
+        report.create_report(**params)
         with open(output_file, 'r') as f:
             data = f.read().splitlines()
         self.assertEqual(len(filter(lambda x: x.startswith("ArtName"), data)),
@@ -126,7 +126,7 @@ class CVNTestCase(TestCase):
             TesisDoctoral.objects.filter(fecha__year='2013').count()
         )
 
-    def rcsv_test(self, output_file, Report, range, n_inv):
+    def rcsv_test(self, output_file, report, range, n_inv, params):
         for i in range:
             u = UserFactory.create()
             u.profile.rrhh_code = i
@@ -173,9 +173,9 @@ class CVNTestCase(TestCase):
             a.save()
             a.user_profile.add(u.profile)
 
-        report = Report(ResumenCSV, 2013)
-        report.create_report('404')
-        report.generator._file.close()
+        report_ = report(ResumenCSV, 2013)
+        report_.create_report(**params)
+        report_.generator._file.close()
         with open(output_file, 'r') as f:
             data = f.read().splitlines()[1].split("|")[1:]
         self.assertEqual(int(data[0]), n_inv)
@@ -196,7 +196,7 @@ class CVNTestCase(TestCase):
         self.assertEqual(int(data[8]), Patente.objects.filter(
             fecha__year='2013').count())
 
-    def pdf_test(self, output_file, Report, range):
+    def pdf_test(self, output_file, Report, range, params):
         for i in range:
             u = UserFactory.create()
             u.profile.rrhh_code = i
@@ -244,45 +244,65 @@ class CVNTestCase(TestCase):
             a.user_profile.add(u.profile)
 
         report = Report(InformePDF, 2013)
-        report.create_report('404')
+        report.create_report(**params)
         self.assertTrue(os.path.isfile(output_file))
-
 
     @patch.object(CachedWS, 'get', get_area_404)
     def test_area_icsv(self):
         output_file = (os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_ICSV_PATH)
-                + '/area/2013/2013-area-aria.csv')
-        self.icsv_test(output_file, AreaReport, range(1, 5))
+                       + '/area/2013/2013-area-aria.csv')
+        self.icsv_test(output_file, AreaReport, range(1, 5), {"unit": "404"})
 
     @patch.object(CachedWS, 'get', get_area_404)
     def test_area_ipdf(self):
         output_file = (os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_IPDF_PATH)
-                + '/area/2013/2013-area-aria.pdf')
-        self.pdf_test(output_file, AreaReport, range(1, 5))
+                       + '/area/2013/2013-area-aria.pdf')
+        self.pdf_test(output_file, AreaReport, range(1, 5), {"unit": "404"})
 
     @patch.object(CachedWS, 'get', get_area_404)
     def test_area_rcsv(self):
         output_file = (os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_RCSV_PATH)
-                + '/area/2013/2013-area.csv')
-        self.rcsv_test(output_file, AreaReport, range(1, 5), 4)
+                       + '/area/2013/2013-area.csv')
+        self.rcsv_test(output_file, AreaReport, range(1, 5), 4, {"unit": "404"})
 
     @patch.object(CachedWS, 'get', get_dept_404)
     def test_dept_icsv(self):
         output_file = (os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_ICSV_PATH)
-                + '/department/2013/2013-departamento-departamental.csv')
-        self.icsv_test(output_file, DeptReport, range(5, 8))
+                       + '/department/2013/2013-departamento-departamental.csv')
+        self.icsv_test(output_file, DeptReport, range(5, 8), {"unit": "404"})
 
     @patch.object(CachedWS, 'get', get_dept_404)
     def test_dept_ipdf(self):
         output_file = (os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_IPDF_PATH)
-                + '/department/2013/2013-departamento-departamental.pdf')
-        self.pdf_test(output_file, DeptReport, range(5, 8))
+                       + '/department/2013/2013-departamento-departamental.pdf')
+        self.pdf_test(output_file, DeptReport, range(5, 8), {"unit": "404"})
 
     @patch.object(CachedWS, 'get', get_dept_404)
     def test_dept_rcsv(self):
         output_file = (os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_RCSV_PATH)
-                + '/department/2013/2013-department.csv')
-        self.rcsv_test(output_file, DeptReport, range(5, 8), 3)
+                       + '/department/2013/2013-department.csv')
+        self.rcsv_test(output_file, DeptReport, range(5, 8), 3, {"unit": "404"})
+
+    @patch.object(CachedWS, 'get', get_dept_404)
+    def test_users_rcsv(self):
+        output_file = (os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_RCSV_PATH)
+                       + '/users/2013/2013-users.csv')
+        self.rcsv_test(output_file, UsersReport, range(1, 5), 5,
+                       {"title": "users"})
+
+    @patch.object(CachedWS, 'get', get_dept_404)
+    def test_user_ipdf(self):
+        output_file = (os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_IPDF_PATH)
+                       + '/users/2013/2013-informe-users.pdf')
+        self.pdf_test(output_file, UsersReport, range(5, 8),
+                      {"title": "informe-users"})
+
+    @patch.object(CachedWS, 'get', get_dept_404)
+    def test_user_icsv(self):
+        output_file = (os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_ICSV_PATH)
+                       + '/users/2013/2013-informe-users.csv')
+        self.icsv_test(output_file, UsersReport, range(5, 8),
+                       {"title": "informe-users"})
 
     @classmethod
     def tearDownClass(cls):
