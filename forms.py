@@ -57,7 +57,7 @@ class UploadCVNForm(forms.ModelForm):
         cvn_file = self.cleaned_data['cvn_file']
         if mimetypes.guess_type(cvn_file.name)[0] != "application/pdf":
             raise forms.ValidationError(
-                _(u'El CVN debe estar en formato PDF.'))
+                _("The CVN must be in PDF format."))
         cvn_file.open()
         # Author
         try:
@@ -66,12 +66,10 @@ class UploadCVNForm(forms.ModelForm):
             if ('/Author' in pdf_info and
                     pdf_info['/Author'] in st_cvn.CVN_PDF_AUTHOR_NOAUT):
                 raise forms.ValidationError(
-                    _(u'El CVN debe estar generado '
-                      u'desde el Editor CVN de la FECYT')
-                )
+                    _("The CVN must be generated from the FECYT CVN Editor"))
         except PdfReadError:
             raise forms.ValidationError(
-                _(u'El CVN debe estar en formato PDF.'))
+                _("The CVN must be in PDF format."))
         # FECYT
         cvn_file.seek(0)
         (self.xml, error) = fecyt.pdf2xml(cvn_file.read(), cvn_file.name)
@@ -117,17 +115,17 @@ class GetDataCVNULL(forms.Form):
         if start_year and end_year:
             if int(start_year) > int(end_year):
                 raise forms.ValidationError(
-                    _(u'El año inicial no puede ser mayor que el año final'))
+                    _("The initial year may not exceed the final year"))
         return end_year
 
 
 class UserProfileAdminForm(forms.ModelForm):
     first_name = forms.CharField(
-        label=_('Nombre'),
+        label=_("Name"),
         widget=forms.TextInput(attrs={'readonly': 'readonly'})
     )
     last_name = forms.CharField(
-        label=_('Apellidos'),
+        label=_("Surname"),
         widget=forms.TextInput(attrs={'readonly': 'readonly'})
     )
 
