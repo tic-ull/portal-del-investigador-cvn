@@ -85,7 +85,7 @@ class UserProfileAdmin(BaseUserProfileAdmin):
                               _("You cannot change more than one dni at "
                                 "a time."), level=messages.ERROR)
             return HttpResponseRedirect(request.get_full_path())
-        if 'apply' in request.POST:
+        elif 'apply' in request.POST:
             form = ChangeDNIForm(request.POST)
             if form.is_valid():
                 dni = form.cleaned_data['new_dni']
@@ -94,14 +94,11 @@ class UserProfileAdmin(BaseUserProfileAdmin):
 
                 self.message_user(request, _("Successfully changed dni."))
                 return HttpResponseRedirect(request.get_full_path())
-
         else:
             action = request.POST.getlist(admin.ACTION_CHECKBOX_NAME)[0]
             form = ChangeDNIForm(initial={'_selected_action': action})
-
-        return render(request,
-                      'cvn/dni_change/dni_change.html',
-                      {'usuarios': queryset, 'change_dni_form': form, })
+            return render(request, 'cvn/dni_change/dni_change.html',
+                          {'usuarios': queryset, 'change_dni_form': form, })
 
     admin_change_dni.short_description = _("Change user's DNI")
 
