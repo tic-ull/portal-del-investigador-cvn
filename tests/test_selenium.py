@@ -23,7 +23,6 @@
 #
 
 from core.tests.helpers import init, clean
-from cvn import settings as st_cvn
 from django import test
 from django.conf import settings as st
 from django.contrib.auth.models import User
@@ -32,7 +31,7 @@ from selenium.common.exceptions import (NoSuchElementException,
                                         NoAlertPresentException)
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait, Select
+from selenium.webdriver.support.ui import WebDriverWait
 import unittest
 from pyvirtualdisplay import Display
 from utils import get_cvn_path
