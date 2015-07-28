@@ -121,7 +121,7 @@ def export_data_ull(request):
 
             if not pdf:
                 form._errors['__all__'] = _(
-                    u'No dispone de información en el periodo seleccionado')
+                    u'No information in this period')
                 context['form'] = form
                 return render(request, 'cvn/export_data_ull.html', context)
 

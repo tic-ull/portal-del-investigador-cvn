@@ -25,6 +25,7 @@
 from cvn import settings as st_cvn
 from ssl import SSLError
 from urllib2 import URLError, HTTPError
+from django.utils.translation import ugettext as _
 
 import base64
 import logging
@@ -74,7 +75,7 @@ def xml2pdf(xml):
         return None
     if pdf.returnCode == '01':
         xml_error = base64.decodestring(pdf.dataHandler)
-        logger.error(st_cvn.RETURN_CODE[pdf.returnCode] + u'\n' +
+        logger.error(_(st_cvn.RETURN_CODE[pdf.returnCode]) + u'\n' +
                      xml_error.decode('iso-8859-10'))
         return None
     return base64.decodestring(pdf.dataHandler)
