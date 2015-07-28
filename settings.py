@@ -37,7 +37,7 @@ st.CONSTANCE_CONFIG['EXPIRY_DATE'] = (
     datetime.date(2013, 12, 31), _("Expiry date for a CVN"))
 
 # Default Entity
-UNIVERSITY = _("University of La Laguna")
+UNIVERSITY = "Universidad de la Laguna"
 
 # ******************************* PATHS *************************************
 FILE_TEST_ROOT = os.path.join(st.BASE_DIR, 'cvn/tests/files/')
