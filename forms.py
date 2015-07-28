@@ -31,6 +31,8 @@ from django.utils.translation import ugettext_lazy as _
 from PyPDF2 import PdfFileReader
 from PyPDF2.utils import PdfReadError
 
+from localflavor.es.forms import ESIdentityCardNumberField
+
 import fecyt
 import mimetypes
 
@@ -141,5 +143,4 @@ class UserProfileAdminForm(forms.ModelForm):
 
 class ChangeDNIForm(forms.Form):
     _selected_action = forms.CharField(widget=forms.HiddenInput)
-    new_dni = forms.CharField(label=_('New DNI'), max_length=20,
-                              required=False, widget=forms.TextInput())
+    new_dni = ESIdentityCardNumberField()
