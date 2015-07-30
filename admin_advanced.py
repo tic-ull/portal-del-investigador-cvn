@@ -80,7 +80,7 @@ class UserProfileAdmin(BaseUserProfileAdmin):
     actions = ['admin_change_dni', ]
 
     def admin_change_dni(self, request, queryset):
-        if len(queryset) > 1:
+        if len(queryset) != 1:
             self.message_user(request,
                               _("You cannot change more than one dni at "
                                 "a time."), level=messages.ERROR)
@@ -89,8 +89,7 @@ class UserProfileAdmin(BaseUserProfileAdmin):
             form = ChangeDNIForm(request.POST)
             if form.is_valid():
                 dni = form.cleaned_data['new_dni']
-                for user_profile in queryset:
-                    user_profile.change_dni(dni)
+                queryset[0].change_dni(dni)
 
                 self.message_user(request, _("Successfully changed dni."))
                 return HttpResponseRedirect(request.get_full_path())
