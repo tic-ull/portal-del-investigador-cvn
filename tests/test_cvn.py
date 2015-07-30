@@ -22,10 +22,9 @@
 #    <http://www.gnu.org/licenses/>.
 #
 
+
 import os
-
 from django.test import TestCase
-
 from cvn import settings as st_cvn
 from cvn.models import CVN, OldCvnPdf
 from core.tests.helpers import init, clean
@@ -87,3 +86,30 @@ class CVNTestCase(TestCase):
     @classmethod
     def tearDownClass(cls):
         clean()
+
+    def test_dni_change(self):
+        # LATEST CVN TEST
+        user = UserFactory.create()
+        cvn = CVN(user=user, pdf_path=get_cvn_path('CVN-Test'))
+        cvn.save()
+        user.profile.documento = '88888888O'
+        user.profile.save()
+        cvn.update_document_in_path()
+        full_pdf_path = cvn.cvn_file.path
+        full_xml_path = cvn.xml_file.path
+        self.assertTrue(user.profile.documento in full_pdf_path)
+        self.assertTrue(user.profile.documento in full_xml_path)
+        self.assertTrue(os.path.isfile(full_pdf_path))
+        self.assertTrue(os.path.isfile(full_xml_path))
+        # OLD CVN TEST
+        user_old = UserFactory.create()
+        cvn2 = CVN(user=user_old, pdf_path=get_cvn_path('CVN-Test'))
+        cvn2.save()
+        CVN(user=user_old, pdf_path=get_cvn_path('CVN-Test'))
+        user_old.profile.documento = '7777777D'
+        user_old.save()
+        cvn_old = user_old.profile.oldcvnpdf_set.all()[0]
+        cvn_old.update_document_in_path()
+        full_old_pdf_path = cvn_old.cvn_file.path
+        self.assertTrue(user_old.profile.documento in full_old_pdf_path)
+        self.assertTrue(os.path.isfile(full_old_pdf_path))

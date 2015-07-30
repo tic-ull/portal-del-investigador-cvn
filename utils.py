@@ -87,14 +87,14 @@ def stats_to_context(request, context):
                 dept = Department.objects.get(
                     code=request.session['dept_code'])
                 context['department'] = dept
-                context['label_dept'] = _(u'Departamento')
+                context['label_dept'] = _("Department")
             except ObjectDoesNotExist:
                 pass
         if 'area_code' in request.session:
             try:
                 area = Area.objects.get(code=request.session['area_code'])
                 context['area'] = area
-                context['label_area'] = _(u'Área')
+                context['label_area'] = _("Area")
             except ObjectDoesNotExist:
                 pass
 

@@ -29,12 +29,13 @@ from django.test import TestCase
 from cvn import settings as st_cvn
 from core.tests.helpers import init, clean
 from core.tests.factories import UserFactory
-from mocks import (get_learning, get_all, get_cargos, get_cargos_no_f_hasta,
-                   get_cargos_no_departamento, get_cargos_no_dedicacion,
-                   get_learning_no_f_expedicion, get_learning_no_organismo,
-                   get_learning_doctor_no_f_expedicion,
-                   get_learning_doctor_no_organismo, get_contratos,
-                   get_contratos_no_f_hasta, get_docencia)
+from mocks.university_info import (
+    get_learning, get_all, get_cargos, get_cargos_no_f_hasta,
+    get_cargos_no_departamento, get_cargos_no_dedicacion,
+    get_learning_no_f_expedicion, get_learning_no_organismo,
+    get_learning_doctor_no_f_expedicion, get_learning_doctor_no_organismo,
+    get_contratos, get_contratos_no_f_hasta, get_docencia
+)
 
 from mock import patch
 from core.ws_utils import CachedWS

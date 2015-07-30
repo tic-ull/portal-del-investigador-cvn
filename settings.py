@@ -34,10 +34,10 @@ _ = lambda s: s
 
 # DJANGO CONSTANCE
 st.CONSTANCE_CONFIG['EXPIRY_DATE'] = (
-    datetime.date(2013, 12, 31), _(u'Expiry date for a CVN'))
+    datetime.date(2013, 12, 31), _("Expiry date for a CVN"))
 
 # Default Entity
-UNIVERSITY = _(u'Universidad de La Laguna')
+UNIVERSITY = "Universidad de la Laguna"
 
 # ******************************* PATHS *************************************
 FILE_TEST_ROOT = os.path.join(st.BASE_DIR, 'cvn/tests/files/')
@@ -70,22 +70,21 @@ class CVNStatus(IntEnum):
     INVALID_IDENTITY = 2
 
 CVN_STATUS = (
-    (CVNStatus.UPDATED.value, _(u'Actualizado')),
-    (CVNStatus.EXPIRED.value, _(u'Caducado')),
-    (CVNStatus.INVALID_IDENTITY.value, _(u'NIF/NIE Incorrecto')),
+    (CVNStatus.UPDATED.value, _("Updated")),
+    (CVNStatus.EXPIRED.value, _("Expired")),
+    (CVNStatus.INVALID_IDENTITY.value, _("Invalid Identity")),
 )
 # ******************************* CVN STATUS ********************************
 
 # ******************************* CVN WAITING *******************************
 # Messages of waiting when be upload a new CVN
 MESSAGES_WAITING = {
-    0: _(u'Este proceso puede tardar unos minutos, por favor espere.'),
-    1: _(u'Se ha establecido la conexión con la FECYT.'
-         u' Su CVN se está procesando, por favor espere.'),
-    2: _(u'Verificando la información de su CVN, por favor espere.'),
-    3: _(u'Este proceso esta tardando más tiempo de lo habitual, por favor espere.'
-         u' Si se produce un error repita el proceso.'
-         u' Si el error persiste contacte con el ') +
+    0: _(u"This process may take several minutes, please wait."),
+    1: _(u"Connection has been established with the FECYT. Your CVN is being processed, "
+         u"please wait."),
+    2: _(u"Verifying CVN details, please wait."),
+    3: _(u"This process is taking longer than usual, please wait. If an error occurs "
+         u"try again. If the error persists contact the ") +
         (u'%(support)s (%(email)s).' % {'support': st.SUPPORT,
                                         'email': st.EMAIL_SUPPORT})
 }
@@ -106,29 +105,27 @@ CVN_XML_DATE_FORMAT = '%Y-%m-%d'
 
 # ******************************* FECYT ERRORS ******************************
 ERROR_CODES = {
-    1: _(u'Error general no determinado en el servidor de la FECYT.'),
-    2: _(u'El PDF no tiene XML asociado.'),
-    3: _(u'El usuario con el que se pretende hacer la importación no existe '
-         u'en la base de datos de la FECYT.'),
-    4: _(u'Contraseña incorrecta.'),
-    5: _(u'El Servicio Web no puede conectarse a la base de datos de '
-         u'instituciones de la FECYT.'),
-    6: _(u'Error no determinado durante el proceso de autentificación '
-         u'con la FECYT.'),
-    8: _(u'No se permite realizar importaciones para esta institución.'),
-    10: _(u'El CvnRootBean obtenido del XML o del PDF no es válido.'),
-    13: _(u'El CVN-XML no es válido.'),
-    14: _(u'Fallo en la extracción del CvnRootBean desde el XML.'),
-    16: _(u'El XML está vacío.'),
-    17: _(u'El proceso de conversión de CvnRootBean de 1.2.5 a 1.3.0 ha '
-          u'fallado.')
+    1: _("General error not determined in FECYT server."),
+    2: _("The PDF has no associated XML."),
+    3: _(u'The user that is intended to import does not exist in the database'
+         u' FECYT.'),
+    4: _("Incorrect password."),
+    5: _(u'The Web Service can not connect to the database FECYT '
+         u'institutions.'),
+    6: _(u'Error not determined during the authentication process with FECYT.'),
+    8: _("Imports are not permitted for this institution."),
+    10: _("The CvnRootBean obtained from XML or PDF is invalid."),
+    13: _("The CVN-XML is invalid."),
+    14: _("Failure CvnRootBean extraction from XML."),
+    16: _("The XML is empty."),
+    17: _(u'The conversion process from 1.2.5 to 1.3.0 CvnRootBean failed.')
 }
 # ******************************* FECYT ERRORS ******************************
 
 # ******************************* FECYT RETURN CODE *************************
 RETURN_CODE = {
-    '00': _(u'CVN-PDF generado correctamente.'),
-    '01': _(u'No se ha podido generar el CVN-PDF.')
+    '00': _("CVN-PDF generated correctly"),
+    '01': _("Failed to generate CVN-PDF")
 }
 # ******************************* FECYT RETURN CODE *************************
 
@@ -304,9 +301,9 @@ class REPORTS_DIRECTORY(Enum):
     USERS = 'users'
 
 # Paths
-REPORTS_IPDF_ROOT = os.path.join(st.MEDIA_ROOT, 'cvn/reports/ipdf')
-REPORTS_RCSV_ROOT = os.path.join(st.MEDIA_ROOT, 'cvn/reports/rcsv')
-REPORTS_ICSV_ROOT = os.path.join(st.MEDIA_ROOT, 'cvn/reports/icsv')
+REPORTS_IPDF_PATH = 'cvn/reports/ipdf'
+REPORTS_RCSV_PATH = 'cvn/reports/rcsv'
+REPORTS_ICSV_PATH = 'cvn/reports/icsv'
 REPORTS_IMAGES = os.path.join(st.STATIC_ROOT, 'images/')
 
 # Fields on the csv file of informe_csv (dept_report and list_report management commands)

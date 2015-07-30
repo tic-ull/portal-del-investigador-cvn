@@ -32,14 +32,15 @@ class ResumenCSV:
 
     def __init__(self, year, model_type):
         self.year = str(year)
-        path = "%s/%s/%s/" % (st_cvn.REPORTS_RCSV_ROOT, model_type,
+        full_path = os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_RCSV_PATH)
+        path = "%s/%s/%s/" % (full_path, model_type,
                               self.year)
         if not os.path.isdir(path):
             os.makedirs(path)
         self.filename = os.path.join(path, self.year +
                                      '-' + model_type + ".csv")
-        self.writer = csv.DictWriter(
-            open(self.filename, 'wb'), dialect=st.CSV_DIALECT,
+        self._file = open(self.filename, 'wb')
+        self.writer = csv.DictWriter(self._file, dialect=st.CSV_DIALECT,
             fieldnames=[u'Nombre', u'Investigadores', u'Artículos', u'Libros',
                         u'Capítulos', u'Congresos', u'Proyectos', u'Convenios',
                         u'Tesis', u'Propiedad Intelectual']

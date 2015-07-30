@@ -23,12 +23,16 @@
 #
 
 from .admin_base import OldCvnPdfInline, BaseUserProfileAdmin, BaseCvnInline
-from .forms import UploadCVNForm
+from .forms import UploadCVNForm, ChangeDNIForm
 from .models import (Congreso, Proyecto, Convenio, TesisDoctoral, Articulo,
                      Libro, CVN, Capitulo, Patente, OldCvnPdf)
 from core.models import UserProfile
 from core.widgets import FileFieldURLWidget
 from django.contrib import admin
+from django.http import HttpResponseRedirect
+from django.shortcuts import render
+from django.contrib import messages
+from django.utils.translation import ugettext_lazy as _
 
 
 class CVNAdmin(admin.ModelAdmin):
@@ -73,6 +77,30 @@ class CVNInline(BaseCvnInline):
 class UserProfileAdmin(BaseUserProfileAdmin):
     inlines = [CVNInline, OldCvnPdfInline]
     readonly_fields = ('rrhh_code', )
+    actions = ['admin_change_dni', ]
+
+    def admin_change_dni(self, request, queryset):
+        if len(queryset) > 1:
+            self.message_user(request,
+                              _("You cannot change more than one dni at "
+                                "a time."), level=messages.ERROR)
+            return HttpResponseRedirect(request.get_full_path())
+        elif 'apply' in request.POST:
+            form = ChangeDNIForm(request.POST)
+            if form.is_valid():
+                dni = form.cleaned_data['new_dni']
+                for user_profile in queryset:
+                    user_profile.change_dni(dni)
+
+                self.message_user(request, _("Successfully changed dni."))
+                return HttpResponseRedirect(request.get_full_path())
+        else:
+            action = request.POST.getlist(admin.ACTION_CHECKBOX_NAME)[0]
+            form = ChangeDNIForm(initial={'_selected_action': action})
+        return render(request, 'cvn/dni_change.html',
+                      {'usuarios': queryset, 'change_dni_form': form, })
+
+    admin_change_dni.short_description = _("Change user's DNI")
 
 
 class ProductionAdmin(admin.ModelAdmin):
