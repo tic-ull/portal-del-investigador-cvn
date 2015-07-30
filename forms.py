@@ -143,4 +143,4 @@ class UserProfileAdminForm(forms.ModelForm):
 
 class ChangeDNIForm(forms.Form):
     _selected_action = forms.CharField(widget=forms.HiddenInput)
-    new_dni = ESIdentityCardNumberField()
+    new_dni = ESIdentityCardNumberField(label=_("New DNI"))

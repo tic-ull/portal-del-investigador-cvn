@@ -1,11 +1,11 @@
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-07-28 12:34+0100\n"
-"PO-Revision-Date: 2015-07-28 12:34-0102\n"
-"Last-Translator: DOMINGO YERAY RODRIGUEZ MARTIN <dyeray@ull.edu.es>\n"
+"POT-Creation-Date: 2015-07-30 13:05+0100\n"
+"PO-Revision-Date: 2015-07-30 12:25-0102\n"
+"Last-Translator: HUGO JIMENEZ HERNANDEZ <hjimeneh@ull.edu.es>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
@@ -17,35 +17,35 @@ msgstr ""
 msgid "You cannot change more than one dni at a time."
 msgstr "No puedes cambiar más de un DNI de una vez."
 
-#: admin_advanced.py:95
+#: admin_advanced.py:94
 msgid "Successfully changed dni."
 msgstr "DNI cambiado con éxito"
 
-#: admin_advanced.py:103
+#: admin_advanced.py:102
 msgid "Change user's DNI"
 msgstr "Cambiar el DNI del usuario"
 
-#: admin_base.py:62 forms.py:124
+#: admin_base.py:62 forms.py:126
 msgid "Name"
 msgstr "Nombre"
 
-#: admin_base.py:66 forms.py:128
+#: admin_base.py:66 forms.py:130
 msgid "Surname"
 msgstr "Apellidos"
 
-#: forms.py:60 forms.py:72
+#: forms.py:62 forms.py:74
 msgid "The CVN must be in PDF format."
 msgstr "El CVN debe estar en formato PDF."
 
-#: forms.py:69
+#: forms.py:71
 msgid "The CVN must be generated from the FECYT CVN Editor"
 msgstr "El CVN debe estar generado desde el Editor CVN de la FECYT"
 
-#: forms.py:118
+#: forms.py:120
 msgid "The initial year may not exceed the final year"
 msgstr "El año inicial no puede ser mayor que el año final"
 
-#: forms.py:144
+#: forms.py:146
 msgid "New DNI"
 msgstr "Nuevo DNI"
 
@@ -303,10 +303,6 @@ msgstr "Histórico de Currículum Vitae Normalizado"
 msgid "Expiry date for a CVN"
 msgstr "Fecha de expiración para un CVN"
 
-#: settings.py:40 settings_local-sample.py:36
-msgid "University of La Laguna"
-msgstr "Universidad de La Laguna"
-
 #: settings.py:74
 msgid "Expired"
 msgstr "Caducado"
@@ -315,23 +311,23 @@ msgstr "Caducado"
 msgid "Invalid Identity"
 msgstr "NIF/NIE Incorrecto"
 
-#: settings.py:87
+#: settings.py:82
 msgid "This process may take several minutes, please wait."
 msgstr "Este proceso puede tardar unos minutos, por favor espere."
 
-#: settings.py:88
+#: settings.py:83
 msgid ""
-"Connection has been established with the FECYT. Your CVN is being processed,"
-" please wait."
+"Connection has been established with the FECYT. Your CVN is being processed, "
+"please wait."
 msgstr ""
 "Se ha establecido la conexión con la FECYT. Su CVN se está procesando, por "
 "favor espere."
 
-#: settings.py:90
+#: settings.py:85
 msgid "Verifying CVN details, please wait."
 msgstr "Verificando la información de su CVN, por favor espere."
 
-#: settings.py:91
+#: settings.py:86
 msgid ""
 "This process is taking longer than usual, please wait. If an error occurs "
 "try again. If the error persists contact the "
@@ -339,67 +335,71 @@ msgstr ""
 "Este proceso esta tardando más tiempo de lo habitual, por favor espere. Si "
 "se produce un error repita el proceso. Si el error persiste contacte con el "
 
-#: settings.py:113
+#: settings.py:108
 msgid "General error not determined in FECYT server."
 msgstr "Error general no determinado en el servidor de la FECYT."
 
-#: settings.py:114
+#: settings.py:109
 msgid "The PDF has no associated XML."
 msgstr "El PDF no tiene XML asociado."
 
-#: settings.py:115
+#: settings.py:110
 msgid ""
 "The user that is intended to import does not exist in the database FECYT."
 msgstr ""
 "El usuario con el que se pretende hacer la importación no existe en la base "
 "de datos de la FECYT."
 
-#: settings.py:117
+#: settings.py:112
 msgid "Incorrect password."
 msgstr "Contraseña incorrecta."
 
-#: settings.py:118
+#: settings.py:113
 msgid "The Web Service can not connect to the database FECYT institutions."
 msgstr ""
 "El Servicio Web no puede conectarse a la base de datos de instituciones de "
 "la FECYT."
 
-#: settings.py:120
+#: settings.py:115
 msgid "Error not determined during the authentication process with FECYT."
 msgstr ""
 "Error no determinado durante el proceso de autentificación con la FECYT."
 
-#: settings.py:121
+#: settings.py:116
 msgid "Imports are not permitted for this institution."
 msgstr "No se permite realizar importaciones para esta institución."
 
-#: settings.py:122
+#: settings.py:117
 msgid "The CvnRootBean obtained from XML or PDF is invalid."
 msgstr "El CvnRootBean obtenido del XML o del PDF no es válido."
 
-#: settings.py:123
+#: settings.py:118
 msgid "The CVN-XML is invalid."
 msgstr "El CVN-XML no es válido."
 
-#: settings.py:124
+#: settings.py:119
 msgid "Failure CvnRootBean extraction from XML."
 msgstr "Fallo en la extracción del CvnRootBean desde el XML."
 
-#: settings.py:125
+#: settings.py:120
 msgid "The XML is empty."
 msgstr "El XML está vacío."
 
-#: settings.py:126
+#: settings.py:121
 msgid "The conversion process from 1.2.5 to 1.3.0 CvnRootBean failed."
 msgstr "El proceso de conversión de CvnRootBean de 1.2.5 a 1.3.0 ha fallado."
 
-#: settings.py:132
+#: settings.py:127
 msgid "CVN-PDF generated correctly"
 msgstr "CVN-PDF generado correctamente."
 
-#: settings.py:133
+#: settings.py:128
 msgid "Failed to generate CVN-PDF"
 msgstr "No se ha podido generar el CVN-PDF."
+
+#: settings_local-sample.py:36
+msgid "University of La Laguna"
+msgstr "Universidad de La Laguna"
 
 #: templates/cvn/base.html:5
 msgid "CVN"
@@ -424,13 +424,21 @@ msgstr "Exportar mi información ULL"
 
 #: templates/cvn/base.html:31
 msgid ""
-"The CVN format has been developed by Fundación Española para la Ciencia y la"
-" Tecnología"
+"The CVN format has been developed by Fundación Española para la Ciencia y la "
+"Tecnología"
 msgstr ""
 "El formato CVN ha sido desarrollado por la Fundación Española para la "
 "Ciencia y la Tecnología"
 
-#: templates/cvn/dni_change/dni_change.html:8
+#: templates/cvn/dni_change.html:7
+msgid "Name:"
+msgstr "Nombre:"
+
+#: templates/cvn/dni_change.html:9
+msgid "Current Document:"
+msgstr "Documento actual"
+
+#: templates/cvn/dni_change.html:14
 msgid "Change"
 msgstr "Cambiar"
 
@@ -659,6 +667,9 @@ msgstr "No disponible"
 msgid "No information in this period"
 msgstr "No dispone de información en el periodo seleccionado"
 
+#~ msgid "Universidad de La Laguna"
+#~ msgstr "Universidad de La Laguna"
+
 #~ msgid "Creation Date"
 #~ msgstr "Fecha de realización"
 
@@ -667,6 +678,3 @@ msgstr "No dispone de información en el periodo seleccionado"
 
 #~ msgid "No dispone de información en el periodo seleccionado"
 #~ msgstr "No information in this period"
-
-#~ msgid "Universidad de La Laguna"
-#~ msgstr "Universidad de La Laguna"
