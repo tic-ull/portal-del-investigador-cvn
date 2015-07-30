@@ -98,7 +98,7 @@ class UserProfileAdmin(BaseUserProfileAdmin):
             action = request.POST.getlist(admin.ACTION_CHECKBOX_NAME)[0]
             form = ChangeDNIForm(initial={'_selected_action': action})
         return render(request, 'cvn/dni_change.html',
-                      {'usuarios': queryset, 'change_dni_form': form, })
+                      {'usuario': queryset[0], 'change_dni_form': form, })
 
     admin_change_dni.short_description = _("Change user's DNI")
 

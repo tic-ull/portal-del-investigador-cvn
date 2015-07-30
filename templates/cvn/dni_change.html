@@ -2,11 +2,16 @@
 {% load i18n %}
 
 {% block content %}
-<form action="" method="post">
-    {% csrf_token %}
-    {{ change_dni_form }}
-    <input type="hidden" name="action" value="admin_change_dni" />
-    <input type="submit" name="apply" value="{% trans 'Change' %}" />
-</form>
+    <form action="" method="post">
+        {% csrf_token %}
+        <label> {%  trans "Name:" %} {{ usuario.user.first_name }} {{ usuario.user.last_name }}</label>
+        <br><br>
+        <label> {%  trans "Current Document:" %} {{ usuario.documento }}</label>
+        <br><br>
+        {{ change_dni_form }}
+
+        <input type="hidden" name="action" value="admin_change_dni" />
+        <input type="submit" name="apply" value="{% trans 'Change' %}" />
+    </form>
 
 {% endblock %}
