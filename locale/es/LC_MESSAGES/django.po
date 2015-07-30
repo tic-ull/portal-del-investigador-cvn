@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-07-30 12:26+0100\n"
+"POT-Creation-Date: 2015-07-30 13:05+0100\n"
 "PO-Revision-Date: 2015-07-30 12:25-0102\n"
 "Last-Translator: HUGO JIMENEZ HERNANDEZ <hjimeneh@ull.edu.es>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,11 +17,11 @@ msgstr ""
 msgid "You cannot change more than one dni at a time."
 msgstr "No puedes cambiar más de un DNI de una vez."
 
-#: admin_advanced.py:95
+#: admin_advanced.py:94
 msgid "Successfully changed dni."
 msgstr "DNI cambiado con éxito"
 
-#: admin_advanced.py:103
+#: admin_advanced.py:102
 msgid "Change user's DNI"
 msgstr "Cambiar el DNI del usuario"
 
@@ -44,6 +44,10 @@ msgstr "El CVN debe estar generado desde el Editor CVN de la FECYT"
 #: forms.py:120
 msgid "The initial year may not exceed the final year"
 msgstr "El año inicial no puede ser mayor que el año final"
+
+#: forms.py:146
+msgid "New DNI"
+msgstr "Nuevo DNI"
 
 #: models.py:54 models.py:720
 msgid "PDF"
@@ -295,7 +299,7 @@ msgstr "Propiedades Intelectuales"
 msgid "Historical Normalized Curriculum Vitae"
 msgstr "Histórico de Currículum Vitae Normalizado"
 
-#: settings.py:37 settings_local-sample.py:33 settings_local.py:11
+#: settings.py:37 settings_local-sample.py:33
 msgid "Expiry date for a CVN"
 msgstr "Fecha de expiración para un CVN"
 
@@ -395,10 +399,6 @@ msgstr "No se ha podido generar el CVN-PDF."
 
 #: settings_local-sample.py:36
 msgid "University of La Laguna"
-msgstr "Universidad de La Laguna"
-
-#: settings_local.py:14
-msgid "Universidad de La Laguna"
 msgstr "Universidad de La Laguna"
 
 #: templates/cvn/base.html:5
@@ -667,8 +667,8 @@ msgstr "No disponible"
 msgid "No information in this period"
 msgstr "No dispone de información en el periodo seleccionado"
 
-#~ msgid "New DNI"
-#~ msgstr "Nuevo DNI"
+#~ msgid "Universidad de La Laguna"
+#~ msgstr "Universidad de La Laguna"
 
 #~ msgid "Creation Date"
 #~ msgstr "Fecha de realización"
