@@ -4,9 +4,9 @@
 {% block content %}
     <form action="" method="post">
         {% csrf_token %}
-        <label> {%  trans "Name:" %} {{ usuario.user.first_name }} {{ usuario.user.last_name }}</label>
+        <label> {%  trans "Name:" %} {{ user_profile.user.first_name }} {{ user_profile.user.last_name }}</label>
         <br><br>
-        <label> {%  trans "Current Document:" %} {{ usuario.documento }}</label>
+        <label> {%  trans "Current Document:" %} {{ user_profile.documento }}</label>
         <br><br>
         {{ change_dni_form }}
 
