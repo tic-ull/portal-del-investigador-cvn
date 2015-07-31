@@ -177,7 +177,7 @@ class DownloadReportView(View):
 
     def create_response(self, path):
         try:
-            pdf = open(path)
+            pdf = open(path, 'r')
         except (IOError, TypeError):
             raise Http404
         response = HttpResponse(
@@ -199,7 +199,6 @@ class DownloadReportView(View):
         code = params['code'] if generator_type != 'rcsv' else None
         if year != datetime.date.today().year:
             path = report.get_full_path(code)
-            return HttpResponse(path)
         elif generator_type == 'rcsv':
             report.create_reports()
             path = report.get_full_path()
