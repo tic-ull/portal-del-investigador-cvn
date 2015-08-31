@@ -8,7 +8,9 @@
             <th>{% trans 'Code' %}</th>
             <th>{% trans 'Name' %}</th>
             <th>PDF</th>
-            <th>CSV</th>
+            {% if year != '2012' and year != '2013' %}
+                <th>CSV</th>
+            {% endif %}
         </tr>
     </thead>
     <tbody>
@@ -17,7 +19,9 @@
                 <td>{{ code }}</td>
                 <td>{{ name }}</td>
                 <td><a href="{% url 'download_report' type='ipdf' code=code year=year unit_type=unit_type %}" class="fa fa-download"></a></td>
-                <td><a href="{% url 'download_report' type='icsv' code=code year=year unit_type=unit_type %}" class="fa fa-download"></a></td>
+                {% if year != '2012' and year != '2013' %}
+                    <td><a href="{% url 'download_report' type='icsv' code=code year=year unit_type=unit_type %}" class="fa fa-download"></a></td>
+                {% endif %}
             </tr>
         {% endfor %}
     </tbody>
