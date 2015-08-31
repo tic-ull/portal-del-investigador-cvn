@@ -100,7 +100,7 @@ class UnitReport(BaseReport):
             try:
                 unit_name = self.unit_names['unit']
             except (AttributeError, KeyError):
-                unit_name = unit
+                unit_name = str(unit)
             return [], [], unit_name
         investigadores = []
         usuarios = []
