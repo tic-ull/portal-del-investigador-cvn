@@ -5,29 +5,29 @@
 {% load staticfiles %}
 
 {% block breadcrumb %}
-    <li><a href='{% url 'export_data_ull' %}'>{% trans "Exportar información ULL" %}</a></li>
+    <li><a href='{% url 'export_data_ull' %}'>{% trans "Export information ULL" %}</a></li>
 {% endblock breadcrumb %}
 
 {% block main %}
-	<h1 class="page-header">{% trans "Exportar mis datos de la Universidad de La Laguna" %}</h1>
+	<h1 class="page-header">{% trans "Export my data from the University of La Laguna" %}</h1>
 
     <div class="section">
         <ul class="nav nav-tabs header">
-            <li class="active">{% trans 'Exportar' %}</li>
+            <li class="active">{% trans "Export" %}</li>
         </ul>
         <div class="content">
             <div class="alert alert-info">
-                <p>{% trans "Seleccione una de las opciones disponibles para obtener sus datos sobre:" %}</p>
+                <p>{% trans "Select one of the options available for getting your data:" %}</p>
                 <br>
                 <ul>
-                    <li><p>{% trans "Docencia impartida" %}</p></li>
-                    <li><p>{% trans "Categorías profesionales" %}</p></li>
-                    <li><p>{% trans "Cargos desempeñados" %}</p></li>
-                    <li><p>{% trans "Titulaciones y formación académica" %}</p></li>
+                    <li><p>{% trans "Subject taught" %}</p></li>
+                    <li><p>{% trans "Professional categories" %}</p></li>
+                    <li><p>{% trans "Positions held" %}</p></li>
+                    <li><p>{% trans "Degrees and academic training" %}</p></li>
                 </ul>
                 <p>
-                {% trans "Para añadir a su CVN la información que obtendrá en un CVN-PDF deberá importarlo en el " %}
-                    <a href={{ EDITOR_FECYT }} class="alert-link" target="_blank">{% trans 'Editor de la FECYT' %}</a>
+                {% trans "To add to your CVN the information you get on a CVN-PDF must import in the " %}
+                    <a href={{ EDITOR_FECYT }} class="alert-link" target="_blank">{% trans "FECYT's CVN Editor" %}</a>
                 </p>
             </div>
             <br>
@@ -43,17 +43,17 @@
                 <div class="row">
                     <div class="col-md-4">
                         <button type="button" id="export-all" onclick="$('#all_years').click()" class="btn btn-primary btn-block btn-ms">
-                            {% trans "Todos los años" %}
+                            {% trans "Every year" %}
                         </button>
                     </div>
                     <div class="col-md-4">
                         <button type="button" id="export-year" class="btn btn-primary btn-block btn-ms" data-toggle="modal" data-target="#selectYears">
-                            {% trans "Seleccionar un año" %}
+                            {% trans "Select a year" %}
                         </button>
                     </div>
                     <div class="col-md-4">
                         <button type="button" id="export-range" class="btn btn-primary btn-block btn-ms" data-toggle="modal" data-target="#rangeYears">
-                            {% trans "Seleccionar un periodo" %}
+                            {% trans "Select a period" %}
                         </button>
                     </div>
                 </div>
@@ -77,15 +77,15 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title">{% trans "Exportar mis datos de la Universidad de La Laguna" %}</h4>
+                        <h4 class="modal-title">{% trans "Export my data from the University of La Laguna" %}</h4>
                     </div>
                     <div class="modal-body">
-                        {%  trans "Obtener información del año" %}: {{ form.year }}
+                        {%  trans "Get information the year" %}: {{ form.year }}
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-danger btn-ms" data-dismiss="modal">{% trans "Cerrar" %}</button>
+                        <button type="button" class="btn btn-danger btn-ms" data-dismiss="modal">{% trans "Close" %}</button>
                         <input id="year" style="display:none;" type="Submit" name="select_year" />
-                        <button type="button" data-dismiss="modal" onclick="$('#year').click()" class="btn btn-primary btn-ms">{% trans "Exportar" %}</button>
+                        <button type="button" data-dismiss="modal" onclick="$('#year').click()" class="btn btn-primary btn-ms">{% trans "Export" %}</button>
                     </div>
                 </div>
             </div>
@@ -101,15 +101,15 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title">{% trans "Exportar mis datos de la Universidad de La Laguna" %}</h4>
+                        <h4 class="modal-title">{% trans "Export my data from the University of La Laguna" %}</h4>
                     </div>
                     <div class="modal-body">
-                        {% trans "Desde el año" %} {{ form.start_year }} {% trans "hasta el" %} {{ form.end_year }}
+                        {% trans "Since" %} {{ form.start_year }} {% trans "until" %} {{ form.end_year }}
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-danger btn-ms" data-dismiss="modal">{% trans "Cerrar" %}</button>
+                        <button type="button" class="btn btn-danger btn-ms" data-dismiss="modal">{% trans "Close" %}</button>
                         <input id="range_years" style="display:none;" type="Submit" name="range_years" />
-                        <button type="button" onclick="$('#range_years').click()" data-dismiss="modal" class="btn btn-primary btn-ms">{% trans "Exportar" %}</button>
+                        <button type="button" onclick="$('#range_years').click()" data-dismiss="modal" class="btn btn-primary btn-ms">{% trans "Export" %}</button>
                     </div>
                 </div>
             </div>

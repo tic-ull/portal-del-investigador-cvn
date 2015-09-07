@@ -1,13 +1,39 @@
 # -*- encoding: UTF-8 -*-
 
+#
+#    Copyright 2014-2015
+#
+#      STIC-Investigación - Universidad de La Laguna (ULL) <gesinv@ull.edu.es>
+#
+#    This file is part of CVN.
+#
+#    CVN is free software: you can redistribute it and/or modify it under
+#    the terms of the GNU Affero General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    CVN is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU Affero General Public License for more details.
+#
+#    You should have received a copy of the GNU Affero General Public License
+#    along with CVN.  If not, see
+#    <http://www.gnu.org/licenses/>.
+#
+
 from abc import ABCMeta
 import os
+import logging
 from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings as st
+from cvn import settings as st_cvn
 from cvn.models import (Articulo, Libro, Capitulo, Congreso, Proyecto,
                         Convenio, TesisDoctoral, Patente)
 from core.models import UserProfile
 from core.ws_utils import CachedWS as ws
+
+logger = logging.getLogger(__name__)
 
 
 class BaseReport:
@@ -33,7 +59,7 @@ class BaseReport:
         for unit in units:
             self.create_report(unit)
 
-    def create_report(self, unit, title=None):
+    def create_report(self, unit=None, title=None):
         inv, profiles, unit_name = self.get_investigadores(unit, title)
         if not inv:
             return
@@ -62,10 +88,17 @@ class BaseReport:
 
 class UsersReport(BaseReport):
 
-    report_type = 'list'
+    report_type = st_cvn.REPORTS_DIRECTORY.USERS.value
 
     def get_investigadores(self, unit, title):
-        profiles = UserProfile.objects.filter(documento__in=unit)
+        if unit is None:
+            profiles = UserProfile.objects.all()
+        else:
+            profiles = UserProfile.objects.filter(documento__in=unit)
+            nonexistent_users = list(set(unit) - set([p.documento for p in profiles]))
+            if nonexistent_users:
+                logger.warn(u"No se encuentran los siguientes usuarios: "
+                            + str(nonexistent_users))
         investigadores = [{'cod_persona__nombre': p.user.first_name,
                            'cod_persona__apellido1': p.user.last_name,
                            'cod_persona__apellido2': '',
@@ -95,12 +128,16 @@ class UnitReport(BaseReport):
         return self.unit_names.keys()
 
     def get_investigadores(self, unit, title):
+        if unit is None:
+            return NotImplemented
         unit_content = ws.get(self.WS_URL_DETAIL % (unit, self.year))[0]
         if unit_content["unidad"] == {}:
             try:
-                unit_name = self.unit_names['unit']
+                unit_name = self.unit_names[unit]
             except (AttributeError, KeyError):
-                unit_name = str(unit)
+                unit_name = unicode(unit)
+            logger.warn(u"La unidad " + unit_name
+                        + u" no tiene información en " + unicode(self.year))
             return [], [], unit_name
         investigadores = []
         usuarios = []
@@ -130,12 +167,12 @@ class UnitReport(BaseReport):
 
 
 class DeptReport(UnitReport):
-    report_type = 'department'
+    report_type = st_cvn.REPORTS_DIRECTORY.DEPT.value
     WS_URL_ALL = st.WS_DEPARTMENTS_ALL
     WS_URL_DETAIL = st.WS_DEPARTMENTS_AND_MEMBERS_UNIT_YEAR
 
 
 class AreaReport(UnitReport):
-    report_type = 'area'
+    report_type = st_cvn.REPORTS_DIRECTORY.AREA.value
     WS_URL_ALL = st.WS_AREAS_ALL
     WS_URL_DETAIL = st.WS_AREAS_AND_MEMBERS_UNIT_YEAR

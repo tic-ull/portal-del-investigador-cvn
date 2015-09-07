@@ -166,12 +166,17 @@ class Command(BaseCommand):
 
     def print_cabecera_registro(self, pry1, pry2, duplicates,
                                 pair, model_fields, count):
+        # If both titles are equal they won't show up for cleaning.
+        # Here we will show them for reference
+        titulo1 = pry1.titulo
+        titulo2 = pry2.titulo
+        titulo = '( ' + titulo1 + ' )' if titulo1 == titulo2 else ''
         os.system("clear")
-        log_print("=====================================================")
-        log_print(" ID1 = {0} comparado con ID2 = {1} ({2:2.2f}%) {3}/{4}"
+        log_print("===========================================================")
+        log_print(u" ID1 = {0} comparado con ID2 = {1} ({2:2.2f}%) {3}/{4} {5}"
                   .format(pry1.id, pry2.id, duplicates[pair] * 100,
-                          count, len(duplicates)))
-        log_print("=====================================================")
+                          count, len(duplicates), titulo))
+        log_print("===========================================================")
         log_print("Field".ljust(self.FIELD_WIDTH)
                   + "ID1".ljust(self.COLWIDTH)
                   + "ID2".ljust(self.COLWIDTH))
@@ -179,9 +184,9 @@ class Command(BaseCommand):
         for f in model_fields:
             if f not in (self.DONT_SET_FIELDS +
                          self.TIMESTAMP_FIELDS):
-                f1 = pry1.__getattribute__(f)
+                f1 = getattr(pry1, f)
                 f1 = "" if f1 is None else f1
-                f2 = pry2.__getattribute__(f)
+                f2 = getattr(pry2, f)
                 f2 = "" if f2 is None else f2
                 if f1 != f2:
                     log_print(unicode(f)[:self.FIELD_WIDTH - 1]

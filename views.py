@@ -58,7 +58,7 @@ def index(request):
                              user=user, instance=cvn)
         if form.is_valid():
             cvn = form.save()
-            context['message'] = _(u'CVN actualizado con éxito.')
+            context['message'] = _("CVN updated successfully.")
             signals.cvn_uploaded.send(sender=None, cvn=cvn)
     context['form'] = form
     stats_to_context(request, context)
@@ -94,7 +94,7 @@ def ull_report(request, year):
     try:
         context['report_date'] = unicode(year)
     except ObjectDoesNotExist:
-        context['report_date'] = _('No disponible')
+        context['report_date'] = _("Not Available")
     return render(request, 'cvn/ull_report.html', context)
 
 
@@ -125,7 +125,7 @@ def export_data_ull(request):
 
             if not pdf:
                 form._errors['__all__'] = _(
-                    u'No dispone de información en el periodo seleccionado')
+                    u'No information in this period')
                 context['form'] = form
                 return render(request, 'cvn/export_data_ull.html', context)
 

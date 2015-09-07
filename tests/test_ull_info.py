@@ -29,12 +29,13 @@ from django.test import TestCase
 from cvn import settings as st_cvn
 from core.tests.helpers import init, clean
 from core.tests.factories import UserFactory
-from mocks import (get_learning, get_all, get_cargos, get_cargos_no_f_hasta,
-                   get_cargos_no_departamento, get_cargos_no_dedicacion,
-                   get_learning_no_f_expedicion, get_learning_no_organismo,
-                   get_learning_doctor_no_f_expedicion,
-                   get_learning_doctor_no_organismo, get_contratos,
-                   get_contratos_no_f_hasta, get_docencia)
+from mocks.university_info import (
+    get_learning, get_all, get_cargos, get_cargos_no_f_hasta,
+    get_cargos_no_departamento, get_cargos_no_dedicacion,
+    get_learning_no_f_expedicion, get_learning_no_organismo,
+    get_learning_doctor_no_f_expedicion, get_learning_doctor_no_organismo,
+    get_contratos, get_contratos_no_f_hasta, get_docencia
+)
 
 from mock import patch
 from core.ws_utils import CachedWS
@@ -64,6 +65,7 @@ class UllInfoTestCase(TestCase):
     def test_get_pdf_ull_learning(self):
         user = UserFactory.create()
         user.profile.rrhh_code = 'example_code'
+        user.profile.documento = 'example_codeL'
         pdf = CVN.get_user_pdf_ull(user=user)
         cvn = CVN(user=user, pdf=pdf)
         cvn.xml_file.open()
@@ -93,13 +95,14 @@ class UllInfoTestCase(TestCase):
     def test_get_pdf_ull_cargos(self):
         user = UserFactory.create()
         user.profile.rrhh_code = 'example_code'
+        user.profile.documento = 'example_codeL'
         pdf = CVN.get_user_pdf_ull(user=user)
         cvn = CVN(user=user, pdf=pdf)
         cvn.xml_file.open()
         cvn_items = etree.parse(cvn.xml_file).findall('CvnItem')
         ws_content = CachedWS.get(st.WS_ULL_CARGOS % 'example_code')
         for w in ws_content:
-            CVN._cleaned_data_profession(w)
+            CVN._clean_data_profession(w)
             if not u'employer' in w:
                 w[u'employer'] = u'Universidad de La Laguna'
         pdf_content = []
@@ -120,13 +123,14 @@ class UllInfoTestCase(TestCase):
     def test_get_pdf_ull_contratos(self):
         user = UserFactory.create()
         user.profile.rrhh_code = 'example_code'
+        user.profile.documento = 'example_codeL'
         pdf = CVN.get_user_pdf_ull(user=user)
         cvn = CVN(user=user, pdf=pdf)
         cvn.xml_file.open()
         cvn_items = etree.parse(cvn.xml_file).findall('CvnItem')
         ws_content = CachedWS.get(st.WS_ULL_CONTRATOS % 'example_code')
         for w in ws_content:
-            CVN._cleaned_data_profession(w)
+            CVN._clean_data_profession(w)
             if not u'employer' in w:
                 w[u'employer'] = u'Universidad de La Laguna'
         pdf_content = []
@@ -136,7 +140,7 @@ class UllInfoTestCase(TestCase):
         for pi in pdf_content:
             pi[u'f_desde'] = pi[u'f_toma_posesion']
             del pi[u'f_toma_posesion']
-            pi[u'des1_cce'] = pi[u'des1_cargo']
+            pi[u'des_cce'] = pi[u'des1_cargo']
             del pi[u'des1_cargo']
         allequal = True
         for wi in ws_content:
@@ -152,6 +156,7 @@ class UllInfoTestCase(TestCase):
     def test_get_pdf_ull_teaching(self):
         user = UserFactory.create()
         user.profile.rrhh_code = 'example_code'
+        user.profile.documento = 'example_codeL'
         pdf = CVN.get_user_pdf_ull(user=user)
         cvn = CVN(user=user, pdf=pdf)
         cvn.xml_file.open()
@@ -177,6 +182,7 @@ class UllInfoTestCase(TestCase):
     def _get_one_cargo_ull(self):
         user = UserFactory.create()
         user.profile.rrhh_code = 'example_code'
+        user.profile.documento = 'example_codeL'
         pdf = CVN.get_user_pdf_ull(user=user)
         cvn = CVN(user=user, pdf=pdf)
         cvn.xml_file.open()
@@ -186,7 +192,7 @@ class UllInfoTestCase(TestCase):
         ws_content = CachedWS.get(st.WS_ULL_CARGOS % 'example_code')
         self.assertEqual(len(ws_content), 1)
         w = ws_content[0]
-        CVN._cleaned_data_profession(w)
+        CVN._clean_data_profession(w)
         if not u'employer' in w:
             w[u'employer'] = u'Universidad de La Laguna'
         self.assertEqual(cmp(item, w), 0)
@@ -194,6 +200,7 @@ class UllInfoTestCase(TestCase):
     def _get_one_contrato_ull(self):
         user = UserFactory.create()
         user.profile.rrhh_code = 'example_code'
+        user.profile.documento = 'example_codeL'
         pdf = CVN.get_user_pdf_ull(user=user)
         cvn = CVN(user=user, pdf=pdf)
         cvn.xml_file.open()
@@ -202,12 +209,12 @@ class UllInfoTestCase(TestCase):
         item = parse_cvnitem(cvn_items[0])
         item[u'f_desde'] = item[u'f_toma_posesion']
         del item[u'f_toma_posesion']
-        item[u'des1_cce'] = item[u'des1_cargo']
+        item[u'des_cce'] = item[u'des1_cargo']
         del item[u'des1_cargo']
         ws_content = CachedWS.get(st.WS_ULL_CONTRATOS % 'example_code')
         self.assertEqual(len(ws_content), 1)
         w = ws_content[0]
-        CVN._cleaned_data_profession(w)
+        CVN._clean_data_profession(w)
         if not u'employer' in w:
             w[u'employer'] = u'Universidad de La Laguna'
         self.assertEqual(cmp(item, w), 0)
@@ -215,6 +222,7 @@ class UllInfoTestCase(TestCase):
     def _get_one_learning_ull(self):
         user = UserFactory.create()
         user.profile.rrhh_code = 'example_code'
+        user.profile.documento = 'example_codeL'
         pdf = CVN.get_user_pdf_ull(user=user)
         cvn = CVN(user=user, pdf=pdf)
         cvn.xml_file.open()
@@ -229,8 +237,8 @@ class UllInfoTestCase(TestCase):
             wi[u'des1_grado_titulacion'] = wi[u'des1_grado_titulacion'].upper()
             if wi[u'des1_grado_titulacion'] == u'DOCTOR':
                 del wi[u'des1_grado_titulacion']
-                if not u'organismo' in wi:
-                    wi[u'organismo'] = u'Universidad de La Laguna'
+                if not u'des1_organismo' in wi:
+                    wi[u'des1_organismo'] = u'Universidad de La Laguna'
         self.assertEqual(cmp(item, wi), 0)
 
     @patch.object(CachedWS, 'get', get_cargos_no_f_hasta)
@@ -269,6 +277,7 @@ class UllInfoTestCase(TestCase):
     def test_get_pdf_ull_filter_by_date(self):
         user = UserFactory.create()
         user.profile.rrhh_code = 'example_code'
+        user.profile.documento = 'example_codeL'
         pdf = CVN.get_user_pdf_ull(user=user)
         cvn = CVN(user=user, pdf=pdf)
         cvn.xml_file.open()
@@ -328,7 +337,7 @@ class UllInfoTestCase(TestCase):
         ws_content = CachedWS.get(st.WS_ULL_CONTRATOS % 'example_code')
         w = ws_content[0]
         w[u'dedicacion'] = u'Tiempo completo'
-        CVN._cleaned_data_profession(w)
+        CVN._clean_data_profession(w)
         self.assertTrue(w[u'dedicacion'])
 
     @classmethod

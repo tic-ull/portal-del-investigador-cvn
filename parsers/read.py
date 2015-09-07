@@ -41,7 +41,7 @@ def _parse_cvnitem_profession(node):
 
     dedicacion = parse_dedication_type(node.find('Dedication/Item'))
     if dedicacion is not None:
-        item[u'dedicacion'] = dedicacion
+        item[u'des1_dedicacion'] = dedicacion
 
     entities = parse_entities(node.findall('Entity'))
 
@@ -56,9 +56,9 @@ def _parse_cvnitem_profession(node):
         item[u'centro'] = entities[st_cvn.Entity.CURRENT_CENTRE.value]
 
     if entities[st_cvn.Entity.DEPT.value] is not None:
-        item[u'departamento'] = entities[st_cvn.Entity.DEPT.value]
+        item[u'des1_departamento'] = entities[st_cvn.Entity.DEPT.value]
     elif entities[st_cvn.Entity.CURRENT_DEPT.value] is not None:
-        item[u'departamento'] = entities[st_cvn.Entity.CURRENT_DEPT.value]
+        item[u'des1_departamento'] = entities[st_cvn.Entity.CURRENT_DEPT.value]
 
     return item
 
@@ -203,7 +203,7 @@ def parse_cvnitem_teaching_subject(node):
 def parse_cvnitem_learning_phd(node):
     organismo = node.find('Entity/EntityName/Item')
     item = {u'des1_titulacion': unicode(node.find('Title/Name/Item').text),
-            u'organismo': unicode(
+            u'des1_organismo': unicode(
                 organismo.text) if organismo is not None else None,
             u'f_expedicion': parse_date(node.find('Date'))}
     return item
@@ -222,7 +222,7 @@ def parse_cvnitem_learning_degree(node):
             u'f_expedicion': parse_date(node.find('Date'))}
     organismo = node.find('Entity/EntityName/Item')
     if organismo is not None:
-        item[u'organismo'] = unicode(organismo.text)
+        item[u'des1_organismo'] = unicode(organismo.text)
     return item
 
 

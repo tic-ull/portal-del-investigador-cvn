@@ -1,19 +1,19 @@
 {% load i18n %}
 <div class="nav-ull">
     <ul class="nav nav-tabs">
-        <li class="active"><a href="#congreso" data-toggle="tab">{% trans "Congresos" %}</a></li>
+        <li class="active"><a href="#congreso" data-toggle="tab">{% trans "Conferences" %}</a></li>
         <li class="dropdown">
-            <a href="#" id="myTabDrop1" class="dropdown-toggle" data-toggle="dropdown">{% trans "Publicaciones" %}<b class="caret"></b></a>
+            <a href="#" id="myTabDrop1" class="dropdown-toggle" data-toggle="dropdown">{% trans "Publications" %}<b class="caret"></b></a>
             <ul class="dropdown-menu" role="menu" aria-labelledby="myTabDrop1">
-                <li><a href="#articulo" tabindex="-1" data-toggle="tab">{% trans "Artículos" %}</a></li>
-                <li><a href="#capitulo" tabindex="-1" data-toggle="tab">{% trans "Capítulos de Libros" %}</a></li>
-                <li><a href="#libro" tabindex="-1" data-toggle="tab">{% trans "Libros" %}</a></li>
+                <li><a href="#articulo" tabindex="-1" data-toggle="tab">{% trans "Articles" %}</a></li>
+                <li><a href="#capitulo" tabindex="-1" data-toggle="tab">{% trans "Chapters of books" %}</a></li>
+                <li><a href="#libro" tabindex="-1" data-toggle="tab">{% trans "Books" %}</a></li>
             </ul>
         </li>
-        <li><a href="#convenio" data-toggle="tab">{% trans "Convenios" %}</a></li>
-        <li><a href="#proyecto" data-toggle="tab">{% trans "Proyectos" %}</a></li>
-        <li><a href="#tesis" data-toggle="tab">{% trans "Tesis" %}</a></li>
-        <li><a href="#patente" data-toggle="tab">{% trans "Propiedad Intelectual" %}</a></li>
+        <li><a href="#convenio" data-toggle="tab">{% trans "Agreements" %}</a></li>
+        <li><a href="#proyecto" data-toggle="tab">{% trans "Projects" %}</a></li>
+        <li><a href="#tesis" data-toggle="tab">{% trans "Thesis" %}</a></li>
+        <li><a href="#patente" data-toggle="tab">{% trans "Intellectual Property" %}</a></li>
     </ul>
     <div class="tab-content">
         <div id="congreso" class="tab-pane active">
@@ -51,7 +51,7 @@
                     {% endfor %}
                 {% else %}
                     <div class="alert alert-warning">
-                        <strong>{% trans "No dispone de Congresos" %}</strong>
+                        <strong>{% trans "You don't have any Conferences" %}</strong>
                     </div>
                 {% endif %}
             </div>
@@ -73,7 +73,7 @@
                                         <strong>{{ publicacion.titulo }}</strong><br>
                                     {% endif %}
                                     {% if publicacion.fecha %}
-                                        <strong>{% trans "Fecha" %}:</strong> {{ publicacion.fecha }}<br>
+                                        <strong>{% trans "Date" %}:</strong> {{ publicacion.fecha }}<br>
                                     {% endif %}
                                     {% if publicacion.autores %}
                                         {{ publicacion.autores }} <br>
@@ -85,10 +85,10 @@
                                         {% trans "Vol." %} {{publicacion.volumen}}
                                     {% endif %}
                                     {% if publicacion.numero %}
-                                        {% trans "Núm." %} {{publicacion.numero}}
+                                        {% trans "Num." %} {{publicacion.numero}}
                                     {% endif %}
                                     {% if publicacion.pagina_inicial and publicacion.pagina_final %}
-                                        {% trans "Pág." %} {{publicacion.pagina_inicial}}-{{publicacion.pagina_final}}
+                                        {% trans "Pag." %} {{publicacion.pagina_inicial}}-{{publicacion.pagina_final}}
                                     {% endif %}
                                     {% if publicacion.issn %}
                                         ISSN: {{ publicacion.issn }}<br>
@@ -99,7 +99,7 @@
                     {% endfor %}
                 {% else %}
                     <div class="alert alert-warning">
-                        <strong>{% trans "No dispone de Artículos" %}</strong>
+                        <strong>{% trans "You don't have any Articles" %}</strong>
                     </div>
                 {% endif %}
             </div>
@@ -121,7 +121,7 @@
                                         <strong>{{ publicacion.titulo }}</strong><br>
                                     {% endif %}
                                     {% if publicacion.fecha %}
-                                        <strong>{% trans "Fecha" %}:</strong> {{ publicacion.fecha }}<br>
+                                        <strong>{% trans "Date" %}:</strong> {{ publicacion.fecha }}<br>
                                     {% endif %}
                                     {% if publicacion.autores %}
                                         {{ publicacion.autores }} <br>
@@ -130,7 +130,7 @@
                                         {{ publicacion.nombre_publicacion }}<br>
                                     {% endif %}
                                     {% if publicacion.pagina_inicial and publicacion.pagina_final %}
-                                        {% trans "Pág." %} {{publicacion.pagina_inicial}}-{{publicacion.pagina_final}}
+                                        {% trans "Pag." %} {{publicacion.pagina_inicial}}-{{publicacion.pagina_final}}
                                     {% endif %}
                                     {% if publicacion.isbn %}
                                         ISBN: {{ publicacion.isbn }}<br>
@@ -141,7 +141,7 @@
                     {% endfor %}
                 {% else %}
                     <div class="alert alert-warning">
-                        <strong>{% trans "No dispone de Capítulos de Libros" %}</strong>
+                        <strong>{% trans "You don't have any Chapters of Books" %}</strong>
                     </div>
                 {% endif %}
             </div>
@@ -163,7 +163,7 @@
                                         <strong>{{ publicacion.titulo }}</strong><br>
                                     {% endif %}
                                     {% if publicacion.fecha %}
-                                        <strong>{% trans "Fecha" %}:</strong> {{ publicacion.fecha }}<br>
+                                        <strong>{% trans "Date" %}:</strong> {{ publicacion.fecha }}<br>
                                     {% endif %}
                                     {% if publicacion.autores %}
                                         {{ publicacion.autores }} <br>
@@ -180,7 +180,7 @@
                     {% endfor %}
                 {% else %}
                     <div class="alert alert-warning">
-                        <strong>{% trans "No dispone de Libros" %}</strong>
+                        <strong>{% trans "You don't have any Books" %}</strong>
                     </div>
                 {% endif %}
             </div>
@@ -202,16 +202,16 @@
                                         <strong>{{ convenio.titulo }}</strong><br>
                                     {% endif %}
                                     {% if fecha_de_inicio %}
-                                        {% trans "Fecha de inicio" %}: {{ convenio.fecha_de_inicio }}<br>
+                                        {% trans "Start date" %}: {{ convenio.fecha_de_inicio }}<br>
                                     {% endif %}
                                     {% if fecha_de_fin %}
-                                        {% trans "Fecha de finalización" %}: {{ convenio.fecha_de_fin }}<br>
+                                        {% trans "End date" %}: {{ convenio.fecha_de_fin }}<br>
                                     {% endif %}
                                     {% if convenio.cuantia_total %}
-                                        {% trans "Cuantía" %}: {{ convenio.cuantia_total }}<br>
+                                        {% trans "Total amount" %}: {{ convenio.cuantia_total }}<br>
                                     {% endif %}
                                     {% if convenio.autores %}
-                                        {% trans "Investigadores" %}: {{ convenio.autores }} <br>
+                                        {% trans "Researchers" %}: {{ convenio.autores }} <br>
                                     {% endif %}
                                 </div>
                             </div>
@@ -219,7 +219,7 @@
                     {% endfor %}
                 {% else %}
                     <div class="alert alert-warning">
-                        <strong>{% trans "No dispone de Convenios" %}</strong>
+                        <strong>{% trans "You don't have any Agreements" %}</strong>
                     </div>
                 {% endif %}
             </div>
@@ -241,16 +241,16 @@
                                         <strong>{{ proyecto.titulo }}</strong><br>
                                     {% endif %}
                                     {% if proyecto.fecha_de_inicio %}
-                                        {% trans "Fecha de inicio" %}: {{ proyecto.fecha_de_inicio }}<br>
+                                        {% trans "Start date" %}: {{ proyecto.fecha_de_inicio }}<br>
                                     {% endif %}
                                     {% if proyecto.fecha_de_fin %}
-                                        {% trans "Fecha de finalización" %}: {{ proyecto.fecha_de_fin }}<br>
+                                        {% trans "End date" %}: {{ proyecto.fecha_de_fin }}<br>
                                     {% endif %}
                                     {% if proyecto.cuantia_total %}
-                                        {% trans "Cuantía" %}: {{ proyecto.cuantia_total }}<br>
+                                        {% trans "Total amount" %}: {{ proyecto.cuantia_total }}<br>
                                     {% endif %}
                                     {% if proyecto.autores %}
-                                        {% trans "Investigadores" %}: {{ proyecto.autores }} <br>
+                                        {% trans "Researchers" %}: {{ proyecto.autores }} <br>
                                     {% endif %}
                                 </div>
                             </div>
@@ -258,7 +258,7 @@
                     {% endfor %}
                 {% else %}
                     <div class="alert alert-warning">
-                        <strong>{% trans "No dispone de Proyectos" %}</strong>
+                        <strong>{% trans "You don't have any Projects" %}</strong>
                     </div>
                 {% endif %}
             </div>
@@ -280,20 +280,20 @@
                                         <strong>{{ tesis.titulo }}</strong><br>
                                     {% endif %}
                                     {% if tesis.autor %}
-                                        {% trans "Doctorando" %}: {{ tesis.autor }}<br>
+                                        {% trans "PhD" %}: {{ tesis.autor }}<br>
                                     {% endif %}
                                     {% if tesis.universidad_que_titula %}
-                                        {% trans "Universidad" %}: {{ tesis.universidad_que_titula }}<br>
+                                        {% trans "University" %}: {{ tesis.universidad_que_titula }}<br>
                                     {% endif %}
                                     {% trans "Director" %}:
                                     {% for user_profile in tesis.user_profile.all %}
                                         {{ user_profile.user.first_name }} {{ user_profile.user.last_name }}<br>
                                     {% endfor %}
                                     {% if tesis.codirector %}
-                                        {% trans "Codirector" %}: {{ tesis.codirector }}<br>
+                                        {% trans "Co-director" %}: {{ tesis.codirector }}<br>
                                     {% endif %}
                                     {% if tesis.fecha %}
-                                        {% trans "Fecha de lectura" %}: {{ tesis.fecha }}
+                                        {% trans "Date of reading" %}: {{ tesis.fecha }}
                                     {% endif %}
                                 </div>
                             </div>
@@ -301,7 +301,7 @@
                     {% endfor %}
                 {% else %}
                     <div class="alert alert-warning">
-                        <strong>{% trans "No dispone de Tesis Doctorales" %}</strong>
+                        <strong>{% trans "You don't have any Doctoral Thesis" %}</strong>
                     </div>
                 {% endif %}
             </div>
@@ -323,28 +323,28 @@
                                         <strong>{{ patente.titulo }}</strong><br>
                                     {% endif %}
                                     {% if patente.num_solicitud %}
-                                        {% trans "Número de solicitud" %}: {{ patente.num_solicitud }}<br>
+                                        {% trans "Request number" %}: {{ patente.num_solicitud }}<br>
                                     {% endif %}
                                     {% if patente.fecha %}
-                                        {% trans "Fecha de registro" %}: {{ patente.fecha }}<br>
+                                        {% trans "Registration date" %}: {{ patente.fecha }}<br>
                                     {% endif %}
                                     {% if patente.fecha_concesion %}
-                                        {% trans "Fecha de concesión" %}: {{ patente.fecha_concesion }}<br>
+                                        {% trans "Concession date" %}: {{ patente.fecha_concesion }}<br>
                                     {% endif %}
                                     {% if patente.lugar_prioritario %}
-                                        {% trans "Inscrita en" %}: {{ patente.lugar_prioritario }} <br>
+                                        {% trans "Enrolled in" %}: {{ patente.lugar_prioritario }} <br>
                                     {% endif %}
                                     {% if patente.autores %}
-                                        {% trans "Autores" %}: {{ patente.autores }} <br>
+                                        {% trans "Authors" %}: {{ patente.autores }} <br>
                                     {% endif %}
                                     {% if patente.entidad_titular %}
-                                        {% trans "Entidad titular" %}: {{ patente.entidad_titular }} <br>
+                                        {% trans "Owner entity" %}: {{ patente.entidad_titular }} <br>
                                     {% endif %}
                                     {% if patente.paises %}
-                                        {% trans "Países" %}: {{ patente.paises }} <br>
+                                        {% trans "Countries" %}: {{ patente.paises }} <br>
                                     {% endif %}
                                     {% if patente.empresas %}
-                                        {% trans "Empresas" %}: {{ patente.empresas }} <br>
+                                        {% trans "Companies" %}: {{ patente.empresas }} <br>
                                     {% endif %}
                                 </div>
                             </div>
@@ -352,7 +352,7 @@
                     {% endfor %}
                 {% else %}
                     <div class="alert alert-warning">
-                        <strong>{% trans "No dispone de Propiedades Intelectuales" %}</strong>
+                        <strong>{% trans "You don't have any Intellectual Property" %}</strong>
                     </div>
                 {% endif %}
             </div>

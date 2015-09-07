@@ -48,7 +48,8 @@ class InformeCSV:
 
     @staticmethod
     def get_save_path(year, model_type):
-        return "%s/%s/%s/" % (st_cvn.REPORTS_ICSV_ROOT, model_type, year)
+        return "%s/%s/%s/" % (os.path.join(
+            st.MEDIA_ROOT, st_cvn.REPORTS_ICSV_PATH), model_type, year)
 
     @staticmethod
     def get_filename(year, team_name, model_type=None):

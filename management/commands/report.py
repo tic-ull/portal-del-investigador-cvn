@@ -92,7 +92,8 @@ class Command(BaseCommand):
             report = Report(Generator, year)
             report.create_reports(unit_id)
         else:
-            nifs = options["user_list"].split(",")
+            ul = options["user_list"]
+            nifs = ul.split(",") if ul is not None else None
             report = UsersReport(Generator, int(options['year']))
             report.create_report(nifs, options['title'])
 
@@ -115,6 +116,3 @@ class Command(BaseCommand):
 
         if options['type'] == 'u' and options['unit_code'] is not None:
             raise CommandError("You can't provide a unit code for this type")
-
-        if options['type'] == 'u' and options['user_list'] is None:
-            raise CommandError("You must provide a user list for this type")

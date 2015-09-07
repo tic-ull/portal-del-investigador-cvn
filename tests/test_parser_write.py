@@ -59,7 +59,7 @@ class ParserWriterTestCase(TestCase):
         # Insert old and new professions in the CVN
         for i in range(0, 10):
             d = ProfessionFactory.create()
-            for key in [u'departamento', u'centro', u'dedicacion']:
+            for key in [u'des1_departamento', u'centro', u'des1_dedicacion']:
                 if d[key] is None:
                     del d[key]
             cvnitem_dict[d[u'des1_cargo']] = d
@@ -81,15 +81,15 @@ class ParserWriterTestCase(TestCase):
         for i in range(0, 10):
             d = LearningPhdFactory.create()
             cvnitem_dict[d[u'des1_titulacion']] = d
-            if u'organismo' in d and d[u'organismo'] is None:
-                del d[u'organismo']
+            if u'des1_organismo' in d and d[u'des1_organismo'] is None:
+                del d[u'des1_organismo']
             parser.add_learning_phd(**d)
          # Insert bachelor, degree...data
         for i in range(0, 10):
             d = LearningFactory.create()
             cvnitem_dict[d[u'des1_titulacion']] = d
-            if u'organismo' in d and d[u'organismo'] is None:
-                del d[u'organismo']
+            if u'des1_organismo' in d and d[u'des1_organismo'] is None:
+                del d[u'des1_organismo']
             parser.add_learning(**d)
         cvn = CVN.create(user, parser.tostring())
         cvn.xml_file.open()

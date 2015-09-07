@@ -8,19 +8,19 @@
 {% endblock breadcrumb_app %}
 
 {% block navbar_links %}
-    <li><a href={{ EDITOR_FECYT }} target="_blank"><i class="fa fa-external-link"></i> {% trans 'Editor de CVN de la FECYT' %}</a></li>
+    <li><a href={{ EDITOR_FECYT }} target="_blank"><i class="fa fa-external-link"></i> {% trans "FECYT's CVN Editor" %}</a></li>
 {% endblock navbar_links %}
 
 {% block submenu %}
     {% if user.profile.rrhh_code %}
     <div class="panel panel-default panel-ull color-336699">
         <div class="panel-heading">
-            <h3 class="panel-title"><i class="fa fa-bars"></i> {% trans "Gestionar CVN" %}</h3>
+            <h3 class="panel-title"><i class="fa fa-bars"></i> {% trans "Manage CVN" %}</h3>
         </div>
         <div class="panel-body">
             <ul class="nav nav-pills nav-stacked">
-                <li><a href='{% url 'cvn' %}'><i class="fa fa-home"></i> {% trans "Mi CVN" %}</a></li>
-                <li><a href='{% url 'export_data_ull' %}'><i class="fa fa-database"></i> {% trans "Exportar mi información ULL" %}</a></li>
+                <li><a href='{% url 'cvn' %}'><i class="fa fa-home"></i> {% trans "My CVN" %}</a></li>
+                <li><a href='{% url 'export_data_ull' %}'><i class="fa fa-database"></i> {% trans "Export my information ULL" %}</a></li>
                 <li><a href='{% url 'reports' %}'><i class="fa fa-files-o"></i> {% trans "Reports" %}</a></li>
             </ul>
         </div>
@@ -29,5 +29,5 @@
 {% endblock submenu %}
 
 {% block footer_list_extra %}
-    <li>{% trans 'El formato CVN ha sido desarrollado por la Fundación Española para la Ciencia y la Tecnología' %}</li>
+    <li>{% trans "The CVN format has been developed by Fundación Española para la Ciencia y la Tecnología" %}</li>
 {% endblock footer_list_extra %}

@@ -36,6 +36,7 @@ from reportlab.platypus import (SimpleDocTemplate, Paragraph, Spacer, Table,
 from reportlab.platypus.flowables import PageBreak
 from slugify import slugify
 import os
+from django.conf import settings as st
 
 
 class InformePDF:
@@ -62,7 +63,8 @@ class InformePDF:
 
     @staticmethod
     def get_save_path(year, model_type):
-        return "%s/%s/%s/" % (st_cvn.REPORTS_IPDF_ROOT, model_type, year)
+        return "%s/%s/%s/" % (os.path.join(
+            st.MEDIA_ROOT, st_cvn.REPORTS_IPDF_PATH), model_type, year)
 
     @staticmethod
     def get_filename(year, team_name, model_type=None):
