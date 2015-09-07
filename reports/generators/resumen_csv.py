@@ -38,8 +38,8 @@ class ResumenCSV:
         if not os.path.isdir(path):
             os.makedirs(path)
         filename = self.get_filename(self.year, None, model_type)
-        self.filename = os.path.join(path, filename)
-        self._file = open(self.filename, 'wb')
+        self.full_path = os.path.join(path, filename)
+        self._file = open(self.full_path, 'wb')
         self.writer = csv.DictWriter(self._file, dialect=st.CSV_DIALECT,
             fieldnames=[u'Nombre', u'Investigadores', u'Artículos', u'Libros',
                         u'Capítulos', u'Congresos', u'Proyectos', u'Convenios',
