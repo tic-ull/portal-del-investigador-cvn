@@ -144,7 +144,6 @@ class ReportsView(TemplateView):
     template_name = "cvn/reports.html"
 
     @method_decorator(login_required)
-    @method_decorator(user_can_view_reports)
     def dispatch(self, *args, **kwargs):
         return super(ReportsView, self).dispatch(*args, **kwargs)
 
