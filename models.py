@@ -759,7 +759,7 @@ class OldCvnPdf(models.Model):
 class ReportUnit(models.Model):
 
     # model fields
-    code = models.CharField(_("Code"), max_length=16)
+    code = models.CharField(_("Code"), max_length=16, unique=True)
     name = models.TextField(_("Name"), blank=True, null=True)
 
     # class attributes
