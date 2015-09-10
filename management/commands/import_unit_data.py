@@ -24,7 +24,7 @@
 
 from django.core.management.base import BaseCommand
 from core.ws_utils import CachedWS as ws
-from cvn.models import ReportArea, ReportDept
+from cvn.models import ReportArea, ReportDept, ReportMember
 from django.utils.translation import ugettext as _
 
 
@@ -34,5 +34,6 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         ReportArea.objects.all().delete()
         ReportDept.objects.all().delete()
-        ReportArea.reload()
-        ReportDept.reload()
+        ReportMember.objects.all().delete()
+        ReportArea.load('2014')
+        ReportDept.load('2014')

@@ -765,12 +765,21 @@ class ReportUnit(models.Model):
     # class attributes
     WS_URL_ALL = None
     WS_URL_DETAIL = None
+    type = ''
 
     @classmethod
-    def reload(cls):
-        units = ws.get(url=cls.WS_URL_ALL, use_redis=True)
+    def load(cls, year):
+        ReportMember.create_all()
+        units = ws.get(url=cls.WS_URL_ALL, use_redis=False)
         for unit in units:
-            cls.objects.create(code=str(unit['codigo']), name=unit['nombre'])
+            unit_code = str(unit['codigo'])
+            cls.objects.create(code=unit_code, name=unit['nombre'])
+            members = ws.get(
+                url=cls.WS_URL_DETAIL % (unit_code, year), use_redis=False)
+            for member in members:
+                up = UserProfile.objects.get(rrhh_code=member['cod_persona'])
+                setattr(up.reportmember, cls.type, unit)
+                up.reportmember.save()
 
     def __unicode__(self):
         return self.code + ": " + self.name
@@ -782,11 +791,13 @@ class ReportUnit(models.Model):
 class ReportDept(ReportUnit):
     WS_URL_ALL = st.WS_DEPARTMENTS_ALL
     WS_URL_DETAIL = st.WS_DEPARTMENTS_AND_MEMBERS_UNIT_YEAR
+    type = 'department'
 
 
 class ReportArea(ReportUnit):
     WS_URL_ALL = st.WS_AREAS_ALL
     WS_URL_DETAIL = st.WS_AREAS_AND_MEMBERS_UNIT_YEAR
+    type = 'area'
 
 
 class ReportMember(models.Model):
