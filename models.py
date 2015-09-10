@@ -774,6 +774,6 @@ class ReportArea(ReportUnit):
 
 class ReportMember(models.Model):
     user_profile = models.OneToOneField(UserProfile)
-    department = models.ForeignKey(ReportDept)
-    area = models.ForeignKey(ReportArea)
-    cce = models.TextField(_("CCE Name"), blank=True, null=True)
+    department = models.ForeignKey(ReportDept, null=True)
+    area = models.ForeignKey(ReportArea, null=True)
+    cce = models.TextField(_("CCE Name"), blank=True)
