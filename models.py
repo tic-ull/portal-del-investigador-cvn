@@ -757,19 +757,36 @@ class OldCvnPdf(models.Model):
 
 
 class ReportUnit(models.Model):
+
+    # model fields
     code = models.CharField(_("Code"), max_length=16)
     name = models.TextField(_("Name"), blank=True, null=True)
+
+    # class attributes
+    WS_URL_ALL = None
+    WS_URL_DETAIL = None
+
+    @classmethod
+    def reload(cls):
+        units = ws.get(url=cls.WS_URL_ALL, use_redis=True)
+        for unit in units:
+            cls.objects.create(code=str(unit['codigo']), name=unit['nombre'])
+
+    def __unicode__(self):
+        return self.code + ": " + self.name
 
     class Meta:
         abstract = True
 
 
 class ReportDept(ReportUnit):
-    pass
+    WS_URL_ALL = st.WS_DEPARTMENTS_ALL
+    WS_URL_DETAIL = st.WS_DEPARTMENTS_AND_MEMBERS_UNIT_YEAR
 
 
 class ReportArea(ReportUnit):
-    pass
+    WS_URL_ALL = st.WS_AREAS_ALL
+    WS_URL_DETAIL = st.WS_AREAS_AND_MEMBERS_UNIT_YEAR
 
 
 class ReportMember(models.Model):
@@ -782,3 +799,6 @@ class ReportMember(models.Model):
     def create_all(cls):
         for up in UserProfile.objects.all():
             cls.objects.create(user_profile=up)
+
+    def __unicode__(self):
+        return str(self.user_profile)
