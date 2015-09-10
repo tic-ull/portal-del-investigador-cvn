@@ -777,3 +777,8 @@ class ReportMember(models.Model):
     department = models.ForeignKey(ReportDept)
     area = models.ForeignKey(ReportArea)
     cce = models.TextField(_("CCE Name"), blank=True, null=True)
+
+    @classmethod
+    def create_all(cls):
+        for up in UserProfile.objects.all():
+            cls.objects.create(user_profile=up)
