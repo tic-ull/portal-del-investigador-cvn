@@ -32,5 +32,7 @@ class Command(BaseCommand):
     help = _(u'Import department and area info from WebServices')
 
     def handle(self, *args, **options):
+        ReportArea.objects.all().delete()
+        ReportDept.objects.all().delete()
         ReportArea.reload()
         ReportDept.reload()
