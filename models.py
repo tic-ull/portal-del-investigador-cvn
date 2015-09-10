@@ -754,3 +754,26 @@ class OldCvnPdf(models.Model):
     class Meta:
         verbose_name_plural = _("Historical Normalized Curriculum Vitae")
         ordering = ['-uploaded_at']
+
+
+class ReportUnit(models.Model):
+    code = models.CharField(_("Code"), max_length=16)
+    name = models.TextField(_("Name"), blank=True, null=True)
+
+    class Meta:
+        abstract = True
+
+
+class ReportDept(ReportUnit):
+    pass
+
+
+class ReportArea(ReportUnit):
+    pass
+
+
+class ReportMember(models.Model):
+    user_profile = models.OneToOneField(UserProfile)
+    department = models.ForeignKey(ReportDept)
+    area = models.ForeignKey(ReportArea)
+    cce = models.TextField(_("CCE Name"), blank=True, null=True)
