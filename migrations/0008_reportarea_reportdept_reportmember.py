@@ -40,9 +40,9 @@ class Migration(migrations.Migration):
             name='ReportMember',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('cce', models.TextField(null=True, verbose_name='CCE Name', blank=True)),
-                ('area', models.ForeignKey(to='cvn.ReportArea')),
-                ('department', models.ForeignKey(to='cvn.ReportDept')),
+                ('cce', models.TextField(verbose_name='CCE Name', blank=True)),
+                ('area', models.ForeignKey(to='cvn.ReportArea', null=True)),
+                ('department', models.ForeignKey(to='cvn.ReportDept', null=True)),
                 ('user_profile', models.OneToOneField(to='core.UserProfile')),
             ],
             options={
