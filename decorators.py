@@ -33,14 +33,13 @@ def user_can_view_reports(view=None, user=None):
             return True
         return False
 
-    @wraps(view)
-    def wrapper(request, *args, **kwargs):
-        if _user_can_view_reports(request.user):
-            return view(request, *args, **kwargs)
-        else:
-            raise Http404
-
     if view is not None:
+        @wraps(view)
+        def wrapper(request, *args, **kwargs):
+            if _user_can_view_reports(request.user):
+                return view(request, *args, **kwargs)
+            else:
+                raise Http404
         return wrapper
     else:
         return _user_can_view_reports(user)

@@ -206,16 +206,29 @@ class DownloadReportView(View):
         return response
 
     def get(self, request, *args, **kwargs):
+
+        # Form validation
         form = self.form_class(kwargs)
         if not form.is_valid():
             raise Http404
+
+        # Get form fields
         params = form.cleaned_data
+        unit_type = params['unit_type']
         generator_type = params['type']
         year = int(params['year'])
-        Report = self.report_type[params['unit_type']]
+        code = params['code'] if generator_type != 'rcsv' else None
+
+        # Check user permissions
+        user_unit = self.request.session[unit_type + '_code']
+        if (not user_can_view_reports(user=self.request.user)
+                and user_unit != code):
+            raise Http404
+
+        # Generate reports
+        Report = self.report_type[unit_type]
         Generator = self.generator_type[generator_type]
         report = Report(Generator, year)
-        code = params['code'] if generator_type != 'rcsv' else None
         if year != datetime.date.today().year:
             path = report.get_full_path(code)
         elif generator_type == 'rcsv':
