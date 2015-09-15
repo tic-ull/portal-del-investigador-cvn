@@ -23,18 +23,30 @@
 #
 
 from django.core.management.base import BaseCommand
-from core.ws_utils import CachedWS as ws
 from cvn.models import ReportArea, ReportDept, ReportMember
 from django.utils.translation import ugettext as _
+from optparse import make_option
 
 
 class Command(BaseCommand):
     help = _(u'Import department and area info from WebServices')
 
+    option_list = BaseCommand.option_list + (
+        make_option(
+            "-d",
+            "--delete",
+            dest="delete",
+            default=False,
+            action="store_true",
+            help="Specify if the reports information should be just deleted"
+        ),
+    )
+
     def handle(self, *args, **options):
         ReportArea.objects.all().delete()
         ReportDept.objects.all().delete()
         ReportMember.objects.all().delete()
-        ReportMember.create_all()
-        ReportArea.load('2014')
-        ReportDept.load('2014')
+        if not options['delete']:
+            ReportMember.create_all()
+            ReportArea.load('2014')
+            ReportDept.load('2014')
