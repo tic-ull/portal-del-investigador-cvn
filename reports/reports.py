@@ -28,7 +28,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings as st
 from cvn import settings as st_cvn
 from cvn.models import (Articulo, Libro, Capitulo, Congreso, Proyecto,
-                        Convenio, TesisDoctoral, Patente)
+                        Convenio, TesisDoctoral, Patente, ReportDept,
+                        ReportArea, ReportMember)
 from core.models import UserProfile
 from core.ws_utils import CachedWS as ws
 
@@ -70,7 +71,7 @@ class BaseReport:
         convenios = Convenio.objects.byUsuariosYear(profiles, self.year)
         tesis = TesisDoctoral.objects.byUsuariosYear(profiles, self.year)
         patentes = Patente.objects.byUsuariosYear(profiles, self.year)
-        self.generator.go(unit_name, inv,articulos, libros, capitulos_libro,
+        self.generator.go(unit_name, inv, articulos, libros, capitulos_libro,
                           congresos, proyectos, convenios, tesis, patentes)
 
 
@@ -83,7 +84,8 @@ class UsersReport(BaseReport):
             profiles = UserProfile.objects.all()
         else:
             profiles = UserProfile.objects.filter(documento__in=unit)
-            nonexistent_users = list(set(unit) - set([p.documento for p in profiles]))
+            nonexistent_users = list(set(unit) -
+                                     set([p.documento for p in profiles]))
             if nonexistent_users:
                 logger.warn(u"No se encuentran los siguientes usuarios: "
                             + str(nonexistent_users))
@@ -101,51 +103,56 @@ class UnitReport(BaseReport):
 
     WS_URL_ALL = None
     WS_URL_DETAIL = None
+    report_type = ''
+    Report = None
 
     def get_all_units(self):
-        units = ws.get(self.WS_URL_ALL)
+        if self.report_type == 'department':
+            self.Report = ReportDept
+        elif self.report_type == 'area':
+            self.Report = ReportArea
+
+        units = self.Report.objects.all()
         # Save unit names bc the ws doesn't return it when there are no members
         self.unit_names = {}
         for unit in units:
-            self.unit_names[unit['codigo']] = unit['nombre']
-        return map(lambda x: x['codigo'], units)
+            self.unit_names[unit.code] = unit.name
+        return map(lambda x: x.code, units)
 
     def get_investigadores(self, unit, title):
         if unit is None:
             return NotImplemented
-        unit_content = ws.get(self.WS_URL_DETAIL % (unit, self.year))[0]
-        if unit_content["unidad"] == {}:
-            try:
-                unit_name = self.unit_names[unit]
-            except (AttributeError, KeyError):
-                unit_name = unit
+        unit_type = {self.report_type+"__code": unit}
+        unit_content = ReportMember.objects.filter(**unit_type)
+        if not unit_content:
+            unit_name = self.unit_names[unit]
             logger.warn(u"La unidad " + unicode(unit_name)
                         + u" no tiene información en " + unicode(self.year))
             return [], [], unit_name
         investigadores = []
         usuarios = []
-        for inv in unit_content['miembros']:
+        for inv in unit_content:
             inv = self.check_inves(inv)
             investigadores.append(inv)
             try:
-                user = UserProfile.objects.get(rrhh_code=inv['cod_persona'])
+                user = unit_content.user_profile
                 usuarios.append(user)
             except ObjectDoesNotExist:
                 pass
         if title is None:
-            title = unit_content['unidad']['nombre']
+            title = unit.name
         return investigadores, usuarios, title
 
     @staticmethod
     def check_inves(inv):
         if 'cod_persona__nombre' not in inv:
-            inv['cod_persona__nombre'] = ''
+            inv['cod_persona__nombre'] = inv.user_profile.user.first_name
         if 'cod_persona__apellido1' not in inv:
-            inv['cod_persona__apellido1'] = ''
+            inv['cod_persona__apellido1'] = inv.user_profile.user.last_name
         if 'cod_persona__apellido2' not in inv:
             inv['cod_persona__apellido2'] = ''
         if 'cod_cce__descripcion' not in inv:
-            inv['cod_cce_descripcion'] = ''
+            inv['cod_cce_descripcion'] = inv.cce
         return inv
 
 
