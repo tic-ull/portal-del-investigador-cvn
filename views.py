@@ -41,6 +41,7 @@ from .utils import (scientific_production_to_context, cvn_to_context,
 from .reports import DeptReport, AreaReport
 from .reports.generators import InformeCSV, InformePDF, ResumenCSV
 from .decorators import user_can_view_reports
+from statistics.models import Area, Department
 
 
 @login_required
@@ -140,6 +141,24 @@ def export_data_ull(request):
     return render(request, 'cvn/export_data_ull.html', context)
 
 
+class AdminReportsView(TemplateView):
+    template_name = "cvn/reports.html"
+
+    @method_decorator(login_required)
+    @method_decorator(user_can_view_reports)
+    def dispatch(self, *args, **kwargs):
+        return super(AdminReportsView, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(AdminReportsView, self).get_context_data(**kwargs)
+        years = st.HISTORICAL.keys() + [str(datetime.date.today().year)]
+        context['depts'] = {}
+        context['areas'] = {}
+        for year in years:
+            context['depts'][year] = DeptReport.get_all_units_names(year=year)
+            context['areas'][year] = AreaReport.get_all_units_names(year=year)
+        return context
+
 class ReportsView(TemplateView):
     template_name = "cvn/reports.html"
 
@@ -152,9 +171,11 @@ class ReportsView(TemplateView):
         years = st.HISTORICAL.keys() + [str(datetime.date.today().year)]
         context['depts'] = {}
         context['areas'] = {}
+        dc = self.request.session['dept_code']
+        ac = self.request.session['area_code']
         for year in years:
-            context['depts'][year] = DeptReport.get_all_units_names(year=year)
-            context['areas'][year] = AreaReport.get_all_units_names(year=year)
+            context['depts'][year] = {dc: Department.objects.get(code=dc).name}
+            context['areas'][year] = {ac: Area.objects.get(code=ac).name}
         return context
 
 
@@ -170,7 +191,6 @@ class DownloadReportView(View):
     form_class = DownloadReportForm
 
     @method_decorator(login_required)
-    @method_decorator(user_can_view_reports)
     def dispatch(self, *args, **kwargs):
         return super(DownloadReportView, self).dispatch(*args, **kwargs)
 
