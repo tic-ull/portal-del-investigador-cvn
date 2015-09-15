@@ -39,7 +39,7 @@ from .models import CVN
 from .utils import (scientific_production_to_context, cvn_to_context,
                     stats_to_context)
 from .reports import DeptReport, AreaReport
-from .reports.generators import InformeCSV, InformePDF, ResumenCSV
+from .reports.shortcuts import get_report_instance
 from .decorators import user_can_view_reports
 from statistics.models import Area, Department
 
@@ -181,13 +181,6 @@ class ReportsView(TemplateView):
 
 class DownloadReportView(View):
 
-    generator_type = {"ipdf": InformePDF,
-                      'icsv': InformeCSV,
-                      'rcsv': ResumenCSV}
-
-    report_type = {"dept": DeptReport,
-                   "area": AreaReport}
-
     form_class = DownloadReportForm
 
     @method_decorator(login_required)
@@ -215,9 +208,9 @@ class DownloadReportView(View):
         # Get form fields
         params = form.cleaned_data
         unit_type = params['unit_type']
-        generator_type = params['type']
+        report_type = params['type']
         year = int(params['year'])
-        code = params['code'] if generator_type != 'rcsv' else None
+        code = params['code'] if report_type != 'rcsv' else None
 
         # Check user permissions
         user_unit = self.request.session[unit_type + '_code']
@@ -226,12 +219,10 @@ class DownloadReportView(View):
             raise Http404
 
         # Generate reports
-        Report = self.report_type[unit_type]
-        Generator = self.generator_type[generator_type]
-        report = Report(Generator, year)
+        report = get_report_instance(unit_type, report_type, year)
         if year != datetime.date.today().year:
             path = report.get_full_path(code)
-        elif generator_type == 'rcsv':
+        elif report_type == 'rcsv':
             report.create_reports()
             path = report.get_full_path()
         else:
