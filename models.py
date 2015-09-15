@@ -767,19 +767,32 @@ class ReportUnit(models.Model):
     WS_URL_DETAIL = None
     type = ''
 
+    def update_members(self, year):
+        try:
+            members = ws.get(url=self.WS_URL_DETAIL % (self.code, year),
+                             use_redis=False)[0]['miembros']
+        except KeyError:
+            logger.warn(self.type + " " + self.code +
+                        " does not exist in WS_URL_DETAIL for year " + year)
+            return # This happens if the webservices are not that good.
+        for member in members:
+            try:
+                up = UserProfile.objects.get(
+                    rrhh_code=member['cod_persona'])
+            except UserProfile.DoesNotExist:
+                continue # TODO: Replace this with a creation of the user.
+            setattr(up.reportmember, self.type, self)
+            up.reportmember.cce = member['cod_cce__descripcion']
+            up.reportmember.save()
+
     @classmethod
     def load(cls, year):
-        ReportMember.create_all()
-        units = ws.get(url=cls.WS_URL_ALL, use_redis=False)
+        units = ws.get(url=cls.WS_URL_ALL % year, use_redis=False)
         for unit in units:
             unit_code = str(unit['codigo'])
-            cls.objects.create(code=unit_code, name=unit['nombre'])
-            members = ws.get(
-                url=cls.WS_URL_DETAIL % (unit_code, year), use_redis=False)
-            for member in members:
-                up = UserProfile.objects.get(rrhh_code=member['cod_persona'])
-                setattr(up.reportmember, cls.type, unit)
-                up.reportmember.save()
+            unit_object = cls.objects.create(code=unit_code,
+                                             name=unit['nombre'])
+            unit_object.update_members(year)
 
     def __unicode__(self):
         return self.code + ": " + self.name
@@ -789,13 +802,13 @@ class ReportUnit(models.Model):
 
 
 class ReportDept(ReportUnit):
-    WS_URL_ALL = st.WS_DEPARTMENTS_ALL
+    WS_URL_ALL = st.WS_DEPARTMENTS_BY_YEAR
     WS_URL_DETAIL = st.WS_DEPARTMENTS_AND_MEMBERS_UNIT_YEAR
     type = 'department'
 
 
 class ReportArea(ReportUnit):
-    WS_URL_ALL = st.WS_AREAS_ALL
+    WS_URL_ALL = st.WS_AREAS_BY_YEAR
     WS_URL_DETAIL = st.WS_AREAS_AND_MEMBERS_UNIT_YEAR
     type = 'area'
 

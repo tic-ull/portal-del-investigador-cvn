@@ -35,5 +35,6 @@ class Command(BaseCommand):
         ReportArea.objects.all().delete()
         ReportDept.objects.all().delete()
         ReportMember.objects.all().delete()
+        ReportMember.create_all()
         ReportArea.load('2014')
         ReportDept.load('2014')
