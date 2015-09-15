@@ -28,7 +28,9 @@
                         <div class="panel-group" id="depts">
                             {% for year, items in depts.items %}
                                 <h2>{{ year }}</h2>
-                                <a href="{% url 'download_report' type='rcsv' year=year unit_type="dept" %}" class="fa fa-download"></a>
+                                {% if not show_rcsv == False %}
+                                    <a href="{% url 'download_report' type='rcsv' year=year unit_type="dept" %}" class="fa fa-download"></a>
+                                {% endif %}
                                 {% include 'cvn/partials/reports_table.html' with unit_type="dept" year=year entities=items %}
                             {% endfor %}
                         </div>
