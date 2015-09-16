@@ -783,7 +783,8 @@ class ReportUnit(models.Model):
                 document = ws.get(
                     st.WS_DOCUMENT %
                     (member['cod_persona']))[0]['numero_documento']
-                up = UserProfile.get_or_create_user(document, document)[0].profile
+                up = UserProfile.get_or_create_user(document,
+                                                    document)[0].profile
                 up.rrhh_code = member['cod_persona']
                 up.save()
                 rp = ReportMember.objects.get_or_create(user_profile=up)
