@@ -780,7 +780,15 @@ class ReportUnit(models.Model):
                 up = UserProfile.objects.get(
                     rrhh_code=member['cod_persona'])
             except UserProfile.DoesNotExist:
-                continue # TODO: Replace this with a creation of the user.
+                document = ws.get(
+                    st.WS_DOCUMENT %
+                    (member['cod_persona']))[0]['numero_documento']
+                up = UserProfile.get_or_create_user(document, document)[0].profile
+                up.rrhh_code = member['cod_persona']
+                up.save()
+                rp = ReportMember.objects.get_or_create(user_profile=up)
+                rp.save()
+
             setattr(up.reportmember, self.type, self)
             up.reportmember.cce = member['cod_cce__descripcion']
             up.reportmember.save()
