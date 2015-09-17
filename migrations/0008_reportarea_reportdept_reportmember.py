@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
             name='ReportArea',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('code', models.CharField(max_length=16, verbose_name='Code')),
+                ('code', models.CharField(unique=True, max_length=16, verbose_name='Code')),
                 ('name', models.TextField(null=True, verbose_name='Name', blank=True)),
             ],
             options={
@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
             name='ReportDept',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('code', models.CharField(max_length=16, verbose_name='Code')),
+                ('code', models.CharField(unique=True, max_length=16, verbose_name='Code')),
                 ('name', models.TextField(null=True, verbose_name='Name', blank=True)),
             ],
             options={
