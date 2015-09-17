@@ -787,7 +787,7 @@ class ReportUnit(models.Model):
                                                     document)[0].profile
                 up.rrhh_code = member['cod_persona']
                 up.save()
-                rp = ReportMember.objects.get_or_create(user_profile=up)
+                rp = ReportMember.objects.get_or_create(user_profile=up)[0]
                 rp.save()
 
             setattr(up.reportmember, self.type, self)
