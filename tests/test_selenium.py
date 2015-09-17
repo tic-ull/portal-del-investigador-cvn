@@ -37,6 +37,7 @@ from pyvirtualdisplay import Display
 from utils import get_cvn_path
 from core.models import UserProfile
 from selenium.webdriver.support.ui import Select
+from django.contrib.auth.models import Permission
 
 
 class LoginCAS(test.LiveServerTestCase):
@@ -50,7 +51,7 @@ class LoginCAS(test.LiveServerTestCase):
         display.start()
         self.display = display
         self.driver = webdriver.Firefox()
-        self.driver.implicitly_wait(8)
+        self.driver.implicitly_wait(7)
         self.driver.set_page_load_timeout(30)
         self.base_url = st.CAS_SERVER_URL
         self.verificationErrors = []
@@ -288,6 +289,46 @@ class LoginCAS(test.LiveServerTestCase):
         self.assertFalse(u'Successfully changed dni.' in result)
         self.assertEqual("72693103Q", UserProfile.objects.get(
             user__username='invipas').documento)
+
+    def test_user_with_permission_can_view_admin_reports_link(self):
+        driver = self.driver
+        driver.get(self.base_url + "/cas-1/login?service=http%3A%2F%2Flocalhost%3A8081%2Finvestigacion%2Faccounts%2Flogin%2F%3Fnext%3D%252Fes%252Finvestigacion%252Fcvn%252F")
+        driver.find_element_by_id("password").clear()
+        driver.find_element_by_id("password").send_keys("pruebasINV1")
+        driver.find_element_by_id("username").clear()
+        driver.find_element_by_id("username").send_keys("invidocente")
+        driver.find_element_by_name("submit").click()
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable(
+            (By.CLASS_NAME, 'btn-signout')))
+        u = User.objects.get(username="invidocente")
+        u.user_permissions.add(Permission.objects.get(codename='read_cvn_reports'))
+        u.user_permissions.add(Permission.objects.get(codename='read_admin_menu'))
+        u.save()
+        driver.refresh()
+        self.assertTrue(self.is_element_present(By.LINK_TEXT, "Informes"))
+
+    def test_user_without_permission_cant_view_admin_reports_link(self):
+        driver = self.driver
+        driver.get(self.base_url + "/cas-1/login?service=http%3A%2F%2Flocalhost%3A8081%2Finvestigacion%2Faccounts%2Flogin%2F%3Fnext%3D%252Fes%252Finvestigacion%252Fcvn%252F")
+        driver.find_element_by_id("password").clear()
+        driver.find_element_by_id("password").send_keys("pruebasINV1")
+        driver.find_element_by_id("username").clear()
+        driver.find_element_by_id("username").send_keys("invidocente")
+        driver.find_element_by_name("submit").click()
+        self.assertFalse(self.is_element_present(By.LINK_TEXT, "Informes"))
+
+    def test_user_without_permission_cant_view_admin_reports(self):
+        driver = self.driver
+        driver.get(self.base_url + "/cas-1/login?service=http%3A%2F%2Flocalhost%3A8081%2Finvestigacion%2Faccounts%2Flogin%2F%3Fnext%3D%252Fes%252Finvestigacion%252Fcvn%252F")
+        driver.find_element_by_id("password").clear()
+        driver.find_element_by_id("password").send_keys("pruebasINV1")
+        driver.find_element_by_id("username").clear()
+        driver.find_element_by_id("username").send_keys("invidocente")
+        driver.find_element_by_name("submit").click()
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable(
+            (By.CLASS_NAME, 'btn-signout')))
+        driver.get("http://localhost:8081/investigacion/cvn/admin_reports/")
+        self.assertTrue(self.is_element_present(By.XPATH, '//h1[.="Page not found (404)"]'))
 
     def is_element_present(self, how, what):
         try:
