@@ -24,20 +24,16 @@
 
 from abc import ABCMeta
 import logging
-from django.core.exceptions import ObjectDoesNotExist
-from django.conf import settings as st
 from cvn import settings as st_cvn
 from cvn.models import (Articulo, Libro, Capitulo, Congreso, Proyecto,
                         Convenio, TesisDoctoral, Patente, ReportDept,
-                        ReportArea, ReportMember)
+                        ReportArea)
 from core.models import UserProfile
-from core.ws_utils import CachedWS as ws
 
 logger = logging.getLogger(__name__)
 
 
 class BaseReport:
-
     __metaclass__ = ABCMeta
 
     report_type = None
@@ -76,7 +72,6 @@ class BaseReport:
 
 
 class UsersReport(BaseReport):
-
     report_type = st_cvn.REPORTS_DIRECTORY.USERS.value
 
     def get_investigadores(self, unit, title):
@@ -84,11 +79,12 @@ class UsersReport(BaseReport):
             profiles = UserProfile.objects.all()
         else:
             profiles = UserProfile.objects.filter(documento__in=unit)
-            nonexistent_users = list(set(unit) -
-                                     set([p.documento for p in profiles]))
+            nonexistent_users = (
+                list(set(unit) - set([p.documento for p in profiles])))
             if nonexistent_users:
-                logger.warn(u"No se encuentran los siguientes usuarios: "
-                            + str(nonexistent_users))
+                logger.warn(u"No se encuentran "
+                            u"los siguientes "
+                            u"usuarios: " + str(nonexistent_users))
         investigadores = [{'cod_persona__nombre': p.user.first_name,
                            'cod_persona__apellido1': p.user.last_name,
                            'cod_persona__apellido2': '',
@@ -100,69 +96,45 @@ class UsersReport(BaseReport):
 
 
 class UnitReport(BaseReport):
-
-    WS_URL_ALL = None
-    WS_URL_DETAIL = None
-    report_type = ''
     Report = None
 
     def get_all_units(self):
-        if self.report_type == 'department':
-            self.Report = ReportDept
-        elif self.report_type == 'area':
-            self.Report = ReportArea
-
-        units = self.Report.objects.all()
-        # Save unit names bc the ws doesn't return it when there are no members
-        self.unit_names = {}
-        for unit in units:
-            self.unit_names[unit.code] = unit.name
-        return map(lambda x: x.code, units)
+        return self.Report.objects.all()
 
     def get_investigadores(self, unit, title):
         if unit is None:
             return NotImplemented
-        unit_type = {self.report_type+"__code": unit}
-        unit_content = ReportMember.objects.filter(**unit_type)
-        if not unit_content:
-            unit_name = self.unit_names[unit]
-            logger.warn(u"La unidad " + unicode(unit_name)
-                        + u" no tiene información en " + unicode(self.year))
-            return [], [], unit_name
+
+        members = unit.reportmember_set.all()
+        if not members:
+            logger.warn((
+                u"La unidad " + unicode(unit.name) + u" no tiene "
+                                                     u"información en " +
+                unicode(self.year)))
+            return [], [], unit.name
+
         investigadores = []
         usuarios = []
-        for inv in unit_content:
-            inv = self.check_inves(inv)
-            investigadores.append(inv)
-            try:
-                user = unit_content.user_profile
-                usuarios.append(user)
-            except ObjectDoesNotExist:
-                pass
+        for member in members:
+            usuarios.append(member.user_profile)
+            investigador = {
+                'cod_persona__nombre': member.user_profile.user.first_name,
+                'cod_persona__apellido1': member.user_profile.user.last_name,
+                'cod_persona__apellido2': '',
+                'cod_cce__descripcion': member.cce
+            }
+            investigadores.append(investigador)
+
         if title is None:
             title = unit.name
         return investigadores, usuarios, title
 
-    @staticmethod
-    def check_inves(inv):
-        if 'cod_persona__nombre' not in inv:
-            inv['cod_persona__nombre'] = inv.user_profile.user.first_name
-        if 'cod_persona__apellido1' not in inv:
-            inv['cod_persona__apellido1'] = inv.user_profile.user.last_name
-        if 'cod_persona__apellido2' not in inv:
-            inv['cod_persona__apellido2'] = ''
-        if 'cod_cce__descripcion' not in inv:
-            inv['cod_cce_descripcion'] = inv.cce
-        return inv
-
 
 class DeptReport(UnitReport):
     report_type = st_cvn.REPORTS_DIRECTORY.DEPT.value
-    WS_URL_ALL = st.WS_DEPARTMENTS_ALL
-    WS_URL_DETAIL = st.WS_DEPARTMENTS_AND_MEMBERS_UNIT_YEAR
+    Report = ReportDept
 
 
 class AreaReport(UnitReport):
     report_type = st_cvn.REPORTS_DIRECTORY.AREA.value
-    WS_URL_ALL = st.WS_AREAS_ALL
-    WS_URL_DETAIL = st.WS_AREAS_AND_MEMBERS_UNIT_YEAR
+    Report = ReportArea
