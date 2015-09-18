@@ -777,6 +777,7 @@ class ReportUnit(models.Model):
             return # This happens if the webservices are not that good.
         for member in members:
             try:
+
                 up = UserProfile.objects.get(
                     rrhh_code=member['cod_persona'])
             except UserProfile.DoesNotExist:
@@ -786,6 +787,10 @@ class ReportUnit(models.Model):
                                                     document)[0].profile
                 up.rrhh_code = member['cod_persona']
                 up.save()
+                up.user.first_name = member['cod_persona__nombre']
+                up.user.last_name = (member['cod_persona__apellido1'] +
+                                    " " + member['cod_persona__apellido2'])[:30]
+                up.user.save()
                 rp = ReportMember.objects.get_or_create(user_profile=up)[0]
                 rp.save()
 
