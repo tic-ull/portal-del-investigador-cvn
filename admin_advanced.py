@@ -33,6 +33,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
+from .models import ReportDept, ReportArea, ReportMember
 
 
 class CVNAdmin(admin.ModelAdmin):
@@ -155,3 +156,6 @@ admin.site.register(Proyecto, ProductionAdmin)
 admin.site.register(Convenio, ProductionAdmin)
 admin.site.register(Patente, ProductionAdmin)
 admin.site.register(OldCvnPdf, OldCVNAdmin)
+admin.site.register(ReportDept)
+admin.site.register(ReportArea)
+admin.site.register(ReportMember)
