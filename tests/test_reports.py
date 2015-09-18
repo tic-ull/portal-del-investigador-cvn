@@ -326,20 +326,20 @@ class CVNTestCase(TestCase):
             lambda t: t.name == 'a' and 'Informes' in t.text)
         self.assertEqual(reports_link, None)
 
-    """
     def test_user_without_permission_cant_view_admin_reports(self):
-        driver = self.driver
-        driver.get(self.base_url + "/cas-1/login?service=http%3A%2F%2Flocalhost%3A8081%2Finvestigacion%2Faccounts%2Flogin%2F%3Fnext%3D%252Fes%252Finvestigacion%252Fcvn%252F")
-        driver.find_element_by_id("password").clear()
-        driver.find_element_by_id("password").send_keys("pruebasINV1")
-        driver.find_element_by_id("username").clear()
-        driver.find_element_by_id("username").send_keys("invidocente")
-        driver.find_element_by_name("submit").click()
-        WebDriverWait(driver, 10).until(EC.element_to_be_clickable(
-            (By.CLASS_NAME, 'btn-signout')))
-        driver.get("http://localhost:8081/investigacion/cvn/admin_reports/")
-        self.assertTrue(self.is_element_present(By.XPATH, '//h1[.="Page not found (404)"]'))
-    """
+        u = UserFactory.create_and_login(self.client)
+        response = self.client.get(reverse('admin_reports'))
+        self.assertEqual(response.status_code, 404)
+
+    def test_user_with_permission_can_view_admin_reports(self):
+        u = UserFactory.create_and_login(self.client)
+        u.user_permissions.add(Permission.objects.get(
+            codename='read_cvn_reports'))
+        u.user_permissions.add(Permission.objects.get(
+            codename='read_admin_menu'))
+        u.save()
+        response = self.client.get(reverse('admin_reports'))
+        self.assertEqual(response.status_code, 200)
 
     @classmethod
     def tearDownClass(cls):
