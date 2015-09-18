@@ -754,3 +754,84 @@ class OldCvnPdf(models.Model):
     class Meta:
         verbose_name_plural = _("Historical Normalized Curriculum Vitae")
         ordering = ['-uploaded_at']
+
+
+class ReportUnit(models.Model):
+
+    # model fields
+    code = models.CharField(_("Code"), max_length=16, unique=True)
+    name = models.TextField(_("Name"), blank=True, null=True)
+
+    # class attributes
+    WS_URL_ALL = None
+    WS_URL_DETAIL = None
+    type = ''
+
+    def update_members(self, year):
+        try:
+            members = ws.get(url=self.WS_URL_DETAIL % (self.code, year),
+                             use_redis=False)[0]['miembros']
+        except KeyError:
+            logger.warn(self.type + " " + self.code +
+                        " does not exist in WS_URL_DETAIL for year " + year)
+            return # This happens if the webservices are not that good.
+        for member in members:
+            try:
+                up = UserProfile.objects.get(
+                    rrhh_code=member['cod_persona'])
+            except UserProfile.DoesNotExist:
+                document = ws.get(
+                    st.WS_DOCUMENT %
+                    (member['cod_persona']))[0]['numero_documento']
+                up = UserProfile.get_or_create_user(document,
+                                                    document)[0].profile
+                up.rrhh_code = member['cod_persona']
+                up.save()
+                rp = ReportMember.objects.get_or_create(user_profile=up)[0]
+                rp.save()
+
+            setattr(up.reportmember, self.type, self)
+            up.reportmember.cce = member['cod_cce__descripcion']
+            up.reportmember.save()
+
+    @classmethod
+    def load(cls, year):
+        units = ws.get(url=cls.WS_URL_ALL % year, use_redis=False)
+        for unit in units:
+            unit_code = str(unit['codigo'])
+            unit_object = cls.objects.create(code=unit_code,
+                                             name=unit['nombre'])
+            unit_object.update_members(year)
+
+    def __unicode__(self):
+        return self.code + ": " + self.name
+
+    class Meta:
+        abstract = True
+
+
+class ReportDept(ReportUnit):
+    WS_URL_ALL = st.WS_DEPARTMENTS_BY_YEAR
+    WS_URL_DETAIL = st.WS_DEPARTMENTS_AND_MEMBERS_UNIT_YEAR
+    type = 'department'
+
+
+class ReportArea(ReportUnit):
+    WS_URL_ALL = st.WS_AREAS_BY_YEAR
+    WS_URL_DETAIL = st.WS_AREAS_AND_MEMBERS_UNIT_YEAR
+    type = 'area'
+
+
+class ReportMember(models.Model):
+    user_profile = models.OneToOneField(UserProfile)
+    department = models.ForeignKey(ReportDept, null=True)
+    area = models.ForeignKey(ReportArea, null=True)
+    cce = models.TextField(_("CCE Name"), blank=True)
+
+    @classmethod
+    def create_all(cls):
+        for up in UserProfile.objects.all():
+            cls.objects.create(user_profile=up)
+
+    def __unicode__(self):
+        return str(self.user_profile)

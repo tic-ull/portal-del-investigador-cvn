@@ -83,8 +83,8 @@
                                     <th><strong>{% trans "Document Date" %}</strong></th>
                                     <td style="text-align: center;">{{ cvn.fecha }}</td>
                                 </tr>
-                                {#% include 'cvn/partials/statistics_unit.html' with unit=department label=label_dept %#}
-                                {#% include 'cvn/partials/statistics_unit.html' with unit=area label=label_area %#}
+                                {% include 'cvn/partials/statistics_unit.html' with unit=department label=label_dept %}
+                                {% include 'cvn/partials/statistics_unit.html' with unit=area label=label_area %}
                             </tbody>
                         </table>
                         <br>
