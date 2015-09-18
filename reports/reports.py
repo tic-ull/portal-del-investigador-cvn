@@ -82,9 +82,8 @@ class UsersReport(BaseReport):
             nonexistent_users = (
                 list(set(unit) - set([p.documento for p in profiles])))
             if nonexistent_users:
-                logger.warn(u"No se encuentran "
-                            u"los siguientes "
-                            u"usuarios: " + str(nonexistent_users))
+                logger.warn(u"No se encuentran los siguientes usuarios: " +
+                            str(nonexistent_users))
         investigadores = [{'cod_persona__nombre': p.user.first_name,
                            'cod_persona__apellido1': p.user.last_name,
                            'cod_persona__apellido2': '',
@@ -99,7 +98,7 @@ class UnitReport(BaseReport):
     Report = None
 
     def get_all_units(self):
-        return self.Report.objects.all()
+        return self.Report.objects.exclude(reportmember_set=None)
 
     def get_investigadores(self, unit, title):
         if unit is None:
