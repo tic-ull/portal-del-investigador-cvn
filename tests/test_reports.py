@@ -25,6 +25,8 @@
 import datetime
 from random import randint
 from django.test import TestCase
+from django.core.urlresolvers import reverse
+from django.contrib.auth.models import Permission
 from mock import patch
 from core.ws_utils import CachedWS
 from core.tests.helpers import init, clean
@@ -37,6 +39,7 @@ from .mocks.reports import get_dept_404, get_area_404
 from django.conf import settings as st
 from cvn import settings as st_cvn
 import os
+from bs4 import BeautifulSoup
 
 
 class CVNTestCase(TestCase):
@@ -303,6 +306,40 @@ class CVNTestCase(TestCase):
                        + '/users/2013/2013-informe-users.csv')
         self.icsv_test(output_file, UsersReport, range(5, 8),
                        {"title": "informe-users"})
+
+    def test_user_with_permission_can_view_admin_reports_link(self):
+        u = UserFactory.create_and_login(self.client)
+        u.user_permissions.add(Permission.objects.get(
+            codename='read_cvn_reports'))
+        u.user_permissions.add(Permission.objects.get(
+            codename='read_admin_menu'))
+        u.save()
+        soup = BeautifulSoup(self.client.get(reverse('cvn')).content, 'lxml')
+        reports_link = soup.find(
+            lambda t: t.name == 'a' and 'Informes' in t.text)
+        self.assertNotEqual(reports_link, None)
+
+    def test_user_without_permission_cant_view_admin_reports_link(self):
+        u = UserFactory.create_and_login(self.client)
+        soup = BeautifulSoup(self.client.get(reverse('cvn')).content, 'lxml')
+        reports_link = soup.find(
+            lambda t: t.name == 'a' and 'Informes' in t.text)
+        self.assertEqual(reports_link, None)
+
+    """
+    def test_user_without_permission_cant_view_admin_reports(self):
+        driver = self.driver
+        driver.get(self.base_url + "/cas-1/login?service=http%3A%2F%2Flocalhost%3A8081%2Finvestigacion%2Faccounts%2Flogin%2F%3Fnext%3D%252Fes%252Finvestigacion%252Fcvn%252F")
+        driver.find_element_by_id("password").clear()
+        driver.find_element_by_id("password").send_keys("pruebasINV1")
+        driver.find_element_by_id("username").clear()
+        driver.find_element_by_id("username").send_keys("invidocente")
+        driver.find_element_by_name("submit").click()
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable(
+            (By.CLASS_NAME, 'btn-signout')))
+        driver.get("http://localhost:8081/investigacion/cvn/admin_reports/")
+        self.assertTrue(self.is_element_present(By.XPATH, '//h1[.="Page not found (404)"]'))
+    """
 
     @classmethod
     def tearDownClass(cls):
