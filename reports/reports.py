@@ -103,15 +103,7 @@ class UnitReport(BaseReport):
     def get_investigadores(self, unit, title):
         if unit is None:
             return NotImplemented
-
         members = unit.reportmember_set.all()
-        if not members:
-            logger.warn((
-                u"La unidad " + unicode(unit.name) + u" no tiene "
-                                                     u"información en " +
-                unicode(self.year)))
-            return [], [], unit.name
-
         investigadores = []
         usuarios = []
         for member in members:
