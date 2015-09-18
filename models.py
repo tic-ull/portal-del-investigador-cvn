@@ -180,8 +180,8 @@ class CVN(models.Model):
             if not item_date_range.intersect(DateRange(
                     start_date, end_date)):
                 continue
-            if (u'des1_grado_titulacion' in item
-                    and item[u'des1_grado_titulacion'].upper() == u'DOCTOR'):
+            if (u'des1_grado_titulacion' in item and
+                    item[u'des1_grado_titulacion'].upper() == u'DOCTOR'):
                 del values[u'des1_grado_titulacion']
                 parser.add_learning_phd(**values)
             else:
@@ -289,7 +289,8 @@ class CVN(models.Model):
             logger.error(str(e))
 
     def _backup_pdf(self):
-        filename = OldCvnPdf.create_filename(self.cvn_file.name, self.uploaded_at)
+        filename = OldCvnPdf.create_filename(self.cvn_file.name,
+                                             self.uploaded_at)
         try:
             old_cvn_file = SimpleUploadedFile(
                 filename, self.cvn_file.read(), content_type="application/pdf")
@@ -344,10 +345,12 @@ class CVN(models.Model):
         if not os_path_isdir(root_path):
             makedirs(root_path)
         if self.cvn_file.path != full_pdf_path:
-            file_move_safe(self.cvn_file.path, full_pdf_path, allow_overwrite=True)
+            file_move_safe(self.cvn_file.path, full_pdf_path,
+                           allow_overwrite=True)
             self.cvn_file.name = relative_pdf_path
         if self.xml_file.path != full_xml_path:
-            file_move_safe(self.xml_file.path, full_xml_path, allow_overwrite=True)
+            file_move_safe(self.xml_file.path, full_xml_path,
+                           allow_overwrite=True)
             self.xml_file.name = xml_path
         self.save()
 
@@ -486,7 +489,8 @@ class Congreso(models.Model):
         _("Legal deposit"), max_length=150, blank=True, null=True)
 
     publicacion_acta_congreso = models.CharField(
-        _("Publication in conference proceedings"), max_length=100, blank=True, null=True)
+        _("Publication in conference proceedings"), max_length=100, blank=True,
+        null=True)
 
     created_at = models.DateTimeField(_("Created"), auto_now_add=True)
 
@@ -536,7 +540,8 @@ class ScientificExp(models.Model):
         _("Another area"), max_length=250, blank=True, null=True)
 
     cod_segun_financiadora = models.CharField(
-        _("Code acc. to the funding institution"), max_length=150, blank=True, null=True)
+        _("Code acc. to the funding institution"), max_length=150, blank=True,
+        null=True)
 
     cuantia_total = models.CharField(
         _("Total amount"), max_length=19, blank=True, null=True)
@@ -569,10 +574,10 @@ class ScientificExp(models.Model):
         except ObjectDoesNotExist:
             pass
         else:
-            inicio_changed = (old.fecha_de_inicio != self.fecha_de_inicio
-                              and self.fecha_de_inicio is not None)
-            fin_changed = (old.fecha_de_fin != self.fecha_de_fin
-                           and self.fecha_de_fin is not None)
+            inicio_changed = (old.fecha_de_inicio != self.fecha_de_inicio and
+                              self.fecha_de_inicio is not None)
+            fin_changed = (old.fecha_de_fin != self.fecha_de_fin and
+                           self.fecha_de_fin is not None)
             duracion_changed = (old.duracion != self.duracion and
                                 self.duracion is not None)
             if inicio_changed or fin_changed:
@@ -738,7 +743,9 @@ class OldCvnPdf(models.Model):
             ) + u'.pdf')
 
     def update_document_in_path(self):
-        filename = 'CVN-%s-%s.pdf' % (self.user_profile.documento, self.uploaded_at.strftime('%Y-%m-%d-%Hh%Mm%Ss'))
+        filename = 'CVN-%s-%s.pdf' % (self.user_profile.documento,
+                                      self.uploaded_at.strftime(
+                                          '%Y-%m-%d-%Hh%Mm%Ss'))
         relative_pdf_path = get_old_cvn_path(self, filename)
         full_pdf_path = os_path_join(st.MEDIA_ROOT, relative_pdf_path)
         if self.cvn_file.path != full_pdf_path:
@@ -746,8 +753,10 @@ class OldCvnPdf(models.Model):
             if not os_path_isdir(root_path):
                 makedirs(root_path)
             # This just moves the file from the old path to the new one,
-            file_move_safe(self.cvn_file.path, full_pdf_path, allow_overwrite=True)
-            # so is therefore necessary to update the name with the new relative path before saving the model
+            file_move_safe(self.cvn_file.path, full_pdf_path,
+                           allow_overwrite=True)
+            # so is therefore necessary to update the name with the new
+            # relative path before saving the model
             self.cvn_file.name = relative_pdf_path
             self.save()
 
@@ -774,9 +783,11 @@ class ReportUnit(models.Model):
         except KeyError:
             logger.warn(self.type + " " + self.code +
                         " does not exist in WS_URL_DETAIL for year " + year)
-            return # This happens if the webservices are not that good.
+            return
+            # This happens if the webservices are not that good.
         for member in members:
             try:
+
                 up = UserProfile.objects.get(
                     rrhh_code=member['cod_persona'])
             except UserProfile.DoesNotExist:
@@ -786,6 +797,10 @@ class ReportUnit(models.Model):
                                                     document)[0].profile
                 up.rrhh_code = member['cod_persona']
                 up.save()
+                up.user.first_name = member['cod_persona__nombre']
+                up.user.last_name = (member['cod_persona__apellido1'] + " " +
+                                     member['cod_persona__apellido2'])[:30]
+                up.user.save()
                 rp = ReportMember.objects.get_or_create(user_profile=up)[0]
                 rp.save()
 

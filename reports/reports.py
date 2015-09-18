@@ -98,7 +98,7 @@ class UnitReport(BaseReport):
     Report = None
 
     def get_all_units(self):
-        return self.Report.objects.exclude(reportmember_set=None)
+        return self.Report.objects.exclude(reportmember=None)
 
     def get_investigadores(self, unit, title):
         if unit is None:

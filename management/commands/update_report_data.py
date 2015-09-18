@@ -40,6 +40,12 @@ class Command(BaseCommand):
             action="store_true",
             help="Specify if the reports information should be just deleted"
         ),
+        make_option(
+            "-y",
+            "--year",
+            dest="year",
+            help="Specify the reports year"
+        ),
     )
 
     def handle(self, *args, **options):
@@ -48,5 +54,5 @@ class Command(BaseCommand):
         ReportMember.objects.all().delete()
         if not options['delete']:
             ReportMember.create_all()
-            ReportArea.load('2014')
-            ReportDept.load('2014')
+            ReportArea.load(options['year'])
+            ReportDept.load(options['year'])
