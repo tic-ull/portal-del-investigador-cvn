@@ -38,6 +38,7 @@ from cvn.models import (Articulo, Capitulo, Congreso, Convenio, Patente,
 from .mocks.reports import get_dept_404, get_area_404
 from django.conf import settings as st
 from cvn import settings as st_cvn
+from statistics.models import Area, Department
 import os
 from bs4 import BeautifulSoup
 
@@ -315,16 +316,35 @@ class CVNTestCase(TestCase):
             codename='read_admin_menu'))
         u.save()
         soup = BeautifulSoup(self.client.get(reverse('cvn')).content, 'lxml')
-        reports_link = soup.find(
-            lambda t: t.name == 'a' and 'Informes' in t.text)
-        self.assertNotEqual(reports_link, None)
+        reports_link = soup.select('a#admin_reports_link')
+        self.assertEqual(len(reports_link), 1)
 
     def test_user_without_permission_cant_view_admin_reports_link(self):
         u = UserFactory.create_and_login(self.client)
         soup = BeautifulSoup(self.client.get(reverse('cvn')).content, 'lxml')
-        reports_link = soup.find(
-            lambda t: t.name == 'a' and 'Informes' in t.text)
-        self.assertEqual(reports_link, None)
+        reports_link = soup.select('a#admin_reports_link')
+        self.assertEqual(len(reports_link), 0)
+
+    def test_user_with_permission_cant_view_reports_link(self):
+        u = UserFactory.create_and_login(self.client)
+        u.profile.rrhh_code = 9354
+        u.profile.save()
+        u.user_permissions.add(Permission.objects.get(
+            codename='read_cvn_reports'))
+        u.user_permissions.add(Permission.objects.get(
+            codename='read_admin_menu'))
+        u.save()
+        soup = BeautifulSoup(self.client.get(reverse('cvn')).content, 'lxml')
+        reports_link = soup.select('a#reports_link')
+        self.assertEqual(len(reports_link), 0)
+
+    def test_user_without_permission_can_view_reports_link(self):
+        u = UserFactory.create_and_login(self.client)
+        u.profile.rrhh_code = 9354
+        u.profile.save()
+        soup = BeautifulSoup(self.client.get(reverse('cvn')).content, 'lxml')
+        reports_link = soup.select('a#reports_link')
+        self.assertEqual(len(reports_link), 1)
 
     def test_user_without_permission_cant_view_admin_reports(self):
         u = UserFactory.create_and_login(self.client)
@@ -340,6 +360,60 @@ class CVNTestCase(TestCase):
         u.save()
         response = self.client.get(reverse('admin_reports'))
         self.assertEqual(response.status_code, 200)
+
+    def test_user_without_permission_can_view_reports(self):
+        u = UserFactory.create_and_login(self.client)
+        Department.objects.create(
+            code=4987, name="dept1", members=[], commit=True)
+        Area.objects.create(code=4987, name="area1", members=[], commit=True)
+        session = self.client.session  # session has to be put in a variable
+        session['dept_code'] = 4987
+        session['area_code'] = 4987
+        session.save()
+        response = self.client.get(reverse('reports'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_user_with_permission_can_view_reports(self):
+        u = UserFactory.create_and_login(self.client)
+        u.user_permissions.add(Permission.objects.get(
+            codename='read_cvn_reports'))
+        u.user_permissions.add(Permission.objects.get(
+            codename='read_admin_menu'))
+        u.save()
+        Department.objects.create(
+            code=4987, name="dept1", members=[], commit=True)
+        Area.objects.create(code=4987, name="area1", members=[], commit=True)
+        session = self.client.session  # session has to be put in a variable
+        session['dept_code'] = 4987
+        session['area_code'] = 4987
+        session.save()
+        response = self.client.get(reverse('reports'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_user_with_permission_can_download_rcsv(self):
+        u = UserFactory.create_and_login(self.client)
+        u.user_permissions.add(Permission.objects.get(
+            codename='read_cvn_reports'))
+        u.user_permissions.add(Permission.objects.get(
+            codename='read_admin_menu'))
+        u.save()
+        session = self.client.session  # session has to be put in a variable
+        session['dept_code'] = 4987
+        session['area_code'] = 4987
+        session.save()
+        response = self.client.get(reverse('download_report', kwargs={
+            'type': 'rcsv', 'year': '2015', 'unit_type': 'dept'}))
+        self.assertEqual(response.status_code, 200)
+
+    def test_user_without_permission_cant_download_rcsv(self):
+        u = UserFactory.create_and_login(self.client)
+        session = self.client.session  # session has to be put in a variable
+        session['dept_code'] = 4987
+        session['area_code'] = 4987
+        session.save()
+        response = self.client.get(reverse('download_report', kwargs={
+            'type': 'rcsv', 'year': '2015', 'unit_type': 'dept'}))
+        self.assertEqual(response.status_code, 404)
 
     @classmethod
     def tearDownClass(cls):
