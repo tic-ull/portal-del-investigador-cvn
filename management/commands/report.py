@@ -79,23 +79,23 @@ class Command(BaseCommand):
         self.check_args(options)
         year = int(options['year'])
         if options['format'] == 'ipdf':
-            generator = InformePDF
+            Generator = InformePDF
         elif options['format'] == 'icsv':
-            generator = InformeCSV
+            Generator = InformeCSV
         else:
-            generator = ResumenCSV
+            Generator = ResumenCSV
         if options['type'] in ['a', 'd']:
             if options['type'] == 'a':
-                report = AreaReport
+                Report = AreaReport
             else:
-                report = DeptReport
-            unit_id = [report.objects.get(int(options['unit_code']))] if type(options['unit_code']) is str else None
-            report = report(generator, year)
+                Report = DeptReport
+            unit_id = [Report.objects.get(int(options['unit_code']))] if type(options['unit_code']) is str else None
+            report = Report(Generator, year)
             report.create_reports(unit_id)
         else:
             ul = options["user_list"]
             nifs = ul.split(",") if ul is not None else None
-            report = UsersReport(generator, int(options['year']))
+            report = UsersReport(Generator, int(options['year']))
             report.create_report(nifs, options['title'])
 
     def check_args(self, options):
