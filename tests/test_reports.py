@@ -165,7 +165,7 @@ class CVNTestCase(TestCase):
         output_file = (os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_ICSV_PATH) +
                        '/area/2013/2013-area-aria.csv')
         self.fill_db(range(1, 5))
-        call_command('update_report_data', '2013')
+        call_command('update_report_data', year='2013')
         self.icsv_test(output_file, AreaReport, {
             "unit": ReportArea.objects.get(code="404")})
 
@@ -174,7 +174,7 @@ class CVNTestCase(TestCase):
         output_file = (os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_IPDF_PATH) +
                        '/area/2013/2013-area-aria.pdf')
         self.fill_db(range(1, 5))
-        call_command('update_report_data', '2013')
+        call_command('update_report_data', year='2013')
         self.pdf_test(output_file, AreaReport, {
             "unit": ReportArea.objects.get(code="404")})
 
@@ -183,7 +183,7 @@ class CVNTestCase(TestCase):
         output_file = (os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_RCSV_PATH) +
                        '/area/2013/2013-area.csv')
         self.fill_db(range(1, 5))
-        call_command('update_report_data', '2013')
+        call_command('update_report_data', year='2013')
         self.rcsv_test(output_file, AreaReport, 5, {
             "unit": ReportArea.objects.get(code="404")})
 
@@ -192,7 +192,7 @@ class CVNTestCase(TestCase):
         output_file = (os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_ICSV_PATH) +
                        '/department/2013/2013-departamento-departamental.csv')
         self.fill_db(range(6, 9))
-        call_command('update_report_data', '2013')
+        call_command('update_report_data', year='2013')
         self.icsv_test(output_file, DeptReport,
                        {"unit": ReportDept.objects.get(code="404")})
 
@@ -202,7 +202,7 @@ class CVNTestCase(TestCase):
         output_file = (os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_IPDF_PATH) +
                        '/department/2013/2013-departamento-departamental.pdf')
         self.fill_db(range(6, 9))
-        call_command('update_report_data', '2013')
+        call_command('update_report_data', year='2013')
         self.pdf_test(output_file, DeptReport, {
             "unit": ReportDept.objects.get(code="404")})
 
@@ -211,7 +211,7 @@ class CVNTestCase(TestCase):
         output_file = (os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_RCSV_PATH) +
                        '/department/2013/2013-department.csv')
         self.fill_db(range(6, 9))
-        call_command('update_report_data', '2013')
+        call_command('update_report_data', year='2013')
         self.rcsv_test(output_file, DeptReport, 3,
                        {"unit": ReportDept.objects.get(code="404")})
 

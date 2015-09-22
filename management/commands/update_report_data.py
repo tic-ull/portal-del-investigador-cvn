@@ -25,6 +25,7 @@
 from django.core.management.base import BaseCommand
 from cvn.models import ReportArea, ReportDept, ReportMember
 from django.utils.translation import ugettext as _
+from django.core.management.base import CommandError
 from optparse import make_option
 
 
@@ -48,7 +49,13 @@ class Command(BaseCommand):
         ),
     )
 
+    def check_args(self, options):
+        if options['year'] is None or not options['year'].isdigit():
+            raise CommandError(
+                "You must provide a year in the format: --year=yyyy")
+
     def handle(self, *args, **options):
+        self.check_args(options)
         ReportArea.objects.all().delete()
         ReportDept.objects.all().delete()
         ReportMember.objects.all().delete()
