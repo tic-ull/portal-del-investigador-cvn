@@ -783,8 +783,7 @@ class ReportUnit(models.Model):
         except KeyError:
             logger.warn(self.type + " " + self.code +
                         " does not exist in WS_URL_DETAIL for year " + year)
-            return
-            # This happens if the webservices are not that good.
+            return  # This happens if the webservices are not that good.
         for member in members:
             try:
 

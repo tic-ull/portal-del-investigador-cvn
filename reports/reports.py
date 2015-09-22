@@ -108,13 +108,12 @@ class UnitReport(BaseReport):
         usuarios = []
         for member in members:
             usuarios.append(member.user_profile)
-            investigador = {
+            investigadores.append({
                 'cod_persona__nombre': member.user_profile.user.first_name,
                 'cod_persona__apellido1': member.user_profile.user.last_name,
                 'cod_persona__apellido2': '',
                 'cod_cce__descripcion': member.cce
-            }
-            investigadores.append(investigador)
+            })
 
         if title is None:
             title = unit.name
