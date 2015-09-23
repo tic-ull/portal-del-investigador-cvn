@@ -40,6 +40,9 @@ from django.conf import settings as st
 
 
 class InformePDF:
+    # Do not touch the method definitions if you don't know what you are doing.
+    # (All the generators should have the same definitions)
+
     BLUE_SECONDARY_ULL = colors.HexColor('#EBF3FA')
     BLUE_ULL = colors.HexColor('#006699')
     DEFAULT_FONT = 'Helvetica'
@@ -58,6 +61,38 @@ class InformePDF:
         self.model_type = model_type
         self.set_logo()
 
+    @staticmethod
+    def get_save_path(year, model_type):
+        return "%s/%s/%s/" % (os.path.join(
+            st.MEDIA_ROOT, st_cvn.REPORTS_IPDF_PATH), model_type, year)
+
+    @staticmethod
+    def get_filename(year, team_name, model_type=None):
+        return slugify(str(year) + "-" + team_name) + ".pdf"
+
+    def go(self, team_name, investigadores, articulos, libros, capitulos,
+           congresos, proyectos, convenios, tesis, patentes):
+        self.team_name = team_name
+        path_file = self.get_save_path(self.year, self.model_type)
+        if not os.path.isdir(path_file):
+            os.makedirs(path_file)
+        file_name = self.get_filename(self.year, team_name)
+        full_path = path_file + file_name
+        doc = SimpleDocTemplate(full_path)
+        story = [Spacer(1, 3 * self.DEFAULT_SPACER)]
+        self.show_investigadores(story, investigadores)
+        self.show_articulos(story, articulos)
+        self.show_libros(story, libros)
+        self.show_capitulos(story, capitulos)
+        self.show_congresos(story, congresos)
+        self.show_proyectos(story, proyectos)
+        self.show_convenios(story, convenios)
+        self.show_tesis(story, tesis)
+        self.show_patentes(story, patentes)
+        doc.build(story, onFirstPage=self.first_page,
+                  onLaterPages=self.later_pages)
+        return full_path
+
     def set_logo(self):
         img_path = st_cvn.REPORTS_IMAGES
         if not os.path.exists(img_path + 'logo' + self.year + '.png'):
@@ -71,29 +106,6 @@ class InformePDF:
         logo_scale = 0.35
         self.logo_width *= logo_scale
         self.logo_height *= logo_scale
-
-    def go(self, team_name, investigadores, articulos, libros, capitulos,
-           congresos, proyectos, convenios, tesis, patentes):
-        self.team_name = team_name
-        full_path = os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_IPDF_PATH)
-        path_file = "%s/%s/%s/" % (full_path, self.model_type,
-                                   self.year)
-        if not os.path.isdir(path_file):
-            os.makedirs(path_file)
-        file_name = slugify(self.year + "-" + self.team_name) + ".pdf"
-        doc = SimpleDocTemplate(path_file + file_name)
-        story = [Spacer(1, 3 * self.DEFAULT_SPACER)]
-        self.show_investigadores(story, investigadores)
-        self.show_articulos(story, articulos)
-        self.show_libros(story, libros)
-        self.show_capitulos(story, capitulos)
-        self.show_congresos(story, congresos)
-        self.show_proyectos(story, proyectos)
-        self.show_convenios(story, convenios)
-        self.show_tesis(story, tesis)
-        self.show_patentes(story, patentes)
-        doc.build(story, onFirstPage=self.first_page,
-                  onLaterPages=self.later_pages)
 
     # -------------------------------------------------------------------------
     # PROCESADO DE LOS DATOS

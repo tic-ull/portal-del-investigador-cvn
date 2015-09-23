@@ -3,14 +3,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-07-30 13:05+0100\n"
-"PO-Revision-Date: 2015-07-30 12:25-0102\n"
-"Last-Translator: HUGO JIMENEZ HERNANDEZ <hjimeneh@ull.edu.es>\n"
+"POT-Creation-Date: 2015-09-08 08:53+0100\n"
+"PO-Revision-Date: 2015-09-08 10:32-0102\n"
+"Last-Translator: DOMINGO YERAY RODRIGUEZ MARTIN <dyeray@ull.edu.es>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: \n"
 "X-Translated-Using: django-rosetta 0.7.6\n"
 
 #: admin_advanced.py:85
@@ -25,7 +25,7 @@ msgstr "DNI cambiado con éxito"
 msgid "Change user's DNI"
 msgstr "Cambiar el DNI del usuario"
 
-#: admin_base.py:62 forms.py:126
+#: admin_base.py:62 forms.py:126 templates/cvn/partials/reports_table.html:9
 msgid "Name"
 msgstr "Nombre"
 
@@ -45,257 +45,257 @@ msgstr "El CVN debe estar generado desde el Editor CVN de la FECYT"
 msgid "The initial year may not exceed the final year"
 msgstr "El año inicial no puede ser mayor que el año final"
 
-#: forms.py:146
+#: forms.py:165
 msgid "New DNI"
 msgstr "Nuevo DNI"
 
-#: models.py:54 models.py:720
+#: models.py:55 models.py:722
 msgid "PDF"
 msgstr "PDF"
 
-#: models.py:56
+#: models.py:57
 msgid "XML"
 msgstr "XML"
 
-#: models.py:58
+#: models.py:59
 msgid "Date of CVN"
 msgstr "Fecha del CVN"
 
-#: models.py:60 models.py:398 models.py:489 models.py:554 models.py:649
-#: models.py:698 models.py:724
+#: models.py:61 models.py:400 models.py:491 models.py:556 models.py:651
+#: models.py:700 models.py:726
 msgid "Created"
 msgstr "Creado"
 
-#: models.py:62 models.py:400 models.py:491 models.py:556 models.py:651
-#: models.py:700 models.py:726 settings.py:73
+#: models.py:63 models.py:402 models.py:493 models.py:558 models.py:653
+#: models.py:702 models.py:728 settings.py:73
 msgid "Updated"
 msgstr "Actualizado"
 
-#: models.py:65 models.py:722
+#: models.py:66 models.py:724
 msgid "Uploaded PDF"
 msgstr "PDF Subido"
 
-#: models.py:69 templates/cvn/index.html:62
+#: models.py:70 templates/cvn/index.html:62
 msgid "Status"
 msgstr "Estado"
 
-#: models.py:71
+#: models.py:72
 msgid "Inserted"
 msgstr "Insertado"
 
-#: models.py:356
+#: models.py:358
 msgid "Normalized Curriculum Vitae"
 msgstr "Currículum Vitae Normalizado"
 
-#: models.py:368
+#: models.py:370
 msgid "Publication title"
 msgstr "Título de la publicación"
 
-#: models.py:372 models.py:462 models.py:475 models.py:678
+#: models.py:374 models.py:464 models.py:477 models.py:680
 #: templates/cvn/partials/producciones_chart.html:76
 #: templates/cvn/partials/producciones_chart.html:124
 #: templates/cvn/partials/producciones_chart.html:166
 msgid "Date"
 msgstr "Fecha"
 
-#: models.py:375
+#: models.py:377
 msgid "Publication name"
 msgstr "Nombre de la publicación"
 
-#: models.py:378
+#: models.py:380
 msgid "Volume"
 msgstr "Volumen"
 
-#: models.py:381
+#: models.py:383
 msgid "Number"
 msgstr "Número"
 
-#: models.py:384
+#: models.py:386
 msgid "First page"
 msgstr "Página Inicial"
 
-#: models.py:387
+#: models.py:389
 msgid "Last page"
 msgstr "Página Final"
 
-#: models.py:389 models.py:473 models.py:519 models.py:691
+#: models.py:391 models.py:475 models.py:521 models.py:693
 #: templates/cvn/partials/producciones_chart.html:338
 msgid "Authors"
 msgstr "Autores"
 
-#: models.py:391
+#: models.py:393
 msgid "ISBN"
 msgstr "ISBN"
 
-#: models.py:393
+#: models.py:395
 msgid "ISSN"
 msgstr "ISSN"
 
-#: models.py:396 models.py:484
+#: models.py:398 models.py:486
 msgid "Legal deposit"
 msgstr "Depósito legal"
 
-#: models.py:406 templates/cvn/partials/producciones_chart.html:6
+#: models.py:408 templates/cvn/partials/producciones_chart.html:6
 msgid "Publications"
 msgstr "Publicaciones"
 
-#: models.py:420 templates/cvn/partials/producciones_chart.html:8
+#: models.py:422 templates/cvn/partials/producciones_chart.html:8
 msgid "Articles"
 msgstr "Artículos"
 
-#: models.py:433 templates/cvn/partials/producciones_chart.html:10
+#: models.py:435 templates/cvn/partials/producciones_chart.html:10
 msgid "Books"
 msgstr "Libros"
 
-#: models.py:446 templates/cvn/partials/producciones_chart.html:9
+#: models.py:448 templates/cvn/partials/producciones_chart.html:9
 msgid "Chapters of books"
 msgstr "Capítulos de Libros"
 
-#: models.py:459
+#: models.py:461
 msgid "Title"
 msgstr "Título"
 
-#: models.py:465 models.py:525
+#: models.py:467 models.py:527
 #: templates/cvn/partials/producciones_chart.html:208
 #: templates/cvn/partials/producciones_chart.html:247
 msgid "End date"
 msgstr "Fecha de finalización"
 
-#: models.py:468
+#: models.py:470
 msgid "Name of the conference"
 msgstr "Nombre del congreso"
 
-#: models.py:471
+#: models.py:473
 msgid "City"
 msgstr "Ciudad de realización"
 
-#: models.py:478
+#: models.py:480
 msgid "Field of the conference"
 msgstr "Ámbito del congreso"
 
-#: models.py:481 models.py:534
+#: models.py:483 models.py:536
 msgid "Another area"
 msgstr "Otro ámbito"
 
-#: models.py:487
+#: models.py:489
 msgid "Publication in conference proceedings"
 msgstr "Publicación en acta"
 
-#: models.py:503 templates/cvn/partials/producciones_chart.html:4
+#: models.py:505 templates/cvn/partials/producciones_chart.html:4
 msgid "Conferences"
 msgstr "Congresos"
 
-#: models.py:514 models.py:676
+#: models.py:516 models.py:678
 msgid "Designation"
 msgstr "Denominación"
 
-#: models.py:517
+#: models.py:519
 msgid "Number of researchers"
 msgstr "Número de investigadores/as"
 
-#: models.py:522 templates/cvn/partials/producciones_chart.html:205
+#: models.py:524 templates/cvn/partials/producciones_chart.html:205
 #: templates/cvn/partials/producciones_chart.html:244
 msgid "Start date"
 msgstr "Fecha de inicio"
 
-#: models.py:528
+#: models.py:530
 msgid "Duration (in days)"
 msgstr "Duración (en días)"
 
-#: models.py:531
+#: models.py:533
 msgid "Scope"
 msgstr "Ámbito"
 
-#: models.py:537
+#: models.py:539
 msgid "Code acc. to the funding institution"
 msgstr "Código según financiadora"
 
-#: models.py:540 templates/cvn/partials/producciones_chart.html:211
+#: models.py:542 templates/cvn/partials/producciones_chart.html:211
 #: templates/cvn/partials/producciones_chart.html:250
 msgid "Total amount"
 msgstr "Cuantía"
 
-#: models.py:543
+#: models.py:545
 msgid "Sub-project amount"
 msgstr "Cuantía subproyecto"
 
-#: models.py:546
+#: models.py:548
 msgid "Percentage as grant"
 msgstr "Porcentaje en subvención"
 
-#: models.py:549
+#: models.py:551
 msgid "Percentage as credit"
 msgstr "Porcentaje en crédito"
 
-#: models.py:552
+#: models.py:554
 msgid "Mixed percentage"
 msgstr "Porcentaje mixto"
 
-#: models.py:586
+#: models.py:588
 msgid "Scientific Experience"
 msgstr "Experiencia Científica"
 
-#: models.py:604 templates/cvn/partials/producciones_chart.html:13
+#: models.py:606 templates/cvn/partials/producciones_chart.html:13
 msgid "Agreements"
 msgstr "Convenios"
 
-#: models.py:621 templates/cvn/partials/producciones_chart.html:14
+#: models.py:623 templates/cvn/partials/producciones_chart.html:14
 msgid "Projects"
 msgstr "Proyectos"
 
-#: models.py:634
+#: models.py:636
 msgid "Project title"
 msgstr "Título del trabajo"
 
-#: models.py:636 templates/cvn/partials/producciones_chart.html:296
+#: models.py:638 templates/cvn/partials/producciones_chart.html:296
 msgid "Date of reading"
 msgstr "Fecha de lectura"
 
-#: models.py:639
+#: models.py:641
 msgid "Author"
 msgstr "Autor"
 
-#: models.py:642
+#: models.py:644
 msgid "University issuing the qualification"
 msgstr "Universidad que expide el título"
 
-#: models.py:647 templates/cvn/partials/producciones_chart.html:293
+#: models.py:649 templates/cvn/partials/producciones_chart.html:293
 msgid "Co-director"
 msgstr "Codirector"
 
-#: models.py:663
+#: models.py:665
 msgid "Doctoral Thesis"
 msgstr "Tesis Doctorales"
 
-#: models.py:681 templates/cvn/partials/producciones_chart.html:332
+#: models.py:683 templates/cvn/partials/producciones_chart.html:332
 msgid "Concession date"
 msgstr "Fecha de concesión"
 
-#: models.py:684 templates/cvn/partials/producciones_chart.html:326
+#: models.py:686 templates/cvn/partials/producciones_chart.html:326
 msgid "Request number"
 msgstr "Número de solicitud"
 
-#: models.py:687
+#: models.py:689
 msgid "Priority country"
 msgstr "País de prioridad"
 
-#: models.py:689 templates/cvn/partials/producciones_chart.html:344
+#: models.py:691 templates/cvn/partials/producciones_chart.html:344
 msgid "Countries"
 msgstr "Países"
 
-#: models.py:694 templates/cvn/partials/producciones_chart.html:341
+#: models.py:696 templates/cvn/partials/producciones_chart.html:341
 msgid "Owner entity"
 msgstr "Entidad titular"
 
-#: models.py:696 templates/cvn/partials/producciones_chart.html:347
+#: models.py:698 templates/cvn/partials/producciones_chart.html:347
 msgid "Companies"
 msgstr "Empresas"
 
-#: models.py:712
+#: models.py:714
 msgid "Intellectual Properties"
 msgstr "Propiedades Intelectuales"
 
-#: models.py:753
+#: models.py:755
 msgid "Historical Normalized Curriculum Vitae"
 msgstr "Histórico de Currículum Vitae Normalizado"
 
@@ -317,8 +317,8 @@ msgstr "Este proceso puede tardar unos minutos, por favor espere."
 
 #: settings.py:83
 msgid ""
-"Connection has been established with the FECYT. Your CVN is being processed, "
-"please wait."
+"Connection has been established with the FECYT. Your CVN is being processed,"
+" please wait."
 msgstr ""
 "Se ha establecido la conexión con la FECYT. Su CVN se está procesando, por "
 "favor espere."
@@ -422,10 +422,15 @@ msgstr "Mi CVN"
 msgid "Export my information ULL"
 msgstr "Exportar mi información ULL"
 
-#: templates/cvn/base.html:31
+#: templates/cvn/base.html:24 templates/cvn/reports.html:7
+#| msgid "Report ULL"
+msgid "Reports"
+msgstr "Informes"
+
+#: templates/cvn/base.html:32
 msgid ""
-"The CVN format has been developed by Fundación Española para la Ciencia y la "
-"Tecnología"
+"The CVN format has been developed by Fundación Española para la Ciencia y la"
+" Tecnología"
 msgstr ""
 "El formato CVN ha sido desarrollado por la Fundación Española para la "
 "Ciencia y la Tecnología"
@@ -639,6 +644,20 @@ msgstr "Inscrita en"
 msgid "You don't have any Intellectual Property"
 msgstr "No dispone de Propiedades Intelectuales"
 
+#: templates/cvn/partials/reports_table.html:8
+msgid "Code"
+msgstr "Código"
+
+#: templates/cvn/reports.html:22
+#| msgid "Department"
+msgid "Departments"
+msgstr "Departamentos"
+
+#: templates/cvn/reports.html:23
+#| msgid "Area"
+msgid "Areas"
+msgstr "Áreas"
+
 #: templates/cvn/ull_report.html:7
 msgid "Report ULL"
 msgstr "Informe ULL"
@@ -655,15 +674,15 @@ msgstr "Departamento"
 msgid "Area"
 msgstr "Área"
 
-#: views.py:57
+#: views.py:61
 msgid "CVN updated successfully."
 msgstr "CVN actualizado con éxito."
 
-#: views.py:93
+#: views.py:97
 msgid "Not Available"
 msgstr "No disponible"
 
-#: views.py:124
+#: views.py:128
 msgid "No information in this period"
 msgstr "No dispone de información en el periodo seleccionado"
 

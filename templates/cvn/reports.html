@@ -1,0 +1,53 @@
+{% extends 'cvn/base.html' %}
+{% load i18n %}
+
+{% load staticfiles %}
+
+{% block breadcrumb %}	
+    <li><a href='{% url 'reports' %}'>{% trans "Reports" %}</a></li>
+{% endblock breadcrumb %}
+
+{% block main %}
+    <script src="{% static datatables_js_url %}"></script>
+    <script src="{% static datatables_sort_normalize %}"></script>
+    <script src="{% static datatables_sort_date %}"></script>
+    <link property="stylesheet" rel="stylesheet" type="text/css" href="{{ datatables_css_url }}"/>
+    <div class="section">
+        <ul class="nav nav-tabs header">
+            <li class="active">Informes</li>
+        </ul>
+        <div class="content">
+            <div class="nav-ull">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#dept" data-toggle="tab">{% trans 'Departments' %}</a></li>
+                    <li><a href="#area" data-toggle="tab">{% trans 'Areas' %}</a></li>
+                </ul>
+
+                <div class="tab-content">
+                    <div id="dept" class="tab-pane active">
+                        <div class="panel-group" id="depts">
+                            {% for year, items in depts.items %}
+                                <h2>{{ year }}</h2>
+                                {% if not show_rcsv == False %}
+                                    <a href="{% url 'download_report' type='rcsv' year=year unit_type="dept" %}" class="fa fa-download"></a>
+                                {% endif %}
+                                {% include 'cvn/partials/reports_table.html' with unit_type="dept" year=year entities=items %}
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div id="area" class="tab-pane">
+                        <div class="panel-group" id="areas">
+                            {% for year, items in areas.items %}
+                                <h2>{{ year }}</h2>
+                                <a href="{% url 'download_report' type='rcsv' year=year unit_type="area" %}" class="fa fa-download"></a>
+                                {% include 'cvn/partials/reports_table.html' with unit_type="area" year=year entities=items %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock main %}

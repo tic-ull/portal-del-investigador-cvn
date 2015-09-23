@@ -23,6 +23,7 @@
 #
 
 from abc import ABCMeta
+import os
 import logging
 from cvn import settings as st_cvn
 from cvn.models import (Articulo, Libro, Capitulo, Congreso, Proyecto,
@@ -67,8 +68,19 @@ class BaseReport:
         convenios = Convenio.objects.byUsuariosYear(profiles, self.year)
         tesis = TesisDoctoral.objects.byUsuariosYear(profiles, self.year)
         patentes = Patente.objects.byUsuariosYear(profiles, self.year)
-        self.generator.go(unit_name, inv, articulos, libros, capitulos_libro,
-                          congresos, proyectos, convenios, tesis, patentes)
+        return self.generator.go(unit_name, inv, articulos, libros,
+                                 capitulos_libro, congresos, proyectos,
+                                 convenios, tesis, patentes)
+
+    def get_full_path(self, unit=None):
+        if unit != None:
+            unit_name = self.get_investigadores(unit, None)[2]
+        else:
+            unit_name = None
+        return os.path.join(
+            self.generator.get_save_path(self.year, self.report_type),
+            self.generator.get_filename(self.year, unit_name, self.report_type)
+        )
 
 
 class UsersReport(BaseReport):

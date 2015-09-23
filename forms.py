@@ -141,6 +141,25 @@ class UserProfileAdminForm(forms.ModelForm):
             self.fields['last_name'].initial = self.instance.user.last_name
 
 
+class DownloadReportForm(forms.Form):
+    type = forms.CharField()
+    code = forms.IntegerField(required=False)
+    year = forms.IntegerField()
+    unit_type = forms.CharField()
+
+    def clean_type(self):
+        generator_type = self.cleaned_data['type']
+        if generator_type not in ['ipdf', 'icsv', 'rcsv']:
+            self.add_error('type', 'Invalid generator type')
+        return generator_type
+
+    def clean_unit_type(self):
+        unit_type = self.cleaned_data['unit_type']
+        if unit_type not in ['dept', 'area']:
+            self.add_error('type', 'Invalid unit type')
+        return unit_type
+
+
 class ChangeDNIForm(forms.Form):
     _selected_action = forms.CharField(widget=forms.HiddenInput)
     new_dni = ESIdentityCardNumberField(label=_("New DNI"))

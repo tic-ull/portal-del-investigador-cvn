@@ -29,23 +29,32 @@ from django.conf import settings as st
 
 
 class ResumenCSV:
+    # Do not touch the method definitions if you don't know what you are doing.
+    # (All the generators should have the same definitions)
 
     def __init__(self, year, model_type):
         self.year = str(year)
-        full_path = os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_RCSV_PATH)
-        path = "%s/%s/%s/" % (full_path, model_type,
-                              self.year)
+        path = self.get_save_path(self.year, model_type)
         if not os.path.isdir(path):
             os.makedirs(path)
-        self.filename = os.path.join(path, self.year +
-                                     '-' + model_type + ".csv")
-        self._file = open(self.filename, 'wb')
+        filename = self.get_filename(self.year, None, model_type)
+        self.full_path = os.path.join(path, filename)
+        self._file = open(self.full_path, 'wb')
         self.writer = csv.DictWriter(self._file, dialect=st.CSV_DIALECT,
             fieldnames=[u'Nombre', u'Investigadores', u'Artículos', u'Libros',
                         u'Capítulos', u'Congresos', u'Proyectos', u'Convenios',
                         u'Tesis', u'Propiedad Intelectual']
         )
         self.writer.writeheader()
+
+    @staticmethod
+    def get_save_path(year, model_type):
+        return "%s/%s/%s/" % (os.path.join(
+            st.MEDIA_ROOT, st_cvn.REPORTS_RCSV_PATH), model_type, year)
+
+    @staticmethod
+    def get_filename(year, team_name, model_type):
+        return str(year) + '-' + model_type + ".csv"
 
     def go(self, team_name, investigadores, articulos, libros, capitulos,
            congresos, proyectos, convenios, tesis, patentes):
@@ -59,3 +68,4 @@ class ResumenCSV:
                               u'Convenios': len(convenios),
                               u'Tesis': len(tesis),
                               u'Propiedad Intelectual': len(patentes)})
+        return self.full_path

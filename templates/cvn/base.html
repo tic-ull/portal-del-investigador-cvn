@@ -21,6 +21,9 @@
             <ul class="nav nav-pills nav-stacked">
                 <li><a href='{% url 'cvn' %}'><i class="fa fa-home"></i> {% trans "My CVN" %}</a></li>
                 <li><a href='{% url 'export_data_ull' %}'><i class="fa fa-database"></i> {% trans "Export my information ULL" %}</a></li>
+                {% if not perms.cvn.read_cvn_reports %}
+                    <li><a id="reports_link" href='{% url 'reports' %}'><i class="fa fa-files-o"></i> {% trans "Reports" %}</a></li>
+                {% endif %}
             </ul>
         </div>
     </div>

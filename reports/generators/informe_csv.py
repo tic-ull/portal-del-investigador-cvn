@@ -39,21 +39,30 @@ def write_producciones(csv_writer, name, producciones, fields):
 
 
 class InformeCSV:
+    # Do not touch the method definitions if you don't know what you are doing.
+    # (All the generators should have the same definitions)
 
     def __init__(self, year, model_type):
         self.year = str(year)
         self.model_type = model_type
 
+    @staticmethod
+    def get_save_path(year, model_type):
+        return "%s/%s/%s/" % (os.path.join(
+            st.MEDIA_ROOT, st_cvn.REPORTS_ICSV_PATH), model_type, year)
+
+    @staticmethod
+    def get_filename(year, team_name, model_type=None):
+        return slugify(str(year) + "-" + team_name) + ".csv"
+
     def go(self, team_name, investigadores, articulos, libros, capitulos,
            congresos, proyectos, convenios, tesis, patentes):
-        full_path = os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_ICSV_PATH)
-        path = "%s/%s/%s/" % (full_path, self.model_type,
-                              self.year)
+        path = self.get_save_path(self.year, self.model_type)
         if not os.path.isdir(path):
             os.makedirs(path)
-        file_name = slugify(self.year + "-" + team_name) + ".csv"
-        file_path = os.path.join(path, file_name)
-        with open(file_path, 'wb') as csvfile:
+        file_name = self.get_filename(self.year, team_name)
+        full_path = os.path.join(path, file_name)
+        with open(full_path, 'wb') as csvfile:
             csv_writer = csv.writer(csvfile, dialect=st.CSV_DIALECT)
             write_producciones(csv_writer, u'Artículos', articulos,
                                st_cvn.INFORME_CSV_FIELDS_ARTICULO)
@@ -71,3 +80,4 @@ class InformeCSV:
                                st_cvn.INFORME_CSV_FIELDS_TESIS)
             write_producciones(csv_writer, u'Patentes', patentes,
                                st_cvn.INFORME_CSV_FIELDS_PATENTE)
+        return full_path

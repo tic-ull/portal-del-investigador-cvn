@@ -22,12 +22,8 @@
 #    <http://www.gnu.org/licenses/>.
 #
 
-from . import signals
-from .forms import UploadCVNForm, GetDataCVNULL
-from .models import CVN
-from .utils import (scientific_production_to_context, cvn_to_context,
-                    stats_to_context)
-from cvn import settings as st_cvn
+import datetime
+import os
 from django.conf import settings as st
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import User
@@ -35,8 +31,18 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, Http404
 from django.shortcuts import render
 from django.utils.translation import ugettext as _
-
-import datetime
+from django.views.generic import TemplateView, View
+from django.utils.decorators import method_decorator
+from cvn import settings as st_cvn
+from . import signals
+from .forms import UploadCVNForm, GetDataCVNULL, DownloadReportForm
+from .models import CVN
+from .utils import (scientific_production_to_context, cvn_to_context,
+                    stats_to_context)
+from .reports import DeptReport, AreaReport
+from .reports.shortcuts import get_report_instance
+from .decorators import user_can_view_reports
+from statistics.models import Area, Department
 
 
 @login_required
@@ -72,7 +78,7 @@ def download_cvn(request):
         pdf = open(cvn.cvn_file.path)
     except IOError:
         raise Http404
-    response = HttpResponse(pdf, content_type='application/pdf')
+    response = HttpResponse(pdf, content_type=st.MIMETYPES['pdf'])
     response['Content-Disposition'] = 'inline; filename=%s' % (
         cvn.cvn_file.name.split('/')[-1])
     signals.cvn_downloaded.send(sender=None)
@@ -134,3 +140,102 @@ def export_data_ull(request):
 
         context['form'] = form
     return render(request, 'cvn/export_data_ull.html', context)
+
+
+class AdminReportsView(TemplateView):
+    template_name = "cvn/reports.html"
+
+    @method_decorator(login_required)
+    @method_decorator(user_can_view_reports)
+    def dispatch(self, *args, **kwargs):
+        return super(AdminReportsView, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(AdminReportsView, self).get_context_data(**kwargs)
+        years = st.HISTORICAL.keys() + [str(datetime.date.today().year)]
+        context['depts'] = {}
+        context['areas'] = {}
+        for year in years:
+            context['depts'][year] = DeptReport.get_all_units_names(year=year)
+            context['areas'][year] = AreaReport.get_all_units_names(year=year)
+        return context
+
+class ReportsView(TemplateView):
+    template_name = "cvn/reports.html"
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(ReportsView, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(ReportsView, self).get_context_data(**kwargs)
+        current_year = str(datetime.date.today().year)
+        years = st.HISTORICAL.keys() + [current_year]
+        context['depts'] = {}
+        context['areas'] = {}
+        dc = self.request.session['dept_code']
+        ac = self.request.session['area_code']
+        for year in years:
+            report = get_report_instance('dept', 'ipdf', year)
+            path = report.get_full_path(dc)
+            if year == current_year or os.path.isfile(path):
+                context['depts'][year] = {dc: Department.objects.get(
+                    code=dc).name}
+            report = get_report_instance('area', 'ipdf', year)
+            path = report.get_full_path(ac)
+            if year == current_year or os.path.isfile(path):
+                context['areas'][year] = {ac: Area.objects.get(code=ac).name}
+        context['show_rcsv'] = False
+        return context
+
+
+class DownloadReportView(View):
+
+    form_class = DownloadReportForm
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(DownloadReportView, self).dispatch(*args, **kwargs)
+
+    def create_response(self, path):
+        try:
+            pdf = open(path, 'r')
+        except (IOError, TypeError):
+            raise Http404
+        response = HttpResponse(
+            pdf, content_type=st.MIMETYPES[path.split('.')[-1]])
+        response['Content-Disposition'] = 'inline; filename=%s' % (
+            path.split('/')[-1])
+        return response
+
+    def get(self, request, *args, **kwargs):
+
+        # Form validation
+        form = self.form_class(kwargs)
+        if not form.is_valid():
+            raise Http404
+
+        # Get form fields
+        params = form.cleaned_data
+        unit_type = params['unit_type']
+        report_type = params['type']
+        year = int(params['year'])
+        code = params['code'] if report_type != 'rcsv' else None
+
+        # Check user permissions
+        user_unit = self.request.session[unit_type + '_code']
+        if (not user_can_view_reports(user=self.request.user)
+                and user_unit != code):
+            raise Http404
+
+        # Generate reports
+        report = get_report_instance(unit_type, report_type, year)
+        if year != datetime.date.today().year:
+            path = report.get_full_path(code)
+        elif report_type == 'rcsv':
+            report.create_reports()
+            path = report.get_full_path()
+        else:
+            path = report.create_report(code)
+        response = self.create_response(path)
+        return response

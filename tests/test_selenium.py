@@ -37,6 +37,7 @@ from pyvirtualdisplay import Display
 from utils import get_cvn_path
 from core.models import UserProfile
 from selenium.webdriver.support.ui import Select
+from django.contrib.auth.models import Permission
 
 
 class LoginCAS(test.LiveServerTestCase):
@@ -50,7 +51,7 @@ class LoginCAS(test.LiveServerTestCase):
         display.start()
         self.display = display
         self.driver = webdriver.Firefox()
-        self.driver.implicitly_wait(8)
+        self.driver.implicitly_wait(7)
         self.driver.set_page_load_timeout(30)
         self.base_url = st.CAS_SERVER_URL
         self.verificationErrors = []
