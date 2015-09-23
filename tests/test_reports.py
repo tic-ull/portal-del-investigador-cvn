@@ -318,12 +318,14 @@ class CVNTestCase(TestCase):
         soup = BeautifulSoup(self.client.get(reverse('cvn')).content, 'lxml')
         reports_link = soup.select('a#admin_reports_link')
         self.assertEqual(len(reports_link), 1)
+        st.AUTHENTICATION_BACKENDS = ('core.backends.CASBackend',)
 
     def test_user_without_permission_cant_view_admin_reports_link(self):
         u = UserFactory.create_and_login(self.client)
         soup = BeautifulSoup(self.client.get(reverse('cvn')).content, 'lxml')
         reports_link = soup.select('a#admin_reports_link')
         self.assertEqual(len(reports_link), 0)
+        st.AUTHENTICATION_BACKENDS = ('core.backends.CASBackend',)
 
     def test_user_with_permission_cant_view_reports_link(self):
         u = UserFactory.create_and_login(self.client)
@@ -337,6 +339,7 @@ class CVNTestCase(TestCase):
         soup = BeautifulSoup(self.client.get(reverse('cvn')).content, 'lxml')
         reports_link = soup.select('a#reports_link')
         self.assertEqual(len(reports_link), 0)
+        st.AUTHENTICATION_BACKENDS = ('core.backends.CASBackend',)
 
     def test_user_without_permission_can_view_reports_link(self):
         u = UserFactory.create_and_login(self.client)
@@ -345,11 +348,13 @@ class CVNTestCase(TestCase):
         soup = BeautifulSoup(self.client.get(reverse('cvn')).content, 'lxml')
         reports_link = soup.select('a#reports_link')
         self.assertEqual(len(reports_link), 1)
+        st.AUTHENTICATION_BACKENDS = ('core.backends.CASBackend',)
 
     def test_user_without_permission_cant_view_admin_reports(self):
         u = UserFactory.create_and_login(self.client)
         response = self.client.get(reverse('admin_reports'))
         self.assertEqual(response.status_code, 404)
+        st.AUTHENTICATION_BACKENDS = ('core.backends.CASBackend',)
 
     def test_user_with_permission_can_view_admin_reports(self):
         u = UserFactory.create_and_login(self.client)
@@ -360,6 +365,7 @@ class CVNTestCase(TestCase):
         u.save()
         response = self.client.get(reverse('admin_reports'))
         self.assertEqual(response.status_code, 200)
+        st.AUTHENTICATION_BACKENDS = ('core.backends.CASBackend',)
 
     def test_user_without_permission_can_view_reports(self):
         u = UserFactory.create_and_login(self.client)
@@ -372,6 +378,7 @@ class CVNTestCase(TestCase):
         session.save()
         response = self.client.get(reverse('reports'))
         self.assertEqual(response.status_code, 200)
+        st.AUTHENTICATION_BACKENDS = ('core.backends.CASBackend',)
 
     def test_user_with_permission_can_view_reports(self):
         u = UserFactory.create_and_login(self.client)
@@ -389,6 +396,7 @@ class CVNTestCase(TestCase):
         session.save()
         response = self.client.get(reverse('reports'))
         self.assertEqual(response.status_code, 200)
+        st.AUTHENTICATION_BACKENDS = ('core.backends.CASBackend',)
 
     def test_user_with_permission_can_download_rcsv(self):
         u = UserFactory.create_and_login(self.client)
@@ -404,6 +412,7 @@ class CVNTestCase(TestCase):
         response = self.client.get(reverse('download_report', kwargs={
             'type': 'rcsv', 'year': '2015', 'unit_type': 'dept'}))
         self.assertEqual(response.status_code, 200)
+        st.AUTHENTICATION_BACKENDS = ('core.backends.CASBackend',)
 
     def test_user_without_permission_cant_download_rcsv(self):
         u = UserFactory.create_and_login(self.client)
@@ -414,6 +423,7 @@ class CVNTestCase(TestCase):
         response = self.client.get(reverse('download_report', kwargs={
             'type': 'rcsv', 'year': '2015', 'unit_type': 'dept'}))
         self.assertEqual(response.status_code, 404)
+        st.AUTHENTICATION_BACKENDS = ('core.backends.CASBackend',)
 
     @classmethod
     def tearDownClass(cls):
