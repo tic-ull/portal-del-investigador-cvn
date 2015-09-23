@@ -103,7 +103,8 @@ class UnitReport(BaseReport):
     def get_investigadores(self, unit, title):
         if unit is None:
             return NotImplemented
-        members = unit.reportmember_set.all()
+        members = unit.reportmember_set.all().order_by(
+            'user_profile__user__last_name', 'user_profile__user__first_name')
         investigadores = []
         usuarios = []
         for member in members:
