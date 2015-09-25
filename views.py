@@ -40,7 +40,7 @@ from .models import CVN
 from .utils import (scientific_production_to_context, cvn_to_context,
                     stats_to_context)
 from .reports import DeptReport, AreaReport
-from .reports.shortcuts import get_report_instance
+from .reports.shortcuts import get_report_path
 from .decorators import user_can_view_reports
 from statistics.models import Area, Department
 
@@ -152,12 +152,13 @@ class AdminReportsView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(AdminReportsView, self).get_context_data(**kwargs)
-        years = st.HISTORICAL.keys() + [str(datetime.date.today().year)]
+        years = st.HISTORICAL.keys()
         context['depts'] = {}
         context['areas'] = {}
         for year in years:
             context['depts'][year] = DeptReport.get_all_units_names(year=year)
             context['areas'][year] = AreaReport.get_all_units_names(year=year)
+
         return context
 
 class ReportsView(TemplateView):
@@ -169,21 +170,18 @@ class ReportsView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(ReportsView, self).get_context_data(**kwargs)
-        current_year = str(datetime.date.today().year)
-        years = st.HISTORICAL.keys() + [current_year]
+        years = st.HISTORICAL.keys()
         context['depts'] = {}
         context['areas'] = {}
         dc = self.request.session['dept_code']
         ac = self.request.session['area_code']
         for year in years:
-            report = get_report_instance('dept', 'ipdf', year)
-            path = report.get_full_path(dc)
-            if year == current_year or os.path.isfile(path):
+            path = get_report_path('dept', 'ipdf', year, dc)
+            if os.path.isfile(path):
                 context['depts'][year] = {dc: Department.objects.get(
                     code=dc).name}
-            report = get_report_instance('area', 'ipdf', year)
-            path = report.get_full_path(ac)
-            if year == current_year or os.path.isfile(path):
+            path = get_report_path('area', 'ipdf', year, ac)
+            if os.path.isfile(path):
                 context['areas'][year] = {ac: Area.objects.get(code=ac).name}
         context['show_rcsv'] = False
         return context
@@ -228,14 +226,6 @@ class DownloadReportView(View):
                 and user_unit != code):
             raise Http404
 
-        # Generate reports
-        report = get_report_instance(unit_type, report_type, year)
-        if year != datetime.date.today().year:
-            path = report.get_full_path(code)
-        elif report_type == 'rcsv':
-            report.create_reports()
-            path = report.get_full_path()
-        else:
-            path = report.create_report(code)
+        path = get_report_path(unit_type, report_type, year, code)
         response = self.create_response(path)
         return response

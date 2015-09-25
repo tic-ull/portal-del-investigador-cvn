@@ -14,13 +14,13 @@
         </tr>
     </thead>
     <tbody>
-        {% for code, name in entities.items %}
+        {% for entity in entities %}
             <tr>
-                <td>{{ code }}</td>
-                <td>{{ name }}</td>
-                <td><a href="{% url 'download_report' type='ipdf' code=code year=year unit_type=unit_type %}" class="fa fa-download"></a></td>
+                <td>{{ entity.code }}</td>
+                <td>{{ entity.name }}</td>
+                <td><a href="{% url 'download_report' type='ipdf' code=entity.code year=year unit_type=unit_type %}" class="fa fa-download"></a></td>
                 {% if year != '2012' and year != '2013' %}
-                    <td><a href="{% url 'download_report' type='icsv' code=code year=year unit_type=unit_type %}" class="fa fa-download"></a></td>
+                    <td><a href="{% url 'download_report' type='icsv' code=entity.code year=year unit_type=unit_type %}" class="fa fa-download"></a></td>
                 {% endif %}
             </tr>
         {% endfor %}

@@ -82,6 +82,10 @@ class BaseReport:
             self.generator.get_filename(self.year, unit_name, self.report_type)
         )
 
+    @classmethod
+    def get_unit_name(cls, code):
+        return NotImplemented
+
 
 class UsersReport(BaseReport):
     report_type = st_cvn.REPORTS_DIRECTORY.USERS.value
@@ -131,6 +135,14 @@ class UnitReport(BaseReport):
         if title is None:
             title = unit.name
         return investigadores, usuarios, title
+
+    @classmethod
+    def get_unit_name(cls, code):
+        return cls.Report.objects.get(code=code).name
+
+    @classmethod
+    def get_all_units_names(cls, year):
+        return cls.Report.objects.all()
 
 
 class DeptReport(UnitReport):
