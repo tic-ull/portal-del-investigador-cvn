@@ -158,8 +158,8 @@ class AdminReportsView(TemplateView):
         for year in years:
             context['depts'][year] = DeptReport.get_all_units_names(year=year)
             context['areas'][year] = AreaReport.get_all_units_names(year=year)
-
         return context
+
 
 class ReportsView(TemplateView):
     template_name = "cvn/reports.html"

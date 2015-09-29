@@ -43,7 +43,7 @@ def get_report_instance(unit_type, report_type, year):
 def get_report_path(unit_type, report_type, year, code):
     Report = _unit_type_dict[unit_type]
     Generator = _report_type_dict[report_type]
-    team_name = Report.get_unit_name(code) if code is not None else None
+    team_name = Report.get_unit_name(code, year) if code is not None else None
     model_type = Report.report_type
     return os.path.join(Generator.get_save_path(year, model_type),
                         Generator.get_filename(year, team_name, model_type))
