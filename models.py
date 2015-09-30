@@ -790,8 +790,8 @@ class ReportUnit(models.Model):
                 up = UserProfile.objects.get(
                     rrhh_code=member['cod_persona'])
             except UserProfile.DoesNotExist:
-                document = ws.get(st.WS_DOCUMENT % member[
-                    'cod_persona'])['numero_documento'].replace('-', '')
+                response = ws.get(st.WS_DOCUMENT % member['cod_persona'])
+                document = response['numero_documento'] + response['letra']
                 up = UserProfile.get_or_create_user(document,
                                                     document)[0].profile
                 up.rrhh_code = member['cod_persona']
