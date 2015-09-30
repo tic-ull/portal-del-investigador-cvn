@@ -803,8 +803,7 @@ class ReportUnit(models.Model):
                                          " " +
                                          member['cod_persona__apellido2'])[:30]
                     up.user.save()
-                    rp = ReportMember.objects.get_or_create(user_profile=up)[0]
-                    rp.save()
+                    ReportMember.objects.get_or_create(user_profile=up)
 
                 setattr(up.reportmember, self.type, self)
                 up.reportmember.cce = member['cod_cce__descripcion']
