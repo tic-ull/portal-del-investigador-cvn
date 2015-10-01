@@ -25,6 +25,7 @@
 import os
 from cvn.reports import DeptReport, AreaReport
 from cvn.reports.generators import InformeCSV, InformePDF, ResumenCSV
+from django.core.exceptions import ObjectDoesNotExist
 
 _report_type_dict = {'ipdf': InformePDF,
                      'icsv': InformeCSV,
@@ -40,10 +41,20 @@ def get_report_instance(unit_type, report_type, year):
     return Report(Generator, year)
 
 
-def get_report_path(unit_type, report_type, year, code):
+def get_report_path(unit_type, report_type, year, code, check_file=True):
     Report = _unit_type_dict[unit_type]
     Generator = _report_type_dict[report_type]
-    team_name = Report.get_unit_name(code) if code is not None else None
+    try:
+        team_name = Report.get_unit_name(code, year) if code is not None else None
+    except ObjectDoesNotExist:
+        raise ReportDoesNotExist
     model_type = Report.report_type
-    return os.path.join(Generator.get_save_path(year, model_type),
+    path = os.path.join(Generator.get_save_path(year, model_type),
                         Generator.get_filename(year, team_name, model_type))
+    if check_file and not os.path.isfile(path):
+        raise ReportDoesNotExist
+    return path
+
+
+class ReportDoesNotExist(Exception):
+    pass

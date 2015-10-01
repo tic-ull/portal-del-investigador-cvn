@@ -40,7 +40,7 @@ from .models import CVN
 from .utils import (scientific_production_to_context, cvn_to_context,
                     stats_to_context)
 from .reports import DeptReport, AreaReport
-from .reports.shortcuts import get_report_path
+from .reports.shortcuts import get_report_path, ReportDoesNotExist
 from .decorators import user_can_view_reports
 from statistics.models import Area, Department
 
@@ -158,8 +158,8 @@ class AdminReportsView(TemplateView):
         for year in years:
             context['depts'][year] = DeptReport.get_all_units_names(year=year)
             context['areas'][year] = AreaReport.get_all_units_names(year=year)
-
         return context
+
 
 class ReportsView(TemplateView):
     template_name = "cvn/reports.html"
@@ -176,12 +176,22 @@ class ReportsView(TemplateView):
         dc = self.request.session['dept_code']
         ac = self.request.session['area_code']
         for year in years:
-            path = get_report_path('dept', 'ipdf', year, dc)
-            if os.path.isfile(path):
+            try:
+                path = get_report_path('dept', 'ipdf', year, dc)
+            except ReportDoesNotExist:
+                # The report does not exist. Probably the user's department
+                # didn't exist this year.
+                pass
+            else:
                 context['depts'][year] = {dc: Department.objects.get(
                     code=dc).name}
-            path = get_report_path('area', 'ipdf', year, ac)
-            if os.path.isfile(path):
+            try:
+                path = get_report_path('area', 'ipdf', year, ac)
+            except ReportDoesNotExist:
+                # The report does not exist. Probably the user's department
+                # didn't exist this year.
+                pass
+            else:
                 context['areas'][year] = {ac: Area.objects.get(code=ac).name}
         context['show_rcsv'] = False
         return context
@@ -225,7 +235,6 @@ class DownloadReportView(View):
         if (not user_can_view_reports(user=self.request.user)
                 and user_unit != code):
             raise Http404
-
         path = get_report_path(unit_type, report_type, year, code)
         response = self.create_response(path)
         return response

@@ -27,6 +27,7 @@ from cvn.models import ReportArea, ReportDept, ReportMember
 from django.utils.translation import ugettext as _
 from django.core.management.base import CommandError
 from optparse import make_option
+from django.conf import settings as st
 
 
 class Command(BaseCommand):
@@ -56,10 +57,11 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.check_args(options)
-        ReportArea.objects.all().delete()
-        ReportDept.objects.all().delete()
-        ReportMember.objects.all().delete()
+        year = options['year']
+        ReportArea.objects.using(st.HISTORICAL[year]).all().delete()
+        ReportDept.objects.using(st.HISTORICAL[year]).all().delete()
+        ReportMember.objects.using(st.HISTORICAL[year]).all().delete()
         if not options['delete']:
-            ReportMember.create_all()
+            ReportMember.create_all(year)
             ReportArea.load(options['year'])
             ReportDept.load(options['year'])

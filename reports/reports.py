@@ -25,6 +25,8 @@
 from abc import ABCMeta
 import os
 import logging
+from django.conf import settings as st
+from core.routers import in_database
 from cvn import settings as st_cvn
 from cvn.models import (Articulo, Libro, Capitulo, Congreso, Proyecto,
                         Convenio, TesisDoctoral, Patente, ReportDept,
@@ -60,30 +62,29 @@ class BaseReport:
         inv, profiles, unit_name = self.get_investigadores(unit, title)
         if not inv:
             return
-        articulos = Articulo.objects.byUsuariosYear(profiles, self.year)
-        libros = Libro.objects.byUsuariosYear(profiles, self.year)
-        capitulos_libro = Capitulo.objects.byUsuariosYear(profiles, self.year)
-        congresos = Congreso.objects.byUsuariosYear(profiles, self.year)
-        proyectos = Proyecto.objects.byUsuariosYear(profiles, self.year)
-        convenios = Convenio.objects.byUsuariosYear(profiles, self.year)
-        tesis = TesisDoctoral.objects.byUsuariosYear(profiles, self.year)
-        patentes = Patente.objects.byUsuariosYear(profiles, self.year)
+        # We use the historical cv of the users
+        with in_database(st.HISTORICAL[str(self.year)]):
+            articulos = list(Articulo.objects.byUsuariosYear(
+                profiles, self.year))
+            libros = list(Libro.objects.byUsuariosYear(profiles, self.year))
+            capitulos_libro = list(Capitulo.objects.byUsuariosYear(
+                profiles, self.year))
+            congresos = list(Congreso.objects.byUsuariosYear(
+                profiles, self.year))
+            proyectos = list(Proyecto.objects.byUsuariosYear(
+                profiles, self.year))
+            convenios = list(Convenio.objects.byUsuariosYear(
+                profiles, self.year))
+            tesis = list(TesisDoctoral.objects.byUsuariosYear(
+                profiles, self.year))
+            patentes = list(Patente.objects.byUsuariosYear(
+                profiles, self.year))
         return self.generator.go(unit_name, inv, articulos, libros,
                                  capitulos_libro, congresos, proyectos,
                                  convenios, tesis, patentes)
 
-    def get_full_path(self, unit=None):
-        if unit != None:
-            unit_name = self.get_investigadores(unit, None)[2]
-        else:
-            unit_name = None
-        return os.path.join(
-            self.generator.get_save_path(self.year, self.report_type),
-            self.generator.get_filename(self.year, unit_name, self.report_type)
-        )
-
     @classmethod
-    def get_unit_name(cls, code):
+    def get_unit_name(cls, code, year):
         return NotImplemented
 
 
@@ -114,35 +115,42 @@ class UnitReport(BaseReport):
     Report = None
 
     def get_all_units(self):
-        return self.Report.objects.exclude(reportmember=None).order_by('name')
+        with in_database(st.HISTORICAL[str(self.year)]):
+            return list(self.Report.objects.exclude(reportmember=None).order_by(
+                'name'))
 
     def get_investigadores(self, unit, title):
-        if unit is None:
-            return NotImplemented
-        members = unit.reportmember_set.all().order_by(
-            'user_profile__user__last_name', 'user_profile__user__first_name')
-        investigadores = []
-        usuarios = []
-        for member in members:
-            usuarios.append(member.user_profile)
-            investigadores.append({
-                'cod_persona__nombre': member.user_profile.user.first_name,
-                'cod_persona__apellido1': member.user_profile.user.last_name,
-                'cod_persona__apellido2': '',
-                'cod_cce__descripcion': member.cce
-            })
+        with in_database(st.HISTORICAL[str(self.year)]):
+            if unit is None:
+                return NotImplemented
+            members = unit.reportmember_set.all().order_by(
+                'user_profile__user__last_name',
+                'user_profile__user__first_name'
+            )
+            investigadores = []
+            usuarios = []
+            for m in members:
+                usuarios.append(m.user_profile)
+                investigadores.append({
+                    'cod_persona__nombre': m.user_profile.user.first_name,
+                    'cod_persona__apellido1': m.user_profile.user.last_name,
+                    'cod_persona__apellido2': '',
+                    'cod_cce__descripcion': m.cce
+                })
 
-        if title is None:
-            title = unit.name
-        return investigadores, usuarios, title
+            if title is None:
+                title = unit.name
+            return investigadores, usuarios, title
 
     @classmethod
-    def get_unit_name(cls, code):
-        return cls.Report.objects.get(code=code).name
+    def get_unit_name(cls, code, year):
+        with in_database(st.HISTORICAL[str(year)]):
+            return cls.Report.objects.get(code=code).name
 
     @classmethod
     def get_all_units_names(cls, year):
-        return cls.Report.objects.all()
+        with in_database(st.HISTORICAL[str(year)]):
+            return list(cls.Report.objects.all())
 
 
 class DeptReport(UnitReport):

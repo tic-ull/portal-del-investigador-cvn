@@ -34,6 +34,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from lxml import etree
 import dateutil.parser
+from core.routers import in_database
 from managers import CongresoManager, ScientificExpManager, CvnItemManager
 from parsers.read_helpers import parse_date, parse_nif, parse_cvnitem_to_class
 from parsers.write import CvnXmlWriter
@@ -777,44 +778,46 @@ class ReportUnit(models.Model):
     type = ''
 
     def update_members(self, year):
-        try:
-            members = ws.get(url=self.WS_URL_DETAIL % (self.code, year),
-                             use_redis=False)[0]['miembros']
-        except KeyError:
-            logger.warn(self.type + " " + self.code +
-                        " does not exist in WS_URL_DETAIL for year " + year)
-            return  # This happens if the webservices are not that good.
-        for member in members:
+        with in_database(st.HISTORICAL[year], write=True):
             try:
+                members = ws.get(url=self.WS_URL_DETAIL % (self.code, year),
+                                 use_redis=False)[0]['miembros']
+            except KeyError:
+                logger.warn(self.type + " " + self.code +
+                            " does not exist in WS_URL_DETAIL for year " + year)
+                return  # This happens if the webservices are not that good.
+            for member in members:
+                try:
 
-                up = UserProfile.objects.get(
-                    rrhh_code=member['cod_persona'])
-            except UserProfile.DoesNotExist:
-                response = ws.get(st.WS_DOCUMENT % member['cod_persona'])
-                document = response['numero_documento'] + response['letra']
-                up = UserProfile.get_or_create_user(document,
-                                                    document)[0].profile
-                up.rrhh_code = member['cod_persona']
-                up.save()
-                up.user.first_name = member['cod_persona__nombre']
-                up.user.last_name = (member['cod_persona__apellido1'] + " " +
-                                     member['cod_persona__apellido2'])[:30]
-                up.user.save()
-                rp = ReportMember.objects.get_or_create(user_profile=up)[0]
-                rp.save()
+                    up = UserProfile.objects.get(
+                        rrhh_code=member['cod_persona'])
+                except UserProfile.DoesNotExist:
+                    response = ws.get(st.WS_DOCUMENT % member['cod_persona'])
+                    document = response['numero_documento'] + response['letra']
+                    up = UserProfile.get_or_create_user(document,
+                                                        document)[0].profile
+                    up.rrhh_code = member['cod_persona']
+                    up.save()
+                    up.user.first_name = member['cod_persona__nombre']
+                    up.user.last_name = (member['cod_persona__apellido1'] +
+                                         " " +
+                                         member['cod_persona__apellido2'])[:30]
+                    up.user.save()
+                    ReportMember.objects.get_or_create(user_profile=up)
 
-            setattr(up.reportmember, self.type, self)
-            up.reportmember.cce = member['cod_cce__descripcion']
-            up.reportmember.save()
+                setattr(up.reportmember, self.type, self)
+                up.reportmember.cce = member['cod_cce__descripcion']
+                up.reportmember.save()
 
     @classmethod
     def load(cls, year):
-        units = ws.get(url=cls.WS_URL_ALL % year, use_redis=False)
-        for unit in units:
-            unit_code = str(unit['codigo'])
-            unit_object = cls.objects.create(code=unit_code,
-                                             name=unit['nombre'])
-            unit_object.update_members(year)
+        with in_database(st.HISTORICAL[year], write=True):
+            units = ws.get(url=cls.WS_URL_ALL % year, use_redis=False)
+            for unit in units:
+                unit_code = str(unit['codigo'])
+                unit_object = cls.objects.create(code=unit_code,
+                                                 name=unit['nombre'])
+                unit_object.update_members(year)
 
     def __unicode__(self):
         return self.code + ": " + self.name
@@ -842,9 +845,10 @@ class ReportMember(models.Model):
     cce = models.TextField(_("CCE Name"), blank=True)
 
     @classmethod
-    def create_all(cls):
-        for up in UserProfile.objects.all():
-            cls.objects.create(user_profile=up)
+    def create_all(cls, year):
+        with in_database(st.HISTORICAL[year], write=True):
+            for up in UserProfile.objects.all():
+                cls.objects.create(user_profile=up)
 
     def __unicode__(self):
         return str(self.user_profile)
