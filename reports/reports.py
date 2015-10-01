@@ -64,15 +64,21 @@ class BaseReport:
             return
         # We use the historical cv of the users
         with in_database(st.HISTORICAL[str(self.year)]):
-            articulos = Articulo.objects.byUsuariosYear(profiles, self.year)
-            libros = Libro.objects.byUsuariosYear(profiles, self.year)
-            capitulos_libro = Capitulo.objects.byUsuariosYear(profiles,
-                                                              self.year)
-            congresos = Congreso.objects.byUsuariosYear(profiles, self.year)
-            proyectos = Proyecto.objects.byUsuariosYear(profiles, self.year)
-            convenios = Convenio.objects.byUsuariosYear(profiles, self.year)
-            tesis = TesisDoctoral.objects.byUsuariosYear(profiles, self.year)
-            patentes = Patente.objects.byUsuariosYear(profiles, self.year)
+            articulos = list(Articulo.objects.byUsuariosYear(
+                profiles, self.year))
+            libros = list(Libro.objects.byUsuariosYear(profiles, self.year))
+            capitulos_libro = list(Capitulo.objects.byUsuariosYear(
+                profiles, self.year))
+            congresos = list(Congreso.objects.byUsuariosYear(
+                profiles, self.year))
+            proyectos = list(Proyecto.objects.byUsuariosYear(
+                profiles, self.year))
+            convenios = list(Convenio.objects.byUsuariosYear(
+                profiles, self.year))
+            tesis = list(TesisDoctoral.objects.byUsuariosYear(
+                profiles, self.year))
+            patentes = list(Patente.objects.byUsuariosYear(
+                profiles, self.year))
         return self.generator.go(unit_name, inv, articulos, libros,
                                  capitulos_libro, congresos, proyectos,
                                  convenios, tesis, patentes)
@@ -110,8 +116,8 @@ class UnitReport(BaseReport):
 
     def get_all_units(self):
         with in_database(st.HISTORICAL[str(self.year)]):
-            return self.Report.objects.exclude(reportmember=None).order_by(
-                'name')
+            return list(self.Report.objects.exclude(reportmember=None).order_by(
+                'name'))
 
     def get_investigadores(self, unit, title):
         with in_database(st.HISTORICAL[str(self.year)]):

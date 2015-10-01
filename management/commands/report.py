@@ -29,6 +29,7 @@ from cvn.reports.generators import InformePDF
 from cvn.reports.generators import InformeCSV
 from cvn.reports.reports import DeptReport, AreaReport, UsersReport
 from optparse import make_option
+from django.conf import settings as st
 
 
 class Command(BaseCommand):
@@ -89,7 +90,7 @@ class Command(BaseCommand):
                 Report = AreaReport
             else:
                 Report = DeptReport
-            unit_id = [Report.objects.get(int(options['unit_code']))] if type(options['unit_code']) is str else None
+            unit_id = [Report.Report.objects.using(st.HISTORICAL[year]).get(int(options['unit_code']))] if type(options['unit_code']) is str else None
             report = Report(Generator, year)
             report.create_reports(unit_id)
         else:
