@@ -35,13 +35,12 @@ class Command(BaseCommand):
     help = u'Fix memberships of departments'
 
     def handle(self, *args, **options):
-        with open(os.path.join(st.BASE_DIR,
-                               'Investigadores_cambiar_dept_code.csv')) as csv:
+        with open(os.path.join(st.BASE_DIR,'dept_membership.csv')) as csv:
             reader = unicodecsv.DictReader(csv, delimiter=',')
             for row in reader:
                 member = ReportMember.objects.get(
                     user_profile__rrhh_code=row['COD_PERSONA'])
-                departamento = ReportDept.objects.get(code=row[
+                department = ReportDept.objects.get(code=row[
                     'COD_DEPARTAMENTO'])
-                member.department = departamento
+                member.department = department
                 member.save()
