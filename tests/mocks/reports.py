@@ -26,7 +26,7 @@
 @classmethod
 def get_area_dept_404(cls, url, use_redis=True, timeout=None):
     if 'numero_documento' in url:
-        return {'numero_documento': '54875596-B'}
+        return {'numero_documento': '54875596', 'letra':'B' }
     elif 'get_codpersona?nif' in url:
         return 38268
     elif "get_areas" in url:
