@@ -349,6 +349,17 @@ class CVNTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         st.AUTHENTICATION_BACKENDS = ('core.backends.CASBackend',)
 
+    def _create_dept_and_area_fake(self, year, code, report_type):
+        with in_database(st.HISTORICAL[year], write=True):
+            ReportDept.objects.create(code=code, name='Departamento 1')
+            ReportArea.objects.create(code=code, name='Area 1')
+        dept_path = get_report_path(unit_type='dept', report_type=report_type,
+                                    year=year, code=code, check_file=False)
+        area_path = get_report_path(unit_type='area', report_type=report_type,
+                                    year=year, code=code, check_file=False)
+        touch(dept_path)
+        touch(area_path)
+
     def test_user_with_permission_can_download_rcsv(self):
         u = UserFactory.create_and_login(self.client)
         u.user_permissions.add(Permission.objects.get(
@@ -360,15 +371,7 @@ class CVNTestCase(TestCase):
         session['dept_code'] = 4987
         session['area_code'] = 4987
         session.save()
-        with in_database(st.HISTORICAL['2014'], write=True):
-            ReportDept.objects.create(code=4987, name='Departamento 1')
-            ReportArea.objects.create(code=4987, name='Area 1')
-        dept_path = get_report_path(unit_type='dept', report_type='rcsv',
-                                    year='2014', code=4987, check_file=False)
-        area_path = get_report_path(unit_type='area', report_type='rcsv',
-                                    year='2014', code=4987, check_file=False)
-        touch(dept_path)
-        touch(area_path)
+        self._create_dept_and_area_fake('2014', 4987, 'rcsv')
         response = self.client.get(reverse('download_report', kwargs={
             'type': 'rcsv', 'year': '2014', 'unit_type': 'dept'}))
         self.assertEqual(response.status_code, 200)
@@ -380,9 +383,98 @@ class CVNTestCase(TestCase):
         session['dept_code'] = 4987
         session['area_code'] = 4987
         session.save()
+        self._create_dept_and_area_fake('2014', 4987, 'rcsv')
         response = self.client.get(reverse('download_report', kwargs={
-            'type': 'rcsv', 'year': '2015', 'unit_type': 'dept'}))
+            'type': 'rcsv', 'year': '2014', 'unit_type': 'dept'}))
         self.assertEqual(response.status_code, 404)
+        st.AUTHENTICATION_BACKENDS = ('core.backends.CASBackend',)
+
+    def test_user_with_permission_can_download_icsv(self):
+        u = UserFactory.create_and_login(self.client)
+        u.user_permissions.add(Permission.objects.get(
+            codename='read_cvn_reports'))
+        u.user_permissions.add(Permission.objects.get(
+            codename='read_admin_menu'))
+        u.save()
+        session = self.client.session  # session has to be put in a variable
+        session['dept_code'] = 4988
+        session['area_code'] = 4988
+        session.save()
+        self._create_dept_and_area_fake('2014', 4987, 'icsv')
+        response = self.client.get(reverse('download_report', kwargs={
+            'type': 'icsv', 'year': '2014', 'unit_type': 'dept',
+            'code': '4987'}))
+        self.assertEqual(response.status_code, 200)
+        st.AUTHENTICATION_BACKENDS = ('core.backends.CASBackend',)
+
+    def test_user_without_permission_cant_download_icsv(self):
+        u = UserFactory.create_and_login(self.client)
+        session = self.client.session  # session has to be put in a variable
+        session['dept_code'] = 4988
+        session['area_code'] = 4988
+        session.save()
+        self._create_dept_and_area_fake('2014', 4987, 'icsv')
+        response = self.client.get(reverse('download_report', kwargs={
+            'type': 'icsv', 'year': '2014', 'unit_type': 'dept',
+            'code': '4987'}))
+        self.assertEqual(response.status_code, 404)
+        st.AUTHENTICATION_BACKENDS = ('core.backends.CASBackend',)
+
+    def test_user_without_permission_can_download_his_icsv(self):
+        u = UserFactory.create_and_login(self.client)
+        session = self.client.session  # session has to be put in a variable
+        session['dept_code'] = 4987
+        session['area_code'] = 4987
+        session.save()
+        self._create_dept_and_area_fake('2014', 4987, 'icsv')
+        response = self.client.get(reverse('download_report', kwargs={
+            'type': 'icsv', 'year': '2014', 'unit_type': 'dept',
+            'code': '4987'}))
+        self.assertEqual(response.status_code, 200)
+        st.AUTHENTICATION_BACKENDS = ('core.backends.CASBackend',)
+
+    def test_user_with_permission_can_download_ipdf(self):
+        u = UserFactory.create_and_login(self.client)
+        u.user_permissions.add(Permission.objects.get(
+            codename='read_cvn_reports'))
+        u.user_permissions.add(Permission.objects.get(
+            codename='read_admin_menu'))
+        u.save()
+        session = self.client.session  # session has to be put in a variable
+        session['dept_code'] = 4988
+        session['area_code'] = 4988
+        session.save()
+        self._create_dept_and_area_fake('2014', 4987, 'ipdf')
+        response = self.client.get(reverse('download_report', kwargs={
+            'type': 'ipdf', 'year': '2014', 'unit_type': 'dept',
+            'code': '4987'}))
+        self.assertEqual(response.status_code, 200)
+        st.AUTHENTICATION_BACKENDS = ('core.backends.CASBackend',)
+
+    def test_user_without_permission_cant_download_ipdf(self):
+        u = UserFactory.create_and_login(self.client)
+        session = self.client.session  # session has to be put in a variable
+        session['dept_code'] = 4988
+        session['area_code'] = 4988
+        session.save()
+        self._create_dept_and_area_fake('2014', 4987, 'ipdf')
+        response = self.client.get(reverse('download_report', kwargs={
+            'type': 'ipdf', 'year': '2014', 'unit_type': 'dept',
+            'code': '4987'}))
+        self.assertEqual(response.status_code, 404)
+        st.AUTHENTICATION_BACKENDS = ('core.backends.CASBackend',)
+
+    def test_user_without_permission_can_download_his_ipdf(self):
+        u = UserFactory.create_and_login(self.client)
+        session = self.client.session  # session has to be put in a variable
+        session['dept_code'] = 4987
+        session['area_code'] = 4987
+        session.save()
+        self._create_dept_and_area_fake('2014', 4987, 'ipdf')
+        response = self.client.get(reverse('download_report', kwargs={
+            'type': 'ipdf', 'year': '2014', 'unit_type': 'dept',
+            'code': '4987'}))
+        self.assertEqual(response.status_code, 200)
         st.AUTHENTICATION_BACKENDS = ('core.backends.CASBackend',)
 
     @classmethod
