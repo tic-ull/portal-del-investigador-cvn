@@ -43,9 +43,22 @@ from statistics.models import Area, Department
 import os
 from django.core.management import call_command
 from bs4 import BeautifulSoup
+from core.routers import in_database
+from cvn.models import ReportDept, ReportArea
+from cvn.reports.shortcuts import get_report_path
+import os
+
+
+def touch(fname, times=None):
+    path = os.path.dirname(fname)
+    if not os.path.exists(path):
+        os.makedirs(path)
+    with open(fname, 'a'):
+        os.utime(fname, times)
 
 
 class CVNTestCase(TestCase):
+    multi_db = True
 
     @classmethod
     def setUpClass(cls):
@@ -165,6 +178,7 @@ class CVNTestCase(TestCase):
         self.assertTrue(os.path.isfile(output_file))
 
     @patch.object(CachedWS, 'get', get_area_dept_404)
+    @in_database(st.HISTORICAL['2013'], write=True)
     def test_area_icsv(self):
         output_file = (os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_ICSV_PATH) +
                        '/area/2013/2013-area-aria.csv')
@@ -174,6 +188,7 @@ class CVNTestCase(TestCase):
             "unit": ReportArea.objects.get(code="404")})
 
     @patch.object(CachedWS, 'get', get_area_dept_404)
+    @in_database(st.HISTORICAL['2013'], write=True)
     def test_area_ipdf(self):
         output_file = (os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_IPDF_PATH) +
                        '/area/2013/2013-area-aria.pdf')
@@ -183,6 +198,7 @@ class CVNTestCase(TestCase):
             "unit": ReportArea.objects.get(code="404")})
 
     @patch.object(CachedWS, 'get', get_area_dept_404)
+    @in_database(st.HISTORICAL['2013'], write=True)
     def test_area_rcsv(self):
         output_file = (os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_RCSV_PATH) +
                        '/area/2013/2013-area.csv')
@@ -192,6 +208,7 @@ class CVNTestCase(TestCase):
             "unit": ReportArea.objects.get(code="404")})
 
     @patch.object(CachedWS, 'get', get_area_dept_404)
+    @in_database(st.HISTORICAL['2013'], write=True)
     def test_dept_icsv(self):
         output_file = (os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_ICSV_PATH) +
                        '/department/2013/2013-departamento-departamental.csv')
@@ -201,6 +218,7 @@ class CVNTestCase(TestCase):
                        {"unit": ReportDept.objects.get(code="404")})
 
     @patch.object(CachedWS, 'get', get_area_dept_404)
+    @in_database(st.HISTORICAL['2013'], write=True)
     def test_dept_ipdf(self):
 
         output_file = (os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_IPDF_PATH) +
@@ -211,6 +229,7 @@ class CVNTestCase(TestCase):
             "unit": ReportDept.objects.get(code="404")})
 
     @patch.object(CachedWS, 'get', get_area_dept_404)
+    @in_database(st.HISTORICAL['2013'], write=True)
     def test_dept_rcsv(self):
         output_file = (os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_RCSV_PATH) +
                        '/department/2013/2013-department.csv')
@@ -220,6 +239,7 @@ class CVNTestCase(TestCase):
                        {"unit": ReportDept.objects.get(code="404")})
 
     @patch.object(CachedWS, 'get', get_area_dept_404)
+    @in_database(st.HISTORICAL['2013'], write=True)
     def test_users_rcsv(self):
         output_file = (os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_RCSV_PATH) +
                        '/users/2013/2013-users.csv')
@@ -340,8 +360,17 @@ class CVNTestCase(TestCase):
         session['dept_code'] = 4987
         session['area_code'] = 4987
         session.save()
+        with in_database(st.HISTORICAL['2014'], write=True):
+            ReportDept.objects.create(code=4987, name='Departamento 1')
+            ReportArea.objects.create(code=4987, name='Area 1')
+        dept_path = get_report_path(unit_type='dept', report_type='rcsv',
+                                    year='2014', code=4987, check_file=False)
+        area_path = get_report_path(unit_type='area', report_type='rcsv',
+                                    year='2014', code=4987, check_file=False)
+        touch(dept_path)
+        touch(area_path)
         response = self.client.get(reverse('download_report', kwargs={
-            'type': 'rcsv', 'year': '2015', 'unit_type': 'dept'}))
+            'type': 'rcsv', 'year': '2014', 'unit_type': 'dept'}))
         self.assertEqual(response.status_code, 200)
         st.AUTHENTICATION_BACKENDS = ('core.backends.CASBackend',)
 
