@@ -34,8 +34,7 @@ from core.tests.factories import UserFactory
 from cvn.reports import UsersReport, AreaReport, DeptReport
 from cvn.reports.generators import InformeCSV, ResumenCSV, InformePDF
 from cvn.models import (Articulo, Capitulo, Congreso, Convenio, Patente,
-                        Proyecto, TesisDoctoral, Libro, ReportDept,
-                        ReportArea)
+                        Proyecto, TesisDoctoral, Libro)
 from .mocks.reports import get_area_dept_404
 from django.conf import settings as st
 from cvn import settings as st_cvn
@@ -46,7 +45,9 @@ from bs4 import BeautifulSoup
 from core.routers import in_database
 from cvn.models import ReportDept, ReportArea
 from cvn.reports.shortcuts import get_report_path
-import os
+from django.test.utils import override_settings
+
+MODEL_BACKEND = 'django.contrib.auth.backends.ModelBackend'
 
 
 def touch(fname, times=None):
@@ -259,6 +260,7 @@ class CVNTestCase(TestCase):
                        '/users/2013/2013-informe-users.csv')
         self.icsv_test(output_file, UsersReport, {"title": "informe-users"})
 
+    @override_settings(AUTHENTICATION_BACKENDS=(MODEL_BACKEND,))
     def test_user_with_permission_can_view_admin_reports_link(self):
         u = UserFactory.create_and_login(self.client)
         u.user_permissions.add(Permission.objects.get(
@@ -269,15 +271,15 @@ class CVNTestCase(TestCase):
         soup = BeautifulSoup(self.client.get(reverse('cvn')).content, 'lxml')
         reports_link = soup.select('a#admin_reports_link')
         self.assertEqual(len(reports_link), 1)
-        st.AUTHENTICATION_BACKENDS = ('core.backends.CASBackend',)
 
+    @override_settings(AUTHENTICATION_BACKENDS=(MODEL_BACKEND,))
     def test_user_without_permission_cant_view_admin_reports_link(self):
         u = UserFactory.create_and_login(self.client)
         soup = BeautifulSoup(self.client.get(reverse('cvn')).content, 'lxml')
         reports_link = soup.select('a#admin_reports_link')
         self.assertEqual(len(reports_link), 0)
-        st.AUTHENTICATION_BACKENDS = ('core.backends.CASBackend',)
 
+    @override_settings(AUTHENTICATION_BACKENDS=(MODEL_BACKEND,))
     def test_user_with_permission_cant_view_reports_link(self):
         u = UserFactory.create_and_login(self.client)
         u.profile.rrhh_code = 9354
@@ -290,8 +292,8 @@ class CVNTestCase(TestCase):
         soup = BeautifulSoup(self.client.get(reverse('cvn')).content, 'lxml')
         reports_link = soup.select('a#reports_link')
         self.assertEqual(len(reports_link), 0)
-        st.AUTHENTICATION_BACKENDS = ('core.backends.CASBackend',)
 
+    @override_settings(AUTHENTICATION_BACKENDS=(MODEL_BACKEND,))
     def test_user_without_permission_can_view_reports_link(self):
         u = UserFactory.create_and_login(self.client)
         u.profile.rrhh_code = 9354
@@ -299,14 +301,14 @@ class CVNTestCase(TestCase):
         soup = BeautifulSoup(self.client.get(reverse('cvn')).content, 'lxml')
         reports_link = soup.select('a#reports_link')
         self.assertEqual(len(reports_link), 1)
-        st.AUTHENTICATION_BACKENDS = ('core.backends.CASBackend',)
 
+    @override_settings(AUTHENTICATION_BACKENDS=(MODEL_BACKEND,))
     def test_user_without_permission_cant_view_admin_reports(self):
         u = UserFactory.create_and_login(self.client)
         response = self.client.get(reverse('admin_reports'))
         self.assertEqual(response.status_code, 404)
-        st.AUTHENTICATION_BACKENDS = ('core.backends.CASBackend',)
 
+    @override_settings(AUTHENTICATION_BACKENDS=(MODEL_BACKEND,))
     def test_user_with_permission_can_view_admin_reports(self):
         u = UserFactory.create_and_login(self.client)
         u.user_permissions.add(Permission.objects.get(
@@ -316,8 +318,8 @@ class CVNTestCase(TestCase):
         u.save()
         response = self.client.get(reverse('admin_reports'))
         self.assertEqual(response.status_code, 200)
-        st.AUTHENTICATION_BACKENDS = ('core.backends.CASBackend',)
 
+    @override_settings(AUTHENTICATION_BACKENDS=(MODEL_BACKEND,))
     def test_user_without_permission_can_view_reports(self):
         u = UserFactory.create_and_login(self.client)
         Department.objects.create(
@@ -329,8 +331,8 @@ class CVNTestCase(TestCase):
         session.save()
         response = self.client.get(reverse('reports'))
         self.assertEqual(response.status_code, 200)
-        st.AUTHENTICATION_BACKENDS = ('core.backends.CASBackend',)
 
+    @override_settings(AUTHENTICATION_BACKENDS=(MODEL_BACKEND,))
     def test_user_with_permission_can_view_reports(self):
         u = UserFactory.create_and_login(self.client)
         u.user_permissions.add(Permission.objects.get(
@@ -347,7 +349,6 @@ class CVNTestCase(TestCase):
         session.save()
         response = self.client.get(reverse('reports'))
         self.assertEqual(response.status_code, 200)
-        st.AUTHENTICATION_BACKENDS = ('core.backends.CASBackend',)
 
     def _create_dept_and_area_fake(self, year, code, report_type):
         with in_database(st.HISTORICAL[year], write=True):
@@ -360,6 +361,7 @@ class CVNTestCase(TestCase):
         touch(dept_path)
         touch(area_path)
 
+    @override_settings(AUTHENTICATION_BACKENDS=(MODEL_BACKEND,))
     def test_user_with_permission_can_download_rcsv(self):
         u = UserFactory.create_and_login(self.client)
         u.user_permissions.add(Permission.objects.get(
@@ -375,8 +377,8 @@ class CVNTestCase(TestCase):
         response = self.client.get(reverse('download_report', kwargs={
             'type': 'rcsv', 'year': '2014', 'unit_type': 'dept'}))
         self.assertEqual(response.status_code, 200)
-        st.AUTHENTICATION_BACKENDS = ('core.backends.CASBackend',)
 
+    @override_settings(AUTHENTICATION_BACKENDS=(MODEL_BACKEND,))
     def test_user_without_permission_cant_download_rcsv(self):
         u = UserFactory.create_and_login(self.client)
         session = self.client.session  # session has to be put in a variable
@@ -387,8 +389,8 @@ class CVNTestCase(TestCase):
         response = self.client.get(reverse('download_report', kwargs={
             'type': 'rcsv', 'year': '2014', 'unit_type': 'dept'}))
         self.assertEqual(response.status_code, 404)
-        st.AUTHENTICATION_BACKENDS = ('core.backends.CASBackend',)
 
+    @override_settings(AUTHENTICATION_BACKENDS=(MODEL_BACKEND,))
     def test_user_with_permission_can_download_icsv(self):
         u = UserFactory.create_and_login(self.client)
         u.user_permissions.add(Permission.objects.get(
@@ -405,8 +407,8 @@ class CVNTestCase(TestCase):
             'type': 'icsv', 'year': '2014', 'unit_type': 'dept',
             'code': '4987'}))
         self.assertEqual(response.status_code, 200)
-        st.AUTHENTICATION_BACKENDS = ('core.backends.CASBackend',)
 
+    @override_settings(AUTHENTICATION_BACKENDS=(MODEL_BACKEND,))
     def test_user_without_permission_cant_download_icsv(self):
         u = UserFactory.create_and_login(self.client)
         session = self.client.session  # session has to be put in a variable
@@ -418,8 +420,8 @@ class CVNTestCase(TestCase):
             'type': 'icsv', 'year': '2014', 'unit_type': 'dept',
             'code': '4987'}))
         self.assertEqual(response.status_code, 404)
-        st.AUTHENTICATION_BACKENDS = ('core.backends.CASBackend',)
 
+    @override_settings(AUTHENTICATION_BACKENDS=(MODEL_BACKEND,))
     def test_user_without_permission_can_download_his_icsv(self):
         u = UserFactory.create_and_login(self.client)
         session = self.client.session  # session has to be put in a variable
@@ -431,8 +433,8 @@ class CVNTestCase(TestCase):
             'type': 'icsv', 'year': '2014', 'unit_type': 'dept',
             'code': '4987'}))
         self.assertEqual(response.status_code, 200)
-        st.AUTHENTICATION_BACKENDS = ('core.backends.CASBackend',)
 
+    @override_settings(AUTHENTICATION_BACKENDS=(MODEL_BACKEND,))
     def test_user_with_permission_can_download_ipdf(self):
         u = UserFactory.create_and_login(self.client)
         u.user_permissions.add(Permission.objects.get(
@@ -449,8 +451,8 @@ class CVNTestCase(TestCase):
             'type': 'ipdf', 'year': '2014', 'unit_type': 'dept',
             'code': '4987'}))
         self.assertEqual(response.status_code, 200)
-        st.AUTHENTICATION_BACKENDS = ('core.backends.CASBackend',)
 
+    @override_settings(AUTHENTICATION_BACKENDS=(MODEL_BACKEND,))
     def test_user_without_permission_cant_download_ipdf(self):
         u = UserFactory.create_and_login(self.client)
         session = self.client.session  # session has to be put in a variable
@@ -462,8 +464,8 @@ class CVNTestCase(TestCase):
             'type': 'ipdf', 'year': '2014', 'unit_type': 'dept',
             'code': '4987'}))
         self.assertEqual(response.status_code, 404)
-        st.AUTHENTICATION_BACKENDS = ('core.backends.CASBackend',)
 
+    @override_settings(AUTHENTICATION_BACKENDS=(MODEL_BACKEND,))
     def test_user_without_permission_can_download_his_ipdf(self):
         u = UserFactory.create_and_login(self.client)
         session = self.client.session  # session has to be put in a variable
@@ -475,7 +477,6 @@ class CVNTestCase(TestCase):
             'type': 'ipdf', 'year': '2014', 'unit_type': 'dept',
             'code': '4987'}))
         self.assertEqual(response.status_code, 200)
-        st.AUTHENTICATION_BACKENDS = ('core.backends.CASBackend',)
 
     @classmethod
     def tearDownClass(cls):
