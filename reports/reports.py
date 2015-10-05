@@ -23,7 +23,6 @@
 #
 
 from abc import ABCMeta
-import os
 import logging
 from django.conf import settings as st
 from core.routers import in_database
@@ -111,19 +110,20 @@ class UsersReport(BaseReport):
         return investigadores, profiles, title
 
 
-class UnitReport(BaseReport):
+class DBReport(BaseReport):
     Report = None
 
     def get_all_units(self):
         with in_database(st.HISTORICAL[str(self.year)]):
-            return list(self.Report.objects.exclude(reportmember=None).order_by(
-                'name'))
+            return [r.code for r in self.Report.objects.exclude(
+                reportmember=None).order_by('name')]
 
     def get_investigadores(self, unit, title):
         with in_database(st.HISTORICAL[str(self.year)]):
-            if unit is None:
+            unit_model = self.Report.objects.get(code=unit)
+            if unit_model is None:
                 return NotImplemented
-            members = unit.reportmember_set.all().order_by(
+            members = unit_model.reportmember_set.all().order_by(
                 'user_profile__user__last_name',
                 'user_profile__user__first_name'
             )
@@ -139,7 +139,7 @@ class UnitReport(BaseReport):
                 })
 
             if title is None:
-                title = unit.name
+                title = unit_model.name
             return investigadores, usuarios, title
 
     @classmethod
@@ -153,11 +153,11 @@ class UnitReport(BaseReport):
             return list(cls.Report.objects.all())
 
 
-class DeptReport(UnitReport):
+class DBDeptReport(DBReport):
     report_type = st_cvn.REPORTS_DIRECTORY.DEPT.value
     Report = ReportDept
 
 
-class AreaReport(UnitReport):
+class DBAreaReport(DBReport):
     report_type = st_cvn.REPORTS_DIRECTORY.AREA.value
     Report = ReportArea

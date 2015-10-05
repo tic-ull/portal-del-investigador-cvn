@@ -31,7 +31,7 @@ from mock import patch
 from core.ws_utils import CachedWS
 from core.tests.helpers import init, clean
 from core.tests.factories import UserFactory
-from cvn.reports import UsersReport, AreaReport, DeptReport
+from cvn.reports import UsersReport, DBAreaReport, DBDeptReport
 from cvn.reports.generators import InformeCSV, ResumenCSV, InformePDF
 from cvn.models import (Articulo, Capitulo, Congreso, Convenio, Patente,
                         Proyecto, TesisDoctoral, Libro)
@@ -148,11 +148,11 @@ class CVNTestCase(TestCase):
             TesisDoctoral.objects.filter(fecha__year='2013').count()
         )
 
-    def rcsv_test(self, output_file, report, n_inv, params):
-        report_ = report(ResumenCSV, 2013)
+    def rcsv_test(self, output_file, Report, n_inv, params):
+        report = Report(ResumenCSV, 2013)
 
-        report_.create_report(**params)
-        report_.generator._file.close()
+        report.create_report(**params)
+        report.generator._file.close()
         with open(output_file, 'r') as f:
             data = f.read().splitlines()[1].split("|")[1:]
         self.assertEqual(int(data[0]), n_inv)
@@ -185,8 +185,7 @@ class CVNTestCase(TestCase):
                        '/area/2013/2013-area-aria.csv')
         self.fill_db(range(1, 5))
         call_command('update_report_data', year='2013')
-        self.icsv_test(output_file, AreaReport, {
-            "unit": ReportArea.objects.get(code="404")})
+        self.icsv_test(output_file, DBAreaReport, {"unit": "404"})
 
     @patch.object(CachedWS, 'get', get_area_dept_404)
     @in_database(st.HISTORICAL['2013'], write=True)
@@ -195,8 +194,7 @@ class CVNTestCase(TestCase):
                        '/area/2013/2013-area-aria.pdf')
         self.fill_db(range(1, 5))
         call_command('update_report_data', year='2013')
-        self.pdf_test(output_file, AreaReport, {
-            "unit": ReportArea.objects.get(code="404")})
+        self.pdf_test(output_file, DBAreaReport, {"unit": "404"})
 
     @patch.object(CachedWS, 'get', get_area_dept_404)
     @in_database(st.HISTORICAL['2013'], write=True)
@@ -205,8 +203,7 @@ class CVNTestCase(TestCase):
                        '/area/2013/2013-area.csv')
         self.fill_db(range(1, 5))
         call_command('update_report_data', year='2013')
-        self.rcsv_test(output_file, AreaReport, 5, {
-            "unit": ReportArea.objects.get(code="404")})
+        self.rcsv_test(output_file, DBAreaReport, 5, {"unit": "404"})
 
     @patch.object(CachedWS, 'get', get_area_dept_404)
     @in_database(st.HISTORICAL['2013'], write=True)
@@ -215,8 +212,7 @@ class CVNTestCase(TestCase):
                        '/department/2013/2013-departamento-departamental.csv')
         self.fill_db(range(6, 9))
         call_command('update_report_data', year='2013')
-        self.icsv_test(output_file, DeptReport,
-                       {"unit": ReportDept.objects.get(code="404")})
+        self.icsv_test(output_file, DBDeptReport, {"unit": "404"})
 
     @patch.object(CachedWS, 'get', get_area_dept_404)
     @in_database(st.HISTORICAL['2013'], write=True)
@@ -226,8 +222,7 @@ class CVNTestCase(TestCase):
                        '/department/2013/2013-departamento-departamental.pdf')
         self.fill_db(range(6, 9))
         call_command('update_report_data', year='2013')
-        self.pdf_test(output_file, DeptReport, {
-            "unit": ReportDept.objects.get(code="404")})
+        self.pdf_test(output_file, DBDeptReport, {"unit": "404"})
 
     @patch.object(CachedWS, 'get', get_area_dept_404)
     @in_database(st.HISTORICAL['2013'], write=True)
@@ -236,8 +231,7 @@ class CVNTestCase(TestCase):
                        '/department/2013/2013-department.csv')
         self.fill_db(range(6, 9))
         call_command('update_report_data', year='2013')
-        self.rcsv_test(output_file, DeptReport, 3,
-                       {"unit": ReportDept.objects.get(code="404")})
+        self.rcsv_test(output_file, DBDeptReport, 3, {"unit": "404"})
 
     @patch.object(CachedWS, 'get', get_area_dept_404)
     @in_database(st.HISTORICAL['2013'], write=True)
@@ -245,8 +239,7 @@ class CVNTestCase(TestCase):
         output_file = (os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_RCSV_PATH) +
                        '/users/2013/2013-users.csv')
         self.fill_db(range(1, 5))
-        self.rcsv_test(output_file, UsersReport, 5,
-                       {"title": "users"})
+        self.rcsv_test(output_file, UsersReport, 5, {"title": "users"})
 
     @patch.object(CachedWS, 'get', get_area_dept_404)
     def test_user_ipdf(self):

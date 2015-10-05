@@ -39,7 +39,7 @@ from .forms import UploadCVNForm, GetDataCVNULL, DownloadReportForm
 from .models import CVN
 from .utils import (scientific_production_to_context, cvn_to_context,
                     stats_to_context)
-from .reports import DeptReport, AreaReport
+from .reports import DBDeptReport, DBAreaReport
 from .reports.shortcuts import get_report_path, ReportDoesNotExist
 from .decorators import user_can_view_reports
 from statistics.models import Area, Department
@@ -156,8 +156,8 @@ class AdminReportsView(TemplateView):
         context['depts'] = {}
         context['areas'] = {}
         for year in years:
-            context['depts'][year] = DeptReport.get_all_units_names(year=year)
-            context['areas'][year] = AreaReport.get_all_units_names(year=year)
+            context['depts'][year] = DBDeptReport.get_all_units_names(year=year)
+            context['areas'][year] = DBAreaReport.get_all_units_names(year=year)
         return context
 
 

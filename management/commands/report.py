@@ -27,7 +27,7 @@ from django.core.management.base import BaseCommand, CommandError
 from cvn.reports.generators import ResumenCSV
 from cvn.reports.generators import InformePDF
 from cvn.reports.generators import InformeCSV
-from cvn.reports.reports import DeptReport, AreaReport, UsersReport
+from cvn.reports.reports import DBDeptReport, DBAreaReport, UsersReport
 from optparse import make_option
 from django.conf import settings as st
 
@@ -87,10 +87,10 @@ class Command(BaseCommand):
             Generator = ResumenCSV
         if options['type'] in ['a', 'd']:
             if options['type'] == 'a':
-                Report = AreaReport
+                Report = DBAreaReport
             else:
-                Report = DeptReport
-            unit_id = [Report.Report.objects.using(st.HISTORICAL[year]).get(int(options['unit_code']))] if type(options['unit_code']) is str else None
+                Report = DBDeptReport
+            unit_id = [int(options['unit_code'])] if type(options['unit_code']) is str else None
             report = Report(Generator, year)
             report.create_reports(unit_id)
         else:
