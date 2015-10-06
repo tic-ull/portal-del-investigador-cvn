@@ -26,7 +26,8 @@ class Command(BaseCommand):
                 'python manage.py fix_unit_members -u {dept|area}'
             )
         unit = options['unit']
-        ReportUnit =  ReportDept if unit == 'dept' else 'area'
+        ReportUnit =  ReportDept if unit == 'dept' else ReportArea
+        import ipdb;ipdb.set_trace()
         with open(os.path.join(st.BASE_DIR, unit + '_membership.csv')) as csv:
             reader = unicodecsv.DictReader(csv, delimiter=',')
             for row in reader:
