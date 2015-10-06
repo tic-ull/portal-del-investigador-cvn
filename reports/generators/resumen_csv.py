@@ -68,4 +68,5 @@ class ResumenCSV:
                               u'Convenios': len(convenios),
                               u'Tesis': len(tesis),
                               u'Propiedad Intelectual': len(patentes)})
+        self._file.flush()
         return self.full_path

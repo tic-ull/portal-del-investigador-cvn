@@ -24,6 +24,7 @@
 
 from abc import ABCMeta
 import logging
+import datetime
 from django.conf import settings as st
 from core.routers import in_database
 from cvn import settings as st_cvn
@@ -31,6 +32,7 @@ from cvn.models import (Articulo, Libro, Capitulo, Congreso, Proyecto,
                         Convenio, TesisDoctoral, Patente, ReportDept,
                         ReportArea)
 from core.models import UserProfile
+from core.ws_utils import CachedWS as ws
 
 logger = logging.getLogger(__name__)
 
@@ -62,7 +64,10 @@ class BaseReport:
         if not inv:
             return
         # We use the historical cv of the users
-        with in_database(st.HISTORICAL[str(self.year)]):
+        database = (st.HISTORICAL[str(self.year)]
+                    if self.year != datetime.date.today().year
+                    else 'default')
+        with in_database(database):
             articulos = list(Articulo.objects.byUsuariosYear(
                 profiles, self.year))
             libros = list(Libro.objects.byUsuariosYear(profiles, self.year))
@@ -161,3 +166,73 @@ class DBDeptReport(DBReport):
 class DBAreaReport(DBReport):
     report_type = st_cvn.REPORTS_DIRECTORY.AREA.value
     Report = ReportArea
+
+
+class WSReport(BaseReport):
+
+    WS_URL_ALL = None
+    WS_URL_DETAIL = None
+
+    @classmethod
+    def get_all_units_names(cls, year=None):
+        ws_url = cls.WS_URL_ALL
+        if year:
+            ws_url += '?year=' + str(year)
+        units = ws.get(ws_url)
+        return [{'code': unit['codigo'], 'name': unit['nombre']} for unit in units]
+
+    def get_all_units(self):
+        # Save unit names bc the ws doesn't return it when there are no members
+        self.unit_names = self.get_all_units_names(self.year)
+        return [unit['code'] for unit in self.unit_names]
+
+    def get_investigadores(self, unit, title):
+        if unit is None:
+            return NotImplemented
+        unit_content = ws.get(self.WS_URL_DETAIL % (unit, self.year))[0]
+        if unit_content["unidad"] == {}:
+            try:
+                unit_name = filter(
+                    lambda x: x['code'] == unit, self.unit_names)[0]['name']
+            except (AttributeError, KeyError):
+                unit_name = unicode(unit)
+            logger.warn(u"La unidad " + unit_name
+                        + u" no tiene información en " + unicode(self.year))
+            return [], [], unit_name
+        investigadores = []
+        usuarios = []
+        for inv in unit_content['miembros']:
+            inv = self._check_inves(inv)
+            investigadores.append(inv)
+            try:
+                user = UserProfile.objects.get(rrhh_code=inv['cod_persona'])
+                usuarios.append(user)
+            except UserProfile.DoesNotExist:
+                pass
+        if title is None:
+            title = unit_content['unidad']['nombre']
+        return investigadores, usuarios, title
+
+    @staticmethod
+    def _check_inves(inv):
+        if 'cod_persona__nombre' not in inv:
+            inv['cod_persona__nombre'] = ''
+        if 'cod_persona__apellido1' not in inv:
+            inv['cod_persona__apellido1'] = ''
+        if 'cod_persona__apellido2' not in inv:
+            inv['cod_persona__apellido2'] = ''
+        if 'cod_cce__descripcion' not in inv:
+            inv['cod_cce_descripcion'] = ''
+        return inv
+
+
+class WSDeptReport(WSReport):
+    report_type = st_cvn.REPORTS_DIRECTORY.DEPT.value
+    WS_URL_ALL = st.WS_DEPARTMENTS_ALL
+    WS_URL_DETAIL = st.WS_DEPARTMENTS_AND_MEMBERS_UNIT_YEAR
+
+
+class WSAreaReport(WSReport):
+    report_type = st_cvn.REPORTS_DIRECTORY.AREA.value
+    WS_URL_ALL = st.WS_AREAS_ALL
+    WS_URL_DETAIL = st.WS_AREAS_AND_MEMBERS_UNIT_YEAR

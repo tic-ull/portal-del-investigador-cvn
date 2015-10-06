@@ -23,7 +23,6 @@
 #
 
 import datetime
-import os
 from django.conf import settings as st
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import User
@@ -39,8 +38,9 @@ from .forms import UploadCVNForm, GetDataCVNULL, DownloadReportForm
 from .models import CVN
 from .utils import (scientific_production_to_context, cvn_to_context,
                     stats_to_context)
-from .reports import DBDeptReport, DBAreaReport
-from .reports.shortcuts import get_report_path, ReportDoesNotExist
+from .reports import DBDeptReport, DBAreaReport, WSAreaReport, WSDeptReport
+from .reports.shortcuts import (get_report_path, ReportDoesNotExist,
+                                get_report_instance)
 from .decorators import user_can_view_reports
 from statistics.models import Area, Department
 
@@ -153,11 +153,26 @@ class AdminReportsView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(AdminReportsView, self).get_context_data(**kwargs)
         years = st.HISTORICAL.keys()
-        context['depts'] = {}
-        context['areas'] = {}
+        context['depts'] = []
+        context['areas'] = []
+        current_year = datetime.date.today().year
+        context['depts'].append({
+            'year': current_year,
+            'units': WSDeptReport.get_all_units_names(year=current_year)
+        })
+        context['areas'].append({
+            'year': current_year,
+            'units': WSAreaReport.get_all_units_names(year=current_year)
+        })
         for year in years:
-            context['depts'][year] = DBDeptReport.get_all_units_names(year=year)
-            context['areas'][year] = DBAreaReport.get_all_units_names(year=year)
+            context['depts'].append({
+                'year': year,
+                'units': DBDeptReport.get_all_units_names(year=year)
+            })
+            context['areas'].append({
+                'year': year,
+                'units': DBAreaReport.get_all_units_names(year=year)
+            })
         return context
 
 
@@ -171,10 +186,21 @@ class ReportsView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(ReportsView, self).get_context_data(**kwargs)
         years = st.HISTORICAL.keys()
-        context['depts'] = {}
-        context['areas'] = {}
+        context['depts'] = []
+        context['areas'] = []
         dc = self.request.session['dept_code']
         ac = self.request.session['area_code']
+        dept = Department.objects.get(code=dc).name
+        area = Area.objects.get(code=ac).name
+        current_year = datetime.date.today().year
+        context['depts'].append({
+            'year': current_year,
+            'units': [{'code': dc, 'name': dept}]
+        })
+        context['areas'].append({
+            'year': current_year,
+            'units': [{'code': ac, 'name': area}]
+        })
         for year in years:
             try:
                 path = get_report_path('dept', 'ipdf', year, dc)
@@ -183,16 +209,21 @@ class ReportsView(TemplateView):
                 # didn't exist this year.
                 pass
             else:
-                context['depts'][year] = {dc: Department.objects.get(
-                    code=dc).name}
+                context['depts'].append({
+                    'year': year,
+                    'units': [{'code': dc, 'name': dept}]
+                })
             try:
-                path = get_report_path('area', 'ipdf', year, ac)
+                get_report_path('area', 'ipdf', year, ac)
             except ReportDoesNotExist:
                 # The report does not exist. Probably the user's department
                 # didn't exist this year.
                 pass
             else:
-                context['areas'][year] = {ac: Area.objects.get(code=ac).name}
+                context['areas'].append({
+                    'year': year,
+                    'units': [{'code': ac, 'name': area}]
+                })
         context['show_rcsv'] = False
         return context
 
@@ -235,6 +266,15 @@ class DownloadReportView(View):
         if (not user_can_view_reports(user=self.request.user)
                 and user_unit != code):
             raise Http404
-        path = get_report_path(unit_type, report_type, year, code)
+        if year == datetime.date.today().year:
+            unit_type = 'ws_' + unit_type
+            report = get_report_instance(unit_type, report_type, year)
+            if report_type == 'rcsv':
+                report.create_reports()
+                path = get_report_path(unit_type, report_type, year, code)
+            else:
+                path = report.create_report(unit=code)
+        else:
+            path = get_report_path(unit_type, report_type, year, code)
         response = self.create_response(path)
         return response

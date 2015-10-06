@@ -23,7 +23,7 @@
 #
 
 import os
-from cvn.reports import DBDeptReport, DBAreaReport
+from cvn.reports import DBDeptReport, DBAreaReport, WSAreaReport, WSDeptReport
 from cvn.reports.generators import InformeCSV, InformePDF, ResumenCSV
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -32,7 +32,9 @@ _report_type_dict = {'ipdf': InformePDF,
                      'rcsv': ResumenCSV}
 
 _unit_type_dict = {'dept': DBDeptReport,
-                   'area': DBAreaReport}
+                   'area': DBAreaReport,
+                   'ws_dept': WSDeptReport,
+                   'ws_area': WSAreaReport}
 
 
 def get_report_instance(unit_type, report_type, year):
