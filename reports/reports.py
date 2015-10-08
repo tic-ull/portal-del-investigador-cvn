@@ -205,10 +205,20 @@ class WSReport(BaseReport):
             inv = self._check_inves(inv)
             investigadores.append(inv)
             try:
-                user = UserProfile.objects.get(rrhh_code=inv['cod_persona'])
-                usuarios.append(user)
+                up = UserProfile.objects.get(rrhh_code=inv['cod_persona'])
             except UserProfile.DoesNotExist:
-                pass
+                response = ws.get(st.WS_DOCUMENT % inv['cod_persona'])
+                document = response['numero_documento'] + response['letra']
+                up = UserProfile.get_or_create_user(document,
+                                                    document)[0].profile
+                up.rrhh_code = inv['cod_persona']
+                up.save()
+                up.user.first_name = inv['cod_persona__nombre']
+                up.user.last_name = (inv['cod_persona__apellido1'] +
+                                     " " +
+                                     inv['cod_persona__apellido2'])[:30]
+                up.user.save()
+            usuarios.append(up)
         if title is None:
             title = unit_content['unidad']['nombre']
         return investigadores, usuarios, title
