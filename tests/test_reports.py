@@ -31,7 +31,8 @@ from mock import patch
 from core.ws_utils import CachedWS
 from core.tests.helpers import init, clean
 from core.tests.factories import UserFactory
-from cvn.reports import UsersReport, DBAreaReport, DBDeptReport
+from cvn.reports import (UsersReport, DBAreaReport, DBDeptReport, WSAreaReport,
+                         WSDeptReport)
 from cvn.reports.generators import InformeCSV, ResumenCSV, InformePDF
 from cvn.models import (Articulo, Capitulo, Congreso, Convenio, Patente,
                         Proyecto, TesisDoctoral, Libro)
@@ -117,64 +118,62 @@ class CVNTestCase(TestCase):
             a.save()
             a.user_profile.add(u.profile)
 
-    def icsv_test(self, output_file, Report, params):
+    def icsv_test(self, output_file, Report, params, year=2013):
 
-        report = Report(InformeCSV, 2013)
+        report = Report(InformeCSV, year)
         report.create_report(**params)
         with open(output_file, 'r') as f:
             data = f.read().splitlines()
         self.assertEqual(len(filter(lambda x: x.startswith("ArtName"), data)),
-                         Articulo.objects.filter(fecha__year='2013').count())
+                         Articulo.objects.filter(fecha__year=year).count())
         self.assertEqual(len(filter(lambda x: x.startswith("CapName"), data)),
-                         Capitulo.objects.filter(fecha__year='2013').count())
+                         Capitulo.objects.filter(fecha__year=year).count())
         self.assertEqual(len(filter(lambda x: x.startswith("LibName"), data)),
-                         Libro.objects.filter(fecha__year='2013').count())
+                         Libro.objects.filter(fecha__year=year).count())
         self.assertEqual(
             len(filter(lambda x: x.startswith("ConName"), data)),
-            Congreso.objects.filter(fecha_de_inicio__year='2013').count()
+            Congreso.objects.filter(fecha_de_inicio__year=year).count()
         )
         self.assertEqual(
             len(filter(lambda x: x.startswith("ConvName"), data)),
-            Convenio.objects.filter(fecha_de_inicio__year='2013').count()
+            Convenio.objects.filter(fecha_de_inicio__year=year).count()
         )
         self.assertEqual(len(filter(lambda x: x.startswith("PatName"), data)),
-                         Patente.objects.filter(fecha__year='2013').count())
+                         Patente.objects.filter(fecha__year=year).count())
         self.assertEqual(
             len(filter(lambda x: x.startswith("ProName"), data)),
-            Proyecto.objects.filter(fecha_de_inicio__year='2013').count()
+            Proyecto.objects.filter(fecha_de_inicio__year=year).count()
         )
         self.assertEqual(
             len(filter(lambda x: x.startswith("TesisName"), data)),
-            TesisDoctoral.objects.filter(fecha__year='2013').count()
+            TesisDoctoral.objects.filter(fecha__year=year).count()
         )
 
-    def rcsv_test(self, output_file, Report, n_inv, params):
-        report = Report(ResumenCSV, 2013)
-
+    def rcsv_test(self, output_file, Report, n_inv, params, year=2013):
+        report = Report(ResumenCSV, year)
         report.create_report(**params)
         report.generator._file.close()
         with open(output_file, 'r') as f:
             data = f.read().splitlines()[1].split("|")[1:]
         self.assertEqual(int(data[0]), n_inv)
-        self.assertEqual(int(data[1]), Articulo.objects.filter(
-            fecha__year='2013').count())
+        self.assertEqual(int(data[1]), Articulo.objects.filter(fecha__year=year).count())
         self.assertEqual(int(data[2]), Libro.objects.filter(
-            fecha__year='2013').count())
+            fecha__year=year).count())
         self.assertEqual(int(data[3]), Capitulo.objects.filter(
-            fecha__year='2013').count())
+            fecha__year=year).count())
         self.assertEqual(int(data[4]), Congreso.objects.filter(
-            fecha_de_inicio__year='2013').count())
+            fecha_de_inicio__year=year).count())
         self.assertEqual(int(data[5]), Proyecto.objects.filter(
-            fecha_de_inicio__year='2013').count())
+            fecha_de_inicio__year=year).count())
         self.assertEqual(int(data[6]), Convenio.objects.filter(
-            fecha_de_inicio__year='2013').count())
+            fecha_de_inicio__year=year).count())
         self.assertEqual(int(data[7]), TesisDoctoral.objects.filter(
-            fecha__year='2013').count())
+            fecha__year=year).count())
         self.assertEqual(int(data[8]), Patente.objects.filter(
-            fecha__year='2013').count())
+            fecha__year=year).count())
 
-    def pdf_test(self, output_file, Report, params):
-        report = Report(InformePDF, 2013)
+    def pdf_test(self, output_file, Report, params, year=2013):
+        report = Report(InformePDF, year)
         report.create_report(**params)
         self.assertTrue(os.path.isfile(output_file))
 
@@ -252,6 +251,44 @@ class CVNTestCase(TestCase):
         output_file = (os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_ICSV_PATH) +
                        '/users/2013/2013-informe-users.csv')
         self.icsv_test(output_file, UsersReport, {"title": "informe-users"})
+
+    @patch.object(CachedWS, 'get', get_area_dept_404)
+    def test_wsdept_rcsv(self):
+        output_file = (os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_RCSV_PATH) +
+                       '/department/2015/2015-department.csv')
+        self.fill_db(range(1, 5))
+        self.rcsv_test(output_file, WSDeptReport, 3, {"unit": "404"}, 2015)
+
+    @patch.object(CachedWS, 'get', get_area_dept_404)
+    def test_wsdept_ipdf(self):
+        output_file = (os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_IPDF_PATH) +
+                       '/department/2015/2015-departamento-departamental.pdf')
+        self.pdf_test(output_file, WSDeptReport, {"unit": "404"}, 2015)
+
+    @patch.object(CachedWS, 'get', get_area_dept_404)
+    def test_wsdept_icsv(self):
+        output_file = (os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_ICSV_PATH) +
+                       '/department/2015/2015-departamento-departamental.csv')
+        self.icsv_test(output_file, WSDeptReport, {"unit": "404"}, 2015)
+
+    @patch.object(CachedWS, 'get', get_area_dept_404)
+    def test_wsarea_rcsv(self):
+        output_file = (os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_RCSV_PATH) +
+                       '/area/2015/2015-area.csv')
+        self.fill_db(range(1, 5))
+        self.rcsv_test(output_file, WSAreaReport, 5, {"unit": "404"}, 2015)
+
+    @patch.object(CachedWS, 'get', get_area_dept_404)
+    def test_wsarea_ipdf(self):
+        output_file = (os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_IPDF_PATH) +
+                       '/area/2015/2015-area-aria.pdf')
+        self.pdf_test(output_file, WSAreaReport, {"unit": "404"}, 2015)
+
+    @patch.object(CachedWS, 'get', get_area_dept_404)
+    def test_wsarea_icsv(self):
+        output_file = (os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_ICSV_PATH) +
+                       '/area/2015/2015-area-aria.csv')
+        self.icsv_test(output_file, WSAreaReport, {"unit": "404"}, 2015)
 
     @override_settings(AUTHENTICATION_BACKENDS=(MODEL_BACKEND,))
     def test_user_with_permission_can_view_admin_reports_link(self):
