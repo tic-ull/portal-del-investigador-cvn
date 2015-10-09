@@ -47,7 +47,8 @@ def get_report_path(unit_type, report_type, year, code, check_file=True):
     Report = _unit_type_dict[unit_type]
     Generator = _report_type_dict[report_type]
     try:
-        team_name = Report.get_unit_name(code, year) if code is not None else None
+        team_name = (Report.get_unit_name(code, year)
+                     if code is not None else None)
     except ObjectDoesNotExist:
         raise ReportDoesNotExist
     model_type = Report.report_type
