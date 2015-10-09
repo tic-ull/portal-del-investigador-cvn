@@ -47,7 +47,7 @@ class CvnItemManager(models.Manager):
 class CongresoManager(CvnItemManager):
 
     def byUsuariosYear(self, usuarios, year):
-        return super(CongresoManager, self).get_query_set().filter(
+        return super(CongresoManager, self).get_queryset().filter(
             user_profile__in=usuarios,
             fecha_de_inicio__year=year
         ).distinct().order_by('fecha_de_inicio').order_by('titulo')
@@ -58,7 +58,7 @@ class ScientificExpManager(CvnItemManager):
     def byUsuariosYear(self, usuarios, year):
         fecha_inicio_max = datetime.date(year, 12, 31)
         fecha_fin_min = datetime.date(year, 1, 1)
-        elements = super(ScientificExpManager, self).get_query_set().filter(
+        elements = super(ScientificExpManager, self).get_queryset().filter(
             user_profile__in=usuarios,
             fecha_de_inicio__isnull=False,
             fecha_de_inicio__lte=fecha_inicio_max
