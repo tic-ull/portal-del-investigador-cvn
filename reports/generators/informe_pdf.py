@@ -34,6 +34,7 @@ from reportlab.lib.units import inch, mm
 from reportlab.platypus import (SimpleDocTemplate, Paragraph, Spacer, Table,
                                 TableStyle)
 from reportlab.platypus.flowables import PageBreak
+import datetime
 from slugify import slugify
 import os
 from django.conf import settings as st
@@ -63,11 +64,15 @@ class InformePDF:
 
     @staticmethod
     def get_save_path(year, model_type):
+        if str(year) == str(datetime.date.today().year):
+            year = 'current'
         return "%s/%s/%s/" % (os.path.join(
             st.MEDIA_ROOT, st_cvn.REPORTS_IPDF_PATH), model_type, year)
 
     @staticmethod
     def get_filename(year, team_name, model_type=None):
+        if str(year) == str(datetime.date.today().year):
+            year = 'current'
         return slugify(str(year) + "-" + team_name) + ".pdf"
 
     def go(self, team_name, investigadores, articulos, libros, capitulos,

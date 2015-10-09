@@ -255,39 +255,39 @@ class CVNTestCase(TestCase):
     @patch.object(CachedWS, 'get', get_area_dept_404)
     def test_wsdept_rcsv(self):
         output_file = (os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_RCSV_PATH) +
-                       '/department/2015/2015-department.csv')
+                       '/department/current/current-department.csv')
         self.fill_db(range(1, 5))
         self.rcsv_test(output_file, WSDeptReport, 3, {"unit": "404"}, 2015)
 
     @patch.object(CachedWS, 'get', get_area_dept_404)
     def test_wsdept_ipdf(self):
         output_file = (os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_IPDF_PATH) +
-                       '/department/2015/2015-departamento-departamental.pdf')
+                       '/department/current/current-departamento-departamental.pdf')
         self.pdf_test(output_file, WSDeptReport, {"unit": "404"}, 2015)
 
     @patch.object(CachedWS, 'get', get_area_dept_404)
     def test_wsdept_icsv(self):
         output_file = (os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_ICSV_PATH) +
-                       '/department/2015/2015-departamento-departamental.csv')
+                       '/department/current/current-departamento-departamental.csv')
         self.icsv_test(output_file, WSDeptReport, {"unit": "404"}, 2015)
 
     @patch.object(CachedWS, 'get', get_area_dept_404)
     def test_wsarea_rcsv(self):
         output_file = (os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_RCSV_PATH) +
-                       '/area/2015/2015-area.csv')
+                       '/area/current/current-area.csv')
         self.fill_db(range(1, 5))
         self.rcsv_test(output_file, WSAreaReport, 5, {"unit": "404"}, 2015)
 
     @patch.object(CachedWS, 'get', get_area_dept_404)
     def test_wsarea_ipdf(self):
         output_file = (os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_IPDF_PATH) +
-                       '/area/2015/2015-area-aria.pdf')
+                       '/area/current/current-area-aria.pdf')
         self.pdf_test(output_file, WSAreaReport, {"unit": "404"}, 2015)
 
     @patch.object(CachedWS, 'get', get_area_dept_404)
     def test_wsarea_icsv(self):
         output_file = (os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_ICSV_PATH) +
-                       '/area/2015/2015-area-aria.csv')
+                       '/area/current/current-area-aria.csv')
         self.icsv_test(output_file, WSAreaReport, {"unit": "404"}, 2015)
 
     @override_settings(AUTHENTICATION_BACKENDS=(MODEL_BACKEND,))

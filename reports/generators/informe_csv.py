@@ -22,6 +22,7 @@
 #    <http://www.gnu.org/licenses/>.
 #
 
+import datetime
 import unicodecsv as csv
 import os
 from slugify import slugify
@@ -48,11 +49,15 @@ class InformeCSV:
 
     @staticmethod
     def get_save_path(year, model_type):
+        if str(year) == str(datetime.date.today().year):
+            year = 'current'
         return "%s/%s/%s/" % (os.path.join(
             st.MEDIA_ROOT, st_cvn.REPORTS_ICSV_PATH), model_type, year)
 
     @staticmethod
     def get_filename(year, team_name, model_type=None):
+        if str(year) == str(datetime.date.today().year):
+            year = 'current'
         return slugify(str(year) + "-" + team_name) + ".csv"
 
     def go(self, team_name, investigadores, articulos, libros, capitulos,
