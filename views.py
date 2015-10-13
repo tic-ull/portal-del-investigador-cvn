@@ -268,13 +268,6 @@ class DownloadReportView(View):
             raise Http404
         if year == datetime.date.today().year:
             unit_type = 'ws_' + unit_type
-            report = get_report_instance(unit_type, report_type, year)
-            if report_type == 'rcsv':
-                report.create_reports()
-                path = get_report_path(unit_type, report_type, year, code)
-            else:
-                path = report.create_report(unit=code)
-        else:
-            path = get_report_path(unit_type, report_type, year, code)
+        path = get_report_path(unit_type, report_type, year, code)
         response = self.create_response(path)
         return response

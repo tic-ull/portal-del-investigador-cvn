@@ -181,6 +181,11 @@ class WSReport(BaseReport):
         units = ws.get(ws_url)
         return [{'code': unit['codigo'], 'name': unit['nombre']} for unit in units]
 
+    @classmethod
+    def get_unit_name(cls, code, year):
+        return filter(lambda x: x['code'] == code,
+               cls.get_all_units_names(year))[0]['name']
+
     def get_all_units(self):
         # Save unit names bc the ws doesn't return it when there are no members
         self.unit_names = self.get_all_units_names(self.year)
