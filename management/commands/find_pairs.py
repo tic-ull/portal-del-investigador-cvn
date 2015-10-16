@@ -25,6 +25,7 @@
 from cvn.models import (Proyecto, Congreso, Convenio, Articulo, Patente,
                         TesisDoctoral, Libro, Capitulo)
 from core.models import UserProfile
+from core.routers import in_database
 from django.conf import settings as st
 from django.core.management.base import BaseCommand, CommandError
 from django.core.exceptions import FieldError, ObjectDoesNotExist
@@ -177,9 +178,8 @@ class Command(BaseCommand):
                   .format(pry1.id, pry2.id, duplicates[pair] * 100,
                           count, len(duplicates), titulo))
         log_print("===========================================================")
-        log_print("Field".ljust(self.FIELD_WIDTH)
-                  + "ID1".ljust(self.COLWIDTH)
-                  + "ID2".ljust(self.COLWIDTH))
+        log_print("Field".ljust(self.FIELD_WIDTH) + "ID1".ljust(self.COLWIDTH) +
+                  "ID2".ljust(self.COLWIDTH))
         log_print("-" * (self.FIELD_WIDTH + 2 * self.COLWIDTH))
         for f in model_fields:
             if f not in (self.DONT_SET_FIELDS +
@@ -363,21 +363,22 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         table, name_field, year = self.check_args(options)
-        log_print("Haciendo copia de seguridad de BD")
-        error = backup_database(year)
-        if error:
-            log_print(error)
-        else:
-            print('Realizando consultas')
-            registros = self.run_queries(options, table)
-            registros = [p for p in registros]
-            print('Buscando parejas de duplicados')
-            duplicates = self.find_duplicates(registros, name_field, 2)
-            sorted_pairs = sorted(duplicates, key=duplicates.get, reverse=True)
-            signal.signal(signal.SIGINT, signal_handler)
-            pairs_solved = self.confirm_duplicates(sorted_pairs, table,
-                                                   name_field, duplicates)
-            self.commit_changes(table, pairs_solved)
+        with in_database(str(year), write=True):
+            log_print("Haciendo copia de seguridad de BD")
+            error = backup_database(year)
+            if error:
+                log_print(error)
+            else:
+                print('Realizando consultas')
+                registros = self.run_queries(options, table)
+                registros = [p for p in registros]
+                print('Buscando parejas de duplicados')
+                duplicates = self.find_duplicates(registros, name_field, 2)
+                sorted_pairs = sorted(duplicates, key=duplicates.get, reverse=True)
+                signal.signal(signal.SIGINT, signal_handler)
+                pairs_solved = self.confirm_duplicates(sorted_pairs, table,
+                                                       name_field, duplicates)
+                self.commit_changes(table, pairs_solved)
 
     def commit_changes(self, table, pairs_solved):
         print pairs_solved
