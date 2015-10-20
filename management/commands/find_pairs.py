@@ -64,10 +64,10 @@ def log_print(message):
     logger.info(message)
 
 
-def backup_database(year):
-    if year is None or year not in st.HISTORICAL:
+def backup_database(database):
+    if database is None or database not in st.HISTORICAL:
         return u'ERROR: No se ha definido la BD HISTORICA'
-    db = st.HISTORICAL[year]
+    db = st.HISTORICAL[database]
     dbname = st.DATABASES[db]['NAME']
     file_path = '%s/%s.%s.gz' % (st.BACKUP_DIR, dbname,
                                  time.strftime('%Y-%m-%d-%Hh%Mm%Ss'))
@@ -130,6 +130,13 @@ class Command(BaseCommand):
             default=False,
             help="specify the year for searching in format XXXX or use 'all'",
         ),
+        make_option(
+            "-D",
+            "--database",
+            dest="database",
+            default=False,
+            help="specify the database to query",
+        ),
     )
 
     TABLES = {'Proyecto': Proyecto,
@@ -190,10 +197,10 @@ class Command(BaseCommand):
                 f2 = "" if f2 is None else f2
                 if f1 != f2:
                     log_print(unicode(f)[:self.FIELD_WIDTH - 1]
-                              .ljust(self.FIELD_WIDTH)
-                              + unicode(f1)[:self.COLWIDTH - 1]
-                              .ljust(self.COLWIDTH)
-                              + unicode(f2)[:self.COLWIDTH - 1]
+                              .ljust(self.FIELD_WIDTH) +
+                              unicode(f1)[:self.COLWIDTH - 1]
+                              .ljust(self.COLWIDTH) +
+                              unicode(f2)[:self.COLWIDTH - 1]
                               .ljust(self.COLWIDTH))
         log_print("-" * (self.FIELD_WIDTH + 2 * self.COLWIDTH))
 
@@ -217,9 +224,16 @@ class Command(BaseCommand):
             except ValueError:
                 raise CommandError("Option `--diff needs an integer 0,1,...")
         year = None
+
         if options['year'] is not None:
             year = unicode(options['year'])
-        return table, name_field, year
+
+        if options['database'] is None:
+            raise CommandError("Option `--database=...` must be specified.")
+        else:
+            database = unicode(options['database'])
+
+        return table, name_field, year, database
 
     def run_queries(self, options, table):
         log_print("Buscando duplicados en el modelo " +
@@ -362,10 +376,10 @@ class Command(BaseCommand):
         return pairs_solved
 
     def handle(self, *args, **options):
-        table, name_field, year = self.check_args(options)
-        with in_database(str(year), write=True):
+        table, name_field, year, database = self.check_args(options)
+        with in_database(str(database), write=True):
             log_print("Haciendo copia de seguridad de BD")
-            error = backup_database(year)
+            error = backup_database(database)
             if error:
                 log_print(error)
             else:
@@ -374,7 +388,8 @@ class Command(BaseCommand):
                 registros = [p for p in registros]
                 print('Buscando parejas de duplicados')
                 duplicates = self.find_duplicates(registros, name_field, 2)
-                sorted_pairs = sorted(duplicates, key=duplicates.get, reverse=True)
+                sorted_pairs = sorted(duplicates,
+                                      key=duplicates.get, reverse=True)
                 signal.signal(signal.SIGINT, signal_handler)
                 pairs_solved = self.confirm_duplicates(sorted_pairs, table,
                                                        name_field, duplicates)
