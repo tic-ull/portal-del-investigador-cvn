@@ -91,7 +91,7 @@ def ull_report(request, year):
     if year is None or year not in st.HISTORICAL:
         raise Http404
     context = {}
-    user = User.objects.using(st.HISTORICAL[year]).get(username='GesInv-ULL')
+    user = User.objects.using(year).get(username='GesInv-ULL')
     scientific_production_to_context(user.profile, context)
     try:
         context['report_date'] = unicode(year)
@@ -152,7 +152,7 @@ class AdminReportsView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(AdminReportsView, self).get_context_data(**kwargs)
-        years = st.HISTORICAL.keys()
+        years = st.HISTORICAL
         context['depts'] = []
         context['areas'] = []
         current_year = datetime.date.today().year
@@ -185,7 +185,7 @@ class ReportsView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(ReportsView, self).get_context_data(**kwargs)
-        years = st.HISTORICAL.keys()
+        years = st.HISTORICAL
         context['depts'] = []
         context['areas'] = []
         dc = self.request.session['dept_code']

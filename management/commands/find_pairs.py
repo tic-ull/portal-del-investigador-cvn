@@ -65,16 +65,15 @@ def log_print(message):
 
 
 def backup_database(database):
-    if database is None or database not in st.HISTORICAL:
-        return u'ERROR: No se ha definido la BD HISTORICA'
-    db = st.HISTORICAL[database]
-    dbname = st.DATABASES[db]['NAME']
+    if database not in st.DATABASES:
+        return u'ERROR: No se ha definido la Base de Datos'
+    dbname = st.DATABASES[database]['NAME']
     file_path = '%s/%s.%s.gz' % (st.BACKUP_DIR, dbname,
                                  time.strftime('%Y-%m-%d-%Hh%Mm%Ss'))
     params = 'export PGPASSWORD=%s\npg_dump -U%s -h %s %s | gzip -9 -c > %s' \
-        % (st.DATABASES[db]['PASSWORD'],
-           st.DATABASES[db]['USER'],
-           st.DATABASES[db]['HOST'],
+        % (st.DATABASES[database]['PASSWORD'],
+           st.DATABASES[database]['USER'],
+           st.DATABASES[database]['HOST'],
            dbname, file_path)
 
     if not os.path.exists(st.BACKUP_DIR):
