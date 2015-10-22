@@ -24,14 +24,14 @@
 
 from django.conf.urls import patterns, url
 from django.http import HttpResponse
-from .settings import HISTORICAL_YEAR
+from .settings import UNIVERSITY_REPORT_DB
 from .views import AdminReportsView, DownloadReportView, ReportsView
 
 urlpatterns = patterns(
     'cvn.views',
     url(r'^$', 'index', name='cvn'),
-    url(r'^ull_report/$', 'ull_report', {'year': HISTORICAL_YEAR},
-        name='ull_report'),
+    url(r'^ull_report/$', 'cvn.views.university_report',
+        {'year': UNIVERSITY_REPORT_DB}, name='ull_report'),
     url(r'^download/$', 'download_cvn', name='download_cvn'),
     url(r'^waiting/$', lambda r: HttpResponse(status=204), name='waiting'),
     url(r'^export_data/$', 'export_data_ull', name='export_data_ull'),
