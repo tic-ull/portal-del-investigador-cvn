@@ -133,7 +133,6 @@ class Command(BaseCommand):
             "-D",
             "--database",
             dest="database",
-            default=False,
             help="specify the database to query",
         ),
     )
