@@ -290,7 +290,7 @@ RANGE_OF_YEARS = (1950, date.today().year + 1)  # Range of years for CVN Export
 CVN_PDF_AUTHOR_NOAUT = [u'FECYT - Author of Example', ]
 
 # HISTORICAL REPORT
-HISTORICAL_YEAR = '2013'
+UNIVERSITY_REPORT_DB = '2013'
 
 
 # ************************* REPORTS *******************************************

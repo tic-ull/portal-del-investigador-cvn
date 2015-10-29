@@ -58,9 +58,9 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.check_args(options)
         year = options['year']
-        ReportArea.objects.using(st.HISTORICAL[year]).all().delete()
-        ReportDept.objects.using(st.HISTORICAL[year]).all().delete()
-        ReportMember.objects.using(st.HISTORICAL[year]).all().delete()
+        ReportArea.objects.using(year).all().delete()
+        ReportDept.objects.using(year).all().delete()
+        ReportMember.objects.using(year).all().delete()
         if not options['delete']:
             ReportMember.create_all(year)
             ReportArea.load(options['year'])

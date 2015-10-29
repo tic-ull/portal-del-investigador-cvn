@@ -778,7 +778,7 @@ class ReportUnit(models.Model):
     type = ''
 
     def update_members(self, year):
-        with in_database(st.HISTORICAL[year], write=True):
+        with in_database(str(year), write=True):
             try:
                 members = ws.get(url=self.WS_URL_DETAIL % (self.code, year),
                                  use_redis=False)[0]['miembros']
@@ -811,7 +811,7 @@ class ReportUnit(models.Model):
 
     @classmethod
     def load(cls, year):
-        with in_database(st.HISTORICAL[year], write=True):
+        with in_database(str(year), write=True):
             units = ws.get(url=cls.WS_URL_ALL % year, use_redis=False)
             for unit in units:
                 unit_code = str(unit['codigo'])
@@ -846,7 +846,7 @@ class ReportMember(models.Model):
 
     @classmethod
     def create_all(cls, year):
-        with in_database(st.HISTORICAL[year], write=True):
+        with in_database(str(year), write=True):
             for up in UserProfile.objects.all():
                 cls.objects.create(user_profile=up)
 

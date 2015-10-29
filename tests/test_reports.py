@@ -178,7 +178,7 @@ class CVNTestCase(TestCase):
         self.assertTrue(os.path.isfile(output_file))
 
     @patch.object(CachedWS, 'get', get_area_dept_404)
-    @in_database(st.HISTORICAL['2013'], write=True)
+    @in_database('2013', write=True)
     def test_area_icsv(self):
         output_file = (os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_ICSV_PATH) +
                        '/area/2013/2013-area-aria.csv')
@@ -187,7 +187,7 @@ class CVNTestCase(TestCase):
         self.icsv_test(output_file, DBAreaReport, {"unit": "404"})
 
     @patch.object(CachedWS, 'get', get_area_dept_404)
-    @in_database(st.HISTORICAL['2013'], write=True)
+    @in_database('2013', write=True)
     def test_area_ipdf(self):
         output_file = (os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_IPDF_PATH) +
                        '/area/2013/2013-area-aria.pdf')
@@ -196,7 +196,7 @@ class CVNTestCase(TestCase):
         self.pdf_test(output_file, DBAreaReport, {"unit": "404"})
 
     @patch.object(CachedWS, 'get', get_area_dept_404)
-    @in_database(st.HISTORICAL['2013'], write=True)
+    @in_database('2013', write=True)
     def test_area_rcsv(self):
         output_file = (os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_RCSV_PATH) +
                        '/area/2013/2013-area.csv')
@@ -205,7 +205,7 @@ class CVNTestCase(TestCase):
         self.rcsv_test(output_file, DBAreaReport, 5, {"unit": "404"})
 
     @patch.object(CachedWS, 'get', get_area_dept_404)
-    @in_database(st.HISTORICAL['2013'], write=True)
+    @in_database('2013', write=True)
     def test_dept_icsv(self):
         output_file = (os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_ICSV_PATH) +
                        '/department/2013/2013-departamento-departamental.csv')
@@ -214,7 +214,7 @@ class CVNTestCase(TestCase):
         self.icsv_test(output_file, DBDeptReport, {"unit": "404"})
 
     @patch.object(CachedWS, 'get', get_area_dept_404)
-    @in_database(st.HISTORICAL['2013'], write=True)
+    @in_database('2013', write=True)
     def test_dept_ipdf(self):
 
         output_file = (os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_IPDF_PATH) +
@@ -224,7 +224,7 @@ class CVNTestCase(TestCase):
         self.pdf_test(output_file, DBDeptReport, {"unit": "404"})
 
     @patch.object(CachedWS, 'get', get_area_dept_404)
-    @in_database(st.HISTORICAL['2013'], write=True)
+    @in_database('2013', write=True)
     def test_dept_rcsv(self):
         output_file = (os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_RCSV_PATH) +
                        '/department/2013/2013-department.csv')
@@ -233,7 +233,7 @@ class CVNTestCase(TestCase):
         self.rcsv_test(output_file, DBDeptReport, 3, {"unit": "404"})
 
     @patch.object(CachedWS, 'get', get_area_dept_404)
-    @in_database(st.HISTORICAL['2013'], write=True)
+    @in_database('2013', write=True)
     def test_users_rcsv(self):
         output_file = (os.path.join(st.MEDIA_ROOT, st_cvn.REPORTS_RCSV_PATH) +
                        '/users/2013/2013-users.csv')
@@ -381,7 +381,7 @@ class CVNTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def _create_dept_and_area_fake(self, year, code, report_type):
-        with in_database(st.HISTORICAL[year], write=True):
+        with in_database(year, write=True):
             ReportDept.objects.create(code=code, name='Departamento 1')
             ReportArea.objects.create(code=code, name='Area 1')
         dept_path = get_report_path(unit_type='dept', report_type=report_type,

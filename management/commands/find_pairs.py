@@ -25,6 +25,7 @@
 from cvn.models import (Proyecto, Congreso, Convenio, Articulo, Patente,
                         TesisDoctoral, Libro, Capitulo)
 from core.models import UserProfile
+from core.routers import in_database
 from django.conf import settings as st
 from django.core.management.base import BaseCommand, CommandError
 from django.core.exceptions import FieldError, ObjectDoesNotExist
@@ -63,17 +64,16 @@ def log_print(message):
     logger.info(message)
 
 
-def backup_database(year):
-    if year is None or year not in st.HISTORICAL:
-        return u'ERROR: No se ha definido la BD HISTORICA'
-    db = st.HISTORICAL[year]
-    dbname = st.DATABASES[db]['NAME']
+def backup_database(database):
+    if database not in st.DATABASES:
+        return u'ERROR: No se ha definido la Base de Datos'
+    dbname = st.DATABASES[database]['NAME']
     file_path = '%s/%s.%s.gz' % (st.BACKUP_DIR, dbname,
                                  time.strftime('%Y-%m-%d-%Hh%Mm%Ss'))
     params = 'export PGPASSWORD=%s\npg_dump -U%s -h %s %s | gzip -9 -c > %s' \
-        % (st.DATABASES[db]['PASSWORD'],
-           st.DATABASES[db]['USER'],
-           st.DATABASES[db]['HOST'],
+        % (st.DATABASES[database]['PASSWORD'],
+           st.DATABASES[database]['USER'],
+           st.DATABASES[database]['HOST'],
            dbname, file_path)
 
     if not os.path.exists(st.BACKUP_DIR):
@@ -129,6 +129,12 @@ class Command(BaseCommand):
             default=False,
             help="specify the year for searching in format XXXX or use 'all'",
         ),
+        make_option(
+            "-D",
+            "--database",
+            dest="database",
+            help="specify the database to query",
+        ),
     )
 
     TABLES = {'Proyecto': Proyecto,
@@ -177,9 +183,8 @@ class Command(BaseCommand):
                   .format(pry1.id, pry2.id, duplicates[pair] * 100,
                           count, len(duplicates), titulo))
         log_print("===========================================================")
-        log_print("Field".ljust(self.FIELD_WIDTH)
-                  + "ID1".ljust(self.COLWIDTH)
-                  + "ID2".ljust(self.COLWIDTH))
+        log_print("Field".ljust(self.FIELD_WIDTH) + "ID1".ljust(self.COLWIDTH) +
+                  "ID2".ljust(self.COLWIDTH))
         log_print("-" * (self.FIELD_WIDTH + 2 * self.COLWIDTH))
         for f in model_fields:
             if f not in (self.DONT_SET_FIELDS +
@@ -190,10 +195,10 @@ class Command(BaseCommand):
                 f2 = "" if f2 is None else f2
                 if f1 != f2:
                     log_print(unicode(f)[:self.FIELD_WIDTH - 1]
-                              .ljust(self.FIELD_WIDTH)
-                              + unicode(f1)[:self.COLWIDTH - 1]
-                              .ljust(self.COLWIDTH)
-                              + unicode(f2)[:self.COLWIDTH - 1]
+                              .ljust(self.FIELD_WIDTH) +
+                              unicode(f1)[:self.COLWIDTH - 1]
+                              .ljust(self.COLWIDTH) +
+                              unicode(f2)[:self.COLWIDTH - 1]
                               .ljust(self.COLWIDTH))
         log_print("-" * (self.FIELD_WIDTH + 2 * self.COLWIDTH))
 
@@ -217,9 +222,16 @@ class Command(BaseCommand):
             except ValueError:
                 raise CommandError("Option `--diff needs an integer 0,1,...")
         year = None
+
         if options['year'] is not None:
             year = unicode(options['year'])
-        return table, name_field, year
+
+        if options['database'] is None:
+            raise CommandError("Option `--database=...` must be specified.")
+        else:
+            database = unicode(options['database'])
+
+        return table, name_field, year, database
 
     def run_queries(self, options, table):
         log_print("Buscando duplicados en el modelo " +
@@ -362,22 +374,24 @@ class Command(BaseCommand):
         return pairs_solved
 
     def handle(self, *args, **options):
-        table, name_field, year = self.check_args(options)
-        log_print("Haciendo copia de seguridad de BD")
-        error = backup_database(year)
-        if error:
-            log_print(error)
-        else:
-            print('Realizando consultas')
-            registros = self.run_queries(options, table)
-            registros = [p for p in registros]
-            print('Buscando parejas de duplicados')
-            duplicates = self.find_duplicates(registros, name_field, 2)
-            sorted_pairs = sorted(duplicates, key=duplicates.get, reverse=True)
-            signal.signal(signal.SIGINT, signal_handler)
-            pairs_solved = self.confirm_duplicates(sorted_pairs, table,
-                                                   name_field, duplicates)
-            self.commit_changes(table, pairs_solved)
+        table, name_field, year, database = self.check_args(options)
+        with in_database(str(database), write=True):
+            log_print("Haciendo copia de seguridad de BD")
+            error = backup_database(database)
+            if error:
+                log_print(error)
+            else:
+                print('Realizando consultas')
+                registros = self.run_queries(options, table)
+                registros = [p for p in registros]
+                print('Buscando parejas de duplicados')
+                duplicates = self.find_duplicates(registros, name_field, 2)
+                sorted_pairs = sorted(duplicates,
+                                      key=duplicates.get, reverse=True)
+                signal.signal(signal.SIGINT, signal_handler)
+                pairs_solved = self.confirm_duplicates(sorted_pairs, table,
+                                                       name_field, duplicates)
+                self.commit_changes(table, pairs_solved)
 
     def commit_changes(self, table, pairs_solved):
         print pairs_solved

@@ -64,7 +64,7 @@ class BaseReport:
         if not inv:
             return
         # We use the historical cv of the users
-        database = (st.HISTORICAL[str(self.year)]
+        database = (str(self.year)
                     if self.year != datetime.date.today().year
                     else 'default')
         with in_database(database):
@@ -119,12 +119,12 @@ class DBReport(BaseReport):
     Report = None
 
     def get_all_units(self):
-        with in_database(st.HISTORICAL[str(self.year)]):
+        with in_database(str(self.year)):
             return [r.code for r in self.Report.objects.exclude(
                 reportmember=None).order_by('name')]
 
     def get_investigadores(self, unit, title):
-        with in_database(st.HISTORICAL[str(self.year)]):
+        with in_database(str(self.year)):
             unit_model = self.Report.objects.get(code=unit)
             if unit_model is None:
                 return NotImplemented
@@ -149,12 +149,12 @@ class DBReport(BaseReport):
 
     @classmethod
     def get_unit_name(cls, code, year):
-        with in_database(st.HISTORICAL[str(year)]):
+        with in_database(str(year)):
             return cls.Report.objects.get(code=code).name
 
     @classmethod
     def get_all_units_names(cls, year):
-        with in_database(st.HISTORICAL[str(year)]):
+        with in_database(str(year)):
             return list(cls.Report.objects.all())
 
 
