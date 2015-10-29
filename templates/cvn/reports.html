@@ -8,42 +8,42 @@
 {% endblock breadcrumb %}
 
 {% block main %}
+    <h1 class="page-header">{% trans "Reports" %}</h1>
     <script src="{% static datatables_js_url %}"></script>
     <script src="{% static datatables_sort_normalize %}"></script>
     <script src="{% static datatables_sort_date %}"></script>
     <link property="stylesheet" rel="stylesheet" type="text/css" href="{{ datatables_css_url }}"/>
-    <div class="section">
-        <ul class="nav nav-tabs header">
-            <li class="active">Informes</li>
-        </ul>
-        <div class="content">
-            <div class="nav-ull">
-                <ul class="nav nav-tabs">
-                    <li class="active"><a href="#dept" data-toggle="tab">{% trans 'Departments' %}</a></li>
-                    <li><a href="#area" data-toggle="tab">{% trans 'Areas' %}</a></li>
-                </ul>
+    <div class="content">
+        <div class="nav-ull">
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="#dept" data-toggle="tab">{% trans 'Departments' %}</a></li>
+                <li><a href="#area" data-toggle="tab">{% trans 'Areas' %}</a></li>
+            </ul>
 
-                <div class="tab-content">
-                    <div id="dept" class="tab-pane active">
-                        <div class="panel-group" id="depts">
-                            {% for depts_year in depts %}
-                                <h2>{{ depts_year.year }}</h2>
+            <div class="tab-content">
+                <div id="dept" class="tab-pane active">
+                    <div class="panel-group" id="depts">
+                        {% for depts_year in depts %}
+                            <h2>
+                                {{ depts_year.year }}
                                 {% if not show_rcsv == False %}
-                                    <a href="{% url 'download_report' type='rcsv' year=depts_year.year unit_type="dept" %}" class="fa fa-download"></a>
+                                    <a class="btn btn-primary" href="{% url 'download_report' type='rcsv' year=depts_year.year unit_type="dept" %}"><span class="fa fa-download"></span> Summary</a>
                                 {% endif %}
-                                {% include 'cvn/partials/reports_table.html' with unit_type="dept" year=depts_year.year entities=depts_year.units %}
-                            {% endfor %}
-                        </div>
+                            </h2>
+                            {% include 'cvn/partials/reports_table.html' with unit_type="dept" year=depts_year.year entities=depts_year.units %}
+                        {% endfor %}
                     </div>
+                </div>
 
-                    <div id="area" class="tab-pane">
-                        <div class="panel-group" id="areas">
-                            {% for areas_year in areas %}
-                                <h2>{{ areas_year.year }}</h2>
+                <div id="area" class="tab-pane">
+                    <div class="panel-group" id="areas">
+                        {% for areas_year in areas %}
+                            <h2>{{ areas_year.year }}</h2>
+                            {% if not show_rcsv == False %}
                                 <a href="{% url 'download_report' type='rcsv' year=areas_year.year unit_type="area" %}" class="fa fa-download"></a>
-                                {% include 'cvn/partials/reports_table.html' with unit_type="area" year=areas_year.year entities=areas_year.units %}
-                            {% endfor %}
-                        </div>
+                            {% endif %}
+                            {% include 'cvn/partials/reports_table.html' with unit_type="area" year=areas_year.year entities=areas_year.units %}
+                        {% endfor %}
                     </div>
                 </div>
             </div>
