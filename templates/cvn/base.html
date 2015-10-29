@@ -24,9 +24,6 @@
                 {% if not perms.cvn.read_cvn_reports %}
                     <li><a id="reports_link" href='{% url 'reports' %}'><i class="fa fa-files-o"></i> {% trans "Reports" %}</a></li>
                 {% endif %}
-            {%  if user.is_impersonate %}
-                <li><a href="{% url 'impersonate-stop' %}" target="_blank"><i class="fa fa-suitcase"></i> {% trans "Stop impersonation" %}</a></li>
-            {% endif %}
             </ul>
         </div>
     </div>
