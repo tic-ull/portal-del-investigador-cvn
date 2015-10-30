@@ -38,10 +38,12 @@
                 <div id="area" class="tab-pane">
                     <div class="panel-group" id="areas">
                         {% for areas_year in areas %}
-                            <h2>{{ areas_year.year }}</h2>
-                            {% if not show_rcsv == False %}
-                                <a href="{% url 'download_report' type='rcsv' year=areas_year.year unit_type="area" %}" class="fa fa-download"></a>
-                            {% endif %}
+                            <h2>
+                                {{ areas_year.year }}
+                                {% if not show_rcsv == False %}
+                                    <a class="btn btn-primary" href="{% url 'download_report' type='rcsv' year=areas_year.year unit_type="area" %}"><span class="fa fa-download"></span> Summary</a>
+                                {% endif %}
+                            </h2>
                             {% include 'cvn/partials/reports_table.html' with unit_type="area" year=areas_year.year entities=areas_year.units %}
                         {% endfor %}
                     </div>
