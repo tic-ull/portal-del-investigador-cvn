@@ -189,10 +189,20 @@ class ReportsView(TemplateView):
         years = st.HISTORICAL
         context['depts'] = []
         context['areas'] = []
-        dc = self.request.session['dept_code']
-        ac = self.request.session['area_code']
-        dept = Department.objects.get(code=dc).name
-        area = Area.objects.get(code=ac).name
+        try:
+            dc = self.request.session['dept_code']
+        except KeyError:
+            dc = None
+            dept = ''
+        else:
+            dept = Department.objects.get(code=dc).name
+        try:
+            ac = self.request.session['area_code']
+        except KeyError:
+            ac = None
+            area = ''
+        else:
+            area = Area.objects.get(code=ac).name
         current_year = datetime.date.today().year
         context['depts'].append({
             'year': current_year,
@@ -203,28 +213,30 @@ class ReportsView(TemplateView):
             'units': [{'code': ac, 'name': area}]
         })
         for year in years:
-            try:
-                path = get_report_path('dept', 'ipdf', year, dc)
-            except ReportDoesNotExist:
-                # The report does not exist. Probably the user's department
-                # didn't exist this year.
-                pass
-            else:
-                context['depts'].append({
-                    'year': year,
-                    'units': [{'code': dc, 'name': dept}]
-                })
-            try:
-                get_report_path('area', 'ipdf', year, ac)
-            except ReportDoesNotExist:
-                # The report does not exist. Probably the user's department
-                # didn't exist this year.
-                pass
-            else:
-                context['areas'].append({
-                    'year': year,
-                    'units': [{'code': ac, 'name': area}]
-                })
+            if dc is not None:
+                try:
+                    get_report_path('dept', 'ipdf', year, dc)
+                except ReportDoesNotExist:
+                    # The report does not exist. Probably the user's department
+                    # didn't exist this year.
+                    pass
+                else:
+                    context['depts'].append({
+                        'year': year,
+                        'units': [{'code': dc, 'name': dept}]
+                    })
+            if ac is not None:
+                try:
+                    get_report_path('area', 'ipdf', year, ac)
+                except ReportDoesNotExist:
+                    # The report does not exist. Probably the user's department
+                    # didn't exist this year.
+                    pass
+                else:
+                    context['areas'].append({
+                        'year': year,
+                        'units': [{'code': ac, 'name': area}]
+                    })
         context['show_rcsv'] = False
         return context
 
@@ -263,7 +275,7 @@ class DownloadReportView(View):
         code = params['code'] if report_type != 'rcsv' else None
 
         # Check user permissions
-        user_unit = self.request.session[unit_type + '_code']
+        user_unit = self.request.session.get(unit_type + '_code', '')
         if (not user_can_view_reports(user=self.request.user)
                 and user_unit != code):
             raise Http404

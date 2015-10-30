@@ -310,29 +310,6 @@ class CVNTestCase(TestCase):
         self.assertEqual(len(reports_link), 0)
 
     @override_settings(AUTHENTICATION_BACKENDS=(MODEL_BACKEND,))
-    def test_user_with_permission_cant_view_reports_link(self):
-        u = UserFactory.create_and_login(self.client)
-        u.profile.rrhh_code = 9354
-        u.profile.save()
-        u.user_permissions.add(Permission.objects.get(
-            codename='read_cvn_reports'))
-        u.user_permissions.add(Permission.objects.get(
-            codename='read_admin_menu'))
-        u.save()
-        soup = BeautifulSoup(self.client.get(reverse('cvn')).content, 'lxml')
-        reports_link = soup.select('a#reports_link')
-        self.assertEqual(len(reports_link), 0)
-
-    @override_settings(AUTHENTICATION_BACKENDS=(MODEL_BACKEND,))
-    def test_user_without_permission_can_view_reports_link(self):
-        u = UserFactory.create_and_login(self.client)
-        u.profile.rrhh_code = 9354
-        u.profile.save()
-        soup = BeautifulSoup(self.client.get(reverse('cvn')).content, 'lxml')
-        reports_link = soup.select('a#reports_link')
-        self.assertEqual(len(reports_link), 1)
-
-    @override_settings(AUTHENTICATION_BACKENDS=(MODEL_BACKEND,))
     def test_user_without_permission_cant_view_admin_reports(self):
         u = UserFactory.create_and_login(self.client)
         response = self.client.get(reverse('admin_reports'))

@@ -1,38 +1,45 @@
 {% load i18n %}
 {% load staticfiles %}
 
-
-<table id="{{ entity_type }}" class="table table-striped table-condensed">
-    <thead>
-        <tr>
-            <th>{% trans 'Code' %}</th>
-            <th>{% trans 'Name' %}</th>
-            <th>PDF</th>
-            {% if year != '2012' and year != '2013' %}
-                <th>CSV</th>
-            {% endif %}
-        </tr>
-    </thead>
-    <tbody>
-        {% for entity in entities %}
+{% if entities.0.code %}
+    <table id="{{ unit_type }}{{ year }}" class="table table-striped table-condensed">
+        <thead>
             <tr>
-                <td>{{ entity.code }}</td>
-                <td>{{ entity.name }}</td>
-                <td><a href="{% url 'download_report' type='ipdf' code=entity.code year=year unit_type=unit_type %}" class="fa fa-download"></a></td>
+                <th>{% trans 'Year' %}</th>
+                <th>{% trans 'Code' %}</th>
+                <th>{% trans 'Name' %}</th>
+                <th>PDF</th>
                 {% if year != '2012' and year != '2013' %}
-                    <td><a href="{% url 'download_report' type='icsv' code=entity.code year=year unit_type=unit_type %}" class="fa fa-download"></a></td>
+                    <th>CSV</th>
                 {% endif %}
             </tr>
-        {% endfor %}
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            {% for entity in entities %}
+                {% if entity.code %}
+                    <tr>
+                        <td>{{ year }}</td>
+                        <td>{{ entity.code }}</td>
+                        <td>{{ entity.name }}</td>
+                        <td><a href="{% url 'download_report' type='ipdf' code=entity.code year=year unit_type=unit_type %}" class="fa fa-download"> PDF</a></td>
+                        {% if year != '2012' and year != '2013' %}
+                            <td><a href="{% url 'download_report' type='icsv' code=entity.code year=year unit_type=unit_type %}" class="fa fa-download"> CSV</a></td>
+                        {% endif %}
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
 
-<script>
-    $(document).ready(function(){
-        $('#{{ entity_type }}{{ year }}').DataTable({
-            paging: false,
-            searching: false,
-            info: false
+    <script>
+        $(document).ready(function(){
+            $('#{{ unit_type }}{{ year }}').DataTable({
+                paging: false,
+                searching: false,
+                info: false
+            });
         });
-    });
-</script>
+    </script>
+{% else %}
+    <div class="alert alert-danger">You don't currently have a department/area.</div>
+{% endif %}
