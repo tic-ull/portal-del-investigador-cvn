@@ -97,7 +97,7 @@ class CvnXmlWriter:
     def add_teaching(self, curso_inicio, creditos, asignatura=None, curso=None,
                      plan_nomid=None, departamento=None, centro_nomid=None,
                      categ_anyo=None, tipologia=None, tipo_estudio=None,
-                     university=st_cvn.UNIVERSITY):
+                     university=st_cvn.UNIVERSITY, **kwargs):
         """Graduate, postgraduate (bachelor's degree, master, engineering)"""
         program_code = self._get_code(st_cvn.PROGRAM_TYPE, tipo_estudio)
         subject_code = self._get_code(st_cvn.SUBJECT_TYPE, tipologia)
@@ -170,7 +170,7 @@ class CvnXmlWriter:
         self.xml.append(teaching)
 
     def add_learning(self, des1_titulacion, des1_grado_titulacion,
-                     des1_organismo=None, f_expedicion=None):
+                     des1_organismo=None, f_expedicion=None, **kwargs):
         titulacion_code = self._get_code(
             st_cvn.OFFICIAL_TITLE_TYPE, des1_grado_titulacion.upper())
         learning = etree.fromstring(
@@ -197,7 +197,7 @@ class CvnXmlWriter:
         self.xml.append(learning)
 
     def add_learning_phd(self, des1_titulacion, f_expedicion=None,
-                         des1_organismo=st_cvn.UNIVERSITY):
+                         des1_organismo=st_cvn.UNIVERSITY, **kwargs):
         """ PhD (Doctor) """
         learning_phd = etree.fromstring(
             get_xml_fragment(st_cvn.XML_LEARNING_PHD) % {
@@ -220,7 +220,7 @@ class CvnXmlWriter:
                        des1_cargo=None, f_toma_posesion=None,
                        des_cce=None, f_desde=None,
                        f_hasta=None, centro=None, des1_departamento=None,
-                       des1_dedicacion=None):
+                       des1_dedicacion=None, **kwargs):
 
         values = {'employer': employer,
                   'centre': centro,
