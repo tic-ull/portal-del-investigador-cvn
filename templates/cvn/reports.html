@@ -40,7 +40,7 @@
                     <div class="panel-group" id="areas">
                         {% for areas_year in areas %}
                             <h2>
-                                {{ areas_year.year }}
+                                {{ areas_year.year|replace_current:True }}
                                 {% if not show_rcsv == False %}
                                     <a class="btn btn-primary" href="{% url 'download_report' type='rcsv' year=areas_year.year unit_type="area" %}"><span class="fa fa-download"></span> Summary</a>
                                 {% endif %}
