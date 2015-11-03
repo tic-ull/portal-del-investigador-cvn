@@ -266,7 +266,6 @@ class DownloadReportView(View):
         form = self.form_class(kwargs)
         if not form.is_valid():
             raise Http404
-
         # Get form fields
         params = form.cleaned_data
         unit_type = params['unit_type']
@@ -277,7 +276,7 @@ class DownloadReportView(View):
         # Check user permissions
         user_unit = self.request.session.get(unit_type + '_code', '')
         if (not user_can_view_reports(user=self.request.user)
-                and user_unit != code):
+                and user_unit != str(code)):
             raise Http404
         if year == datetime.date.today().year:
             unit_type = 'ws_' + unit_type
