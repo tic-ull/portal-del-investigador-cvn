@@ -26,6 +26,7 @@ from cvn import settings as st_cvn
 from django.utils.safestring import mark_safe
 from django import template
 from django.utils.translation import ugettext as _
+import datetime
 
 register = template.Library()
 
@@ -44,3 +45,11 @@ def messages_waiting():
         _(st_cvn.MESSAGES_WAITING.values()[-1]) + "\");\n" +
         "\t" * 5 + "}")
     return mark_safe(html)
+
+
+@register.filter(name='replace_current')
+def replace_current(value, verbose=False):
+    if value == datetime.date.today().year:
+        return _('Current year') if verbose else _('current')
+    else:
+        return value

@@ -1,5 +1,6 @@
 {% extends 'cvn/base.html' %}
 {% load i18n %}
+{% load cvn_extras %}
 
 {% load staticfiles %}
 
@@ -25,7 +26,7 @@
                     <div class="panel-group" id="depts">
                         {% for depts_year in depts %}
                             <h2>
-                                {{ depts_year.year }}
+                                {{ depts_year.year|replace_current:True }}
                                 {% if not show_rcsv == False %}
                                     <a class="btn btn-primary" href="{% url 'download_report' type='rcsv' year=depts_year.year unit_type="dept" %}"><span class="fa fa-download"></span> Summary</a>
                                 {% endif %}

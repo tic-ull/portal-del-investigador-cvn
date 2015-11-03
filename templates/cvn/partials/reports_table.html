@@ -1,5 +1,6 @@
 {% load i18n %}
 {% load staticfiles %}
+{% load cvn_extras %}
 
 {% if entities.0.code %}
     <table id="{{ unit_type }}{{ year }}" class="table table-striped table-condensed">
@@ -18,7 +19,7 @@
             {% for entity in entities %}
                 {% if entity.code %}
                     <tr>
-                        <td>{{ year }}</td>
+                        <td>{{ year|replace_current }}</td>
                         <td>{{ entity.code }}</td>
                         <td>{{ entity.name }}</td>
                         <td><a href="{% url 'download_report' type='ipdf' code=entity.code year=year unit_type=unit_type %}" class="fa fa-download"> PDF</a></td>

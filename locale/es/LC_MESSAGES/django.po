@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-30 13:13+0000\n"
-"PO-Revision-Date: 2015-10-30 13:14-0102\n"
+"POT-Creation-Date: 2015-11-03 12:20+0000\n"
+"PO-Revision-Date: 2015-11-03 12:21-0102\n"
 "Last-Translator: DOMINGO YERAY RODRIGUEZ MARTIN <dyeray@ull.edu.es>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -26,7 +26,7 @@ msgid "Change user's DNI"
 msgstr "Cambiar el DNI del usuario"
 
 #: admin_base.py:62 forms.py:126 models.py:773
-#: templates/cvn/partials/reports_table.html:10
+#: templates/cvn/partials/reports_table.html:11
 msgid "Name"
 msgstr "Nombre"
 
@@ -304,12 +304,11 @@ msgstr "Propiedades Intelectuales"
 msgid "Historical Normalized Curriculum Vitae"
 msgstr "Histórico de Currículum Vitae Normalizado"
 
-#: models.py:772 templates/cvn/partials/reports_table.html:9
+#: models.py:772 templates/cvn/partials/reports_table.html:10
 msgid "Code"
 msgstr "Código"
 
 #: models.py:845
-#| msgid "Name"
 msgid "CCE Name"
 msgstr "Nombre del CCE"
 
@@ -657,24 +656,23 @@ msgstr "Inscrita en"
 msgid "You don't have any Intellectual Property"
 msgstr "No dispone de Propiedades Intelectuales"
 
-#: templates/cvn/partials/reports_table.html:8
+#: templates/cvn/partials/reports_table.html:9
 msgid "Year"
 msgstr "Año"
 
-#: templates/cvn/partials/reports_table.html:44
-#| msgid "You don't have any Agreements"
+#: templates/cvn/partials/reports_table.html:54
 msgid "You don't currently have a department/area."
 msgstr "No dispone de un departamento/area."
 
-#: templates/cvn/reports.html:7 templates/cvn/reports.html.py:11
+#: templates/cvn/reports.html:8 templates/cvn/reports.html.py:12
 msgid "Reports"
 msgstr "Informes"
 
-#: templates/cvn/reports.html:19
+#: templates/cvn/reports.html:20
 msgid "Departments"
 msgstr "Departamentos"
 
-#: templates/cvn/reports.html:20
+#: templates/cvn/reports.html:21
 msgid "Areas"
 msgstr "Áreas"
 
@@ -685,6 +683,15 @@ msgstr "Informe ULL"
 #: templates/cvn/ull_report.html:11
 msgid "Scientific Activity at the Universidad of la Laguna"
 msgstr "Actividad Científica en la Universidad de La Laguna"
+
+#: templatetags/cvn_extras.py:53
+#| msgid "Current Document:"
+msgid "Current year"
+msgstr "Año actual"
+
+#: templatetags/cvn_extras.py:53
+msgid "current"
+msgstr "actual"
 
 #: utils.py:90
 msgid "Department"
