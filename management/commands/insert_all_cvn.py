@@ -46,8 +46,9 @@ class Command(BaseCommand):
 
     def create_unit_reports(self, Unit, unit_type, rrhh_codes=None):
         uniq = lambda x: list(set(x))
-        units = (uniq([Unit.get_user_unit(code)[0].code for code in rrhh_codes])
+        units = (uniq([Unit.get_user_unit(code)[0].code for code in rrhh_codes if code is not None])
                  if rrhh_codes else None)
+
         year = datetime.date.today().year
         if rrhh_codes != []:
             get_report_instance(unit_type, 'icsv', year).create_reports(units)
