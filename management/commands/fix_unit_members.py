@@ -7,6 +7,7 @@ from django.conf import settings as st
 import os
 import unicodecsv
 from optparse import make_option
+from core.routers import in_database
 
 
 class Command(BaseCommand):
@@ -17,6 +18,11 @@ class Command(BaseCommand):
             dest="unit",
             help="Specify the unit type ('dept' or 'area')",
         ),
+        make_option(
+            "--database",
+            dest="database",
+            help="Specify database to update",
+        ),
     )
 
     def handle(self, *args, **options):
@@ -26,13 +32,17 @@ class Command(BaseCommand):
                 'python manage.py fix_unit_members -u {dept|area}'
             )
         unit = options['unit']
+        database = (options['database']
+                    if options['database'] is not None
+                    else 'default')
         ReportUnit =  ReportDept if unit == 'dept' else ReportArea
+        unit_field = 'COD_DEPARTAMENTO' if unit == 'dept' else 'COD_AREA'
         with open(os.path.join(st.BASE_DIR, unit + '_membership.csv')) as csv:
             reader = unicodecsv.DictReader(csv, delimiter=',')
-            for row in reader:
-                member = ReportMember.objects.get(
-                    user_profile__rrhh_code=row['COD_PERSONA'])
-                department = ReportUnit.objects.get(code=row[
-                    'COD_DEPARTAMENTO'])
-                member.department = department
-                member.save()
+            with in_database(database, write=True):
+                for row in reader:
+                    member = ReportMember.objects.get(
+                        user_profile__rrhh_code=row['COD_PERSONA'])
+                    department = ReportUnit.objects.get(code=row[unit_field])
+                    member.department = department
+                    member.save()
