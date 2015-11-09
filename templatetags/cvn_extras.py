@@ -27,6 +27,7 @@ from django.utils.safestring import mark_safe
 from django import template
 from django.utils.translation import ugettext as _
 import datetime
+from django.conf import settings as st
 
 register = template.Library()
 
@@ -42,8 +43,10 @@ def messages_waiting():
     html += (
         "\t" * 6 + "default:\n" +
         "\t" * 7 + "$('#show').text(\"" +
-        _(st_cvn.MESSAGES_WAITING.values()[-1]) + "\");\n" +
-        "\t" * 5 + "}")
+        _(st_cvn.MESSAGES_WAITING.values()[-1]) % {
+            'support': st.SUPPORT,
+            'email': st.EMAIL_SUPPORT
+        } + "\");\n" + "\t" * 5 + "}")
     return mark_safe(html)
 
 

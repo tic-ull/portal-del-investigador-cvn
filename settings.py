@@ -84,9 +84,7 @@ MESSAGES_WAITING = {
          u"please wait."),
     2: _(u"Verifying CVN details, please wait."),
     3: _(u"This process is taking longer than usual, please wait. If an error occurs "
-         u"try again. If the error persists contact the ") +
-        (u'%(support)s (%(email)s).' % {'support': st.SUPPORT,
-                                        'email': st.EMAIL_SUPPORT})
+         u"try again. If the error persists contact the %(support)s (%(email)s).")
 }
 
 TIME_WAITING = 5000  # In milliseconds
