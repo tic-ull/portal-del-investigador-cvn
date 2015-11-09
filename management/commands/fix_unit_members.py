@@ -55,5 +55,5 @@ class Command(BaseCommand):
                     member.department = department
                     member.save()
                 if options['delempty']:
-                    ReportDept.objects.filter(reportmember=None)
+                    ReportDept.objects.filter(reportmember=None).delete()
 
