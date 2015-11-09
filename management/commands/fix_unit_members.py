@@ -23,7 +23,15 @@ class Command(BaseCommand):
             dest="database",
             help="Specify database to update",
         ),
+        make_option(
+            "--delete-empty",
+            dest="delempty",
+            default=False,
+            action="store_true",
+            help=" Delete departaments that no longer have members"
+        )
     )
+
 
     def handle(self, *args, **options):
         if options['unit'] != 'dept' and options['unit'] != 'area':
@@ -46,3 +54,6 @@ class Command(BaseCommand):
                     department = ReportUnit.objects.get(code=row[unit_field])
                     member.department = department
                     member.save()
+                if options['delempty']:
+                    ReportDept.objects.filter(reportmember=None).delete()
+
